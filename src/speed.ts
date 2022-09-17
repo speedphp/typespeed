@@ -10,18 +10,12 @@ function onClass<T extends { new(...args: any[]): {} }>(constructor: T) {
     };
 }
 
-function onMethod() {
-    return function (
-        target,
-        propertyKey: string,
-        descriptor: PropertyDescriptor,
-    ) {
-        let type = Reflect.getMetadata("design:returntype", target, propertyKey);
-        console.log("Metadata: " + type);
-        descriptor.value = (...args: any[]) => {
-            console.log("decorator onMethod");
-            return "end";
-        };
+function bean(target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<Function>) {
+    let method = descriptor.value!;
+    console.log("decorator bean, outside the function: " + method);
+    descriptor.value = function () {
+        console.log("decorator bean, in the function: " + method);
+        return method.apply(this, arguments);
     };
 }
 
@@ -44,4 +38,4 @@ function inject(): any {
     }
 }
 
-export { onClass, onMethod, autoware, inject };
+export { onClass, bean, autoware, inject };

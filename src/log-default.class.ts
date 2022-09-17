@@ -1,4 +1,4 @@
-import { onClass, onMethod, autoware, inject } from "./speed";
+import { onClass, bean, autoware, inject } from "./speed";
 
 @onClass
 export default class LogDefault {
@@ -12,9 +12,9 @@ export default class LogDefault {
     @inject()
     private testInject: string;
 
-    @onMethod()
+    @bean
     public log(): string {
         console.log('LogDefault log method');
-        return "end";
+        return "return from method log";
     }
 }
