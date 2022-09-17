@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 function onClass<T extends { new(...args: any[]): {} }>(constructor: T) {
-    console.log("decorator onClass");
+    console.log("decorator onClass: " + constructor.name);
     return class extends constructor {
         constructor(...args: any[]) {
             super(...args);
