@@ -1,9 +1,12 @@
-import LogDefault from '../src/log-default.class';
+import * as walkSync from "walk-sync";
 
-const className = "../src/log-default.class";
-import(className);
 
-const logObject = new LogDefault();
-logObject.log();
+const srcDir = process.cwd()
+const paths = walkSync(srcDir, { globs: ['**/*.ts'] });
+
+
+for(let p of paths) {
+    import(srcDir + "/" + p);
+}
 
 console.log("Main file running...");
