@@ -1,0 +1,24 @@
+{
+  "name": "typespeed",
+  "version": "1.0.1",
+  "description": "A new Framework for TypeScript.",
+  "author": "speedphp",
+  "license": "MIT License",
+  "scripts": {
+    "dev" : "nodemon",
+    "test" : "ts-node test/main.ts",
+    "start" :"ts-node --transpile-only test/main.ts",
+    "build" : "tsc -p ."
+  },
+  "main": "dist/speed.js",
+  "homepage": "https://github.com/speedphp/typespeed#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/speedphp/typespeed.git"
+  },
+  "dependencies": {
+    "@types/node": "^18.0.6",
+    "reflect-metadata": "^0.1.13",
+    "typescript": "^4.7.4"
+  }
+}
