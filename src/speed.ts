@@ -1,4 +1,6 @@
 import "reflect-metadata";
+import BeanFactory from "./bean-factory.class";
+import { LogFactory } from "./log-factory.interface";
 
 function onClass<T extends { new(...args: any[]): {} }>(constructor: T) {
     console.log("decorator onClass: " + constructor.name);
@@ -10,13 +12,10 @@ function onClass<T extends { new(...args: any[]): {} }>(constructor: T) {
     };
 }
 
-function bean(target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<Function>) {
-    let method = descriptor.value!;
-    console.log("decorator bean, outside the function: " + method);
-    descriptor.value = function () {
-        console.log("decorator bean, in the function: " + method);
-        return method.apply(this, arguments);
-    };
+function bean(target: any, propertyName: string, descriptor: PropertyDescriptor) {
+    let returnType = Reflect.getMetadata("design:returntype", target, propertyName);
+    console.log(returnType.name);
+    BeanFactory.putBean(returnType, target[propertyName]);
 }
 
 function autoware(target: any, propertyKey: string): void {
@@ -38,4 +37,9 @@ function inject(): any {
     }
 }
 
-export { onClass, bean, autoware, inject };
+function log(...args) {
+    //console.log(...args);
+    const logFactory : LogFactory = BeanFactory.getBean(LogFactory.name);
+}
+
+export { onClass, bean, autoware, inject, log };

@@ -1,20 +1,22 @@
-import { onClass, bean, autoware, inject } from "./speed";
+import { bean } from "../src/speed";
+import {LogFactory} from "./log-factory.interface";
+import * as tracer from "tracer";
 
-@onClass
-export default class LogDefault {
-    constructor() {
-        console.log('LogDefault constructor');
-    }
-
-    @autoware
-    private testAutoware: string;
-
-    @inject()
-    private testInject: string;
+export default class LogDefault implements LogFactory {
 
     @bean
-    public log(): string {
-        console.log('LogDefault log method');
-        return "return from method log";
+    createLog(): LogFactory {
+        return new LogDefault;
     }
+
+    log(...args): any {
+        return tracer.console({
+            format: "[{{title}}] {{timestamp}} {{file}}:{{line}} ({{method}}) {{message}}",
+            dateformat: "yyyy-mm-dd HH:MM:ss",
+            preprocess: function (data) {
+                data.title = data.title.toUpperCase();
+            }
+        });
+    }
+
 }
