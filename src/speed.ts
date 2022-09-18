@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import BeanFactory from "./bean-factory.class";
-import { LogFactory } from "./log-factory.interface";
+import LogFactory from "./log-factory.class";
 
 function onClass<T extends { new(...args: any[]): {} }>(constructor: T) {
     log("decorator onClass: " + constructor.name);
@@ -37,12 +37,13 @@ function inject(): any {
     }
 }
 
-function log(...args) {
-    const logFactory: LogFactory = BeanFactory.getBean("LogFactory");
-    if (logFactory) {
-        logFactory.log(...args);
-    } else {
-        console.log(...args);
+function log(message?: any, ...optionalParams: any[]) {
+    const logBean = BeanFactory.getBean(LogFactory);
+    if(logBean) {
+        const logObject = logBean();
+        logObject.log(message, ...optionalParams);
+    }else{
+        console.log(message, ...optionalParams);
     }
 }
 
