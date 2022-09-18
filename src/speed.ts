@@ -14,7 +14,7 @@ function onClass<T extends { new(...args: any[]): {} }>(constructor: T) {
 
 function bean(target: any, propertyName: string, descriptor: PropertyDescriptor) {
     let returnType = Reflect.getMetadata("design:returntype", target, propertyName);
-    log(returnType.name);
+    log("decorator bean, the return Type is: " + returnType.name);
     BeanFactory.putBean(returnType.name, target[propertyName]);
 }
 
