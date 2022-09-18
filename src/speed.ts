@@ -3,7 +3,7 @@ import BeanFactory from "./bean-factory.class";
 import { LogFactory } from "./log-factory.interface";
 
 function onClass<T extends { new(...args: any[]): {} }>(constructor: T) {
-    console.log("decorator onClass: " + constructor.name);
+    log("decorator onClass: " + constructor.name);
     return class extends constructor {
         constructor(...args: any[]) {
             super(...args);
@@ -14,8 +14,8 @@ function onClass<T extends { new(...args: any[]): {} }>(constructor: T) {
 
 function bean(target: any, propertyName: string, descriptor: PropertyDescriptor) {
     let returnType = Reflect.getMetadata("design:returntype", target, propertyName);
-    console.log(returnType.name);
-    BeanFactory.putBean(returnType, target[propertyName]);
+    log(returnType.name);
+    BeanFactory.putBean(returnType.name, target[propertyName]);
 }
 
 function autoware(target: any, propertyKey: string): void {
@@ -38,8 +38,12 @@ function inject(): any {
 }
 
 function log(...args) {
-    //console.log(...args);
-    const logFactory : LogFactory = BeanFactory.getBean(LogFactory.name);
+    const logFactory: LogFactory = BeanFactory.getBean("LogFactory");
+    if (logFactory) {
+        logFactory.log(...args);
+    } else {
+        console.log(...args);
+    }
 }
 
 export { onClass, bean, autoware, inject, log };
