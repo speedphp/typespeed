@@ -1,22 +1,15 @@
 import { bean } from "../src/speed";
-import {LogFactory} from "./log-factory.interface";
-import * as tracer from "tracer";
+import LogFactory from "./log-factory.class";
 
-export default class LogDefault implements LogFactory {
+export default class LogDefault extends LogFactory {
 
     @bean
     createLog(): LogFactory {
-        return new LogDefault;
+        return new LogDefault();
     }
 
-    log(...args): any {
-        return tracer.console({
-            format: "[{{title}}] {{timestamp}} {{file}}:{{line}} ({{method}}) {{message}}",
-            dateformat: "yyyy-mm-dd HH:MM:ss",
-            preprocess: function (data) {
-                data.title = data.title.toUpperCase();
-            }
-        });
+    public log(message?: any, ...optionalParams: any[]): void {
+        console.log("console.log : " + message);
     }
 
 }
