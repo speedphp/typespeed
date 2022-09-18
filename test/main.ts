@@ -1,3 +1,4 @@
+import { log } from "../src/speed";
 import * as walkSync from "walk-sync";
 
 const srcDir = process.cwd() + "/src";
@@ -11,4 +12,5 @@ const testPaths = walkSync(testDir, { globs: ['**/*.ts'] });
 for(let p of testPaths) {
     import(testDir + "/" + p);
 }
-console.log("Main file running...");
+
+log("Main file running...");
