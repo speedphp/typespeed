@@ -5,8 +5,7 @@ import start from "../src/start.decorator";
 @start
 class Main {
 
-    @app
-    public main(){
-        console.log("start")
+    public start(){
+        console.log('start application');
     }
 }
