@@ -46,9 +46,14 @@ function bean(target: any, propertyName: string, descriptor: PropertyDescriptor)
     BeanFactory.putBean(returnType, target[propertyName]);
 }
 
-function autoware(target: any, propertyKey: string): void {
-    console.log("decorator autoware: " + propertyKey);
-    target[propertyKey] = "autoware value";
+function autoware(target: any, propertyName: string): void {
+    let type = Reflect.getMetadata("design:type", target, propertyName);
+    Object.defineProperty(target, propertyName, {
+      get: function myProperty() {
+        const beanObject = BeanFactory.getBean(type);
+        return beanObject()
+      }
+    });
 }
 
 function inject(): any {

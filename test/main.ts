@@ -1,13 +1,15 @@
-import ExpressServer from "../src/default/express-server.class";
-import { app, log } from "../src/speed";
+import ServerFactory from "../src/factory/server-factory.class";
+import { app, log, autoware } from "../src/speed";
 
 
 @app
 class Main {
 
+    @autoware
+    public server : ServerFactory;
+
     public main(){
-        const server = new ExpressServer();
-        server.start(8080);
+        this.server.start(8080);
         log('start application');
     }
 }
