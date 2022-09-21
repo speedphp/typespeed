@@ -1,6 +1,27 @@
 import "reflect-metadata";
+import * as walkSync from "walk-sync";
 import BeanFactory from "./bean-factory.class";
 import LogFactory from "./log-factory.class";
+
+function app<T extends { new (...args: any[]): {} }>(constructor: T){
+    (async function () {
+        const srcDir = process.cwd() + "/src";
+        const srcPaths = walkSync(srcDir, { globs: ['**/*.ts'] });
+        for(let p of srcPaths) {
+            await import(srcDir + "/" + p);
+        }
+        
+        const testDir = process.cwd() + "/test";
+        const testPaths = walkSync(testDir, { globs: ['**/*.ts'] });
+        for(let p of testPaths) {
+            await import(testDir + "/" + p);
+        }
+        
+        log("app Decorator running...");
+        const main = new constructor();
+        main["main"]();
+    }());
+}
 
 function onClass<T extends { new(...args: any[]): {} }>(constructor: T) {
     log("decorator onClass: " + constructor.name);
@@ -47,4 +68,4 @@ function log(message?: any, ...optionalParams: any[]) {
     }
 }
 
-export { onClass, bean, autoware, inject, log };
+export { onClass, bean, autoware, inject, log, app };
