@@ -1,5 +1,6 @@
 import * as express from "express";
 import ServerFactory from "../factory/server-factory.class";
+import { setRouter } from "../route-mapping.decorator";
 import { bean, log } from "../speed";
 
 export default class ExpressServer extends ServerFactory {
@@ -15,6 +16,7 @@ export default class ExpressServer extends ServerFactory {
         this.middlewareList.forEach(middleware => {
             app.use(middleware);
         });
+        setRouter(app);
         app.listen(port, () => {
             log("server start at port: " + port);
         });
