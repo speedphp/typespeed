@@ -1,10 +1,10 @@
-import { app } from "../src/speed";
+import { app, log } from "../src/speed";
 
 
 @app
 class Main {
 
     public main(){
-        console.log('start application');
+        log('start application');
     }
 }

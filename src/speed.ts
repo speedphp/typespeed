@@ -3,21 +3,28 @@ import * as walkSync from "walk-sync";
 import BeanFactory from "./bean-factory.class";
 import LogFactory from "./log-factory.class";
 
-function app<T extends { new (...args: any[]): {} }>(constructor: T){
+function app<T extends { new(...args: any[]): {} }>(constructor: T) {
+    const srcDir = process.cwd() + "/src";
+    const srcFiles = walkSync(srcDir, { globs: ['**/*.ts'] });
+
+    const testDir = process.cwd() + "/test";
+    const testFiles = walkSync(testDir, { globs: ['**/*.ts'] });
+
     (async function () {
-        const srcDir = process.cwd() + "/src";
-        const srcPaths = walkSync(srcDir, { globs: ['**/*.ts'] });
-        for(let p of srcPaths) {
-            await import(srcDir + "/" + p);
+        try {
+            for (let p of srcFiles) {
+                let moduleName = p.replace(".d.ts", "").replace(".ts", "");
+                await import(srcDir + "/" + moduleName);
+            }
+
+            for (let p of testFiles) {
+                let moduleName = p.replace(".d.ts", "").replace(".ts", "");
+                await import(testDir + "/" + moduleName);
+            }
+        } catch (err) {
+            console.error(err);
         }
-        
-        const testDir = process.cwd() + "/test";
-        const testPaths = walkSync(testDir, { globs: ['**/*.ts'] });
-        for(let p of testPaths) {
-            await import(testDir + "/" + p);
-        }
-        
-        log("app Decorator running...");
+        log("main start")
         const main = new constructor();
         main["main"]();
     }());
@@ -60,10 +67,10 @@ function inject(): any {
 
 function log(message?: any, ...optionalParams: any[]) {
     const logBean = BeanFactory.getBean(LogFactory);
-    if(logBean) {
+    if (logBean) {
         const logObject = logBean();
         logObject.log(message, ...optionalParams);
-    }else{
+    } else {
         console.log(message, ...optionalParams);
     }
 }
