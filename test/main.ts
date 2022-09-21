@@ -1,11 +1,10 @@
-import app from "../src/app.decorator";
-import start from "../src/start.decorator";
+import { app } from "../src/speed";
 
 
-@start
+@app
 class Main {
 
-    public start(){
+    public main(){
         console.log('start application');
     }
 }
