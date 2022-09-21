@@ -1,5 +1,5 @@
-import { bean } from "../src/speed";
-import LogFactory from "./log-factory.class";
+import { bean } from "../speed";
+import LogFactory from "../factory/log-factory.class";
 
 export default class LogDefault extends LogFactory {
 

@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import * as walkSync from "walk-sync";
 import BeanFactory from "./bean-factory.class";
-import LogFactory from "./log-factory.class";
+import LogFactory from "./factory/log-factory.class";
 
 function app<T extends { new(...args: any[]): {} }>(constructor: T) {
     const srcDir = process.cwd() + "/src";
