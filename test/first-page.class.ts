@@ -10,6 +10,21 @@ export default class FirstPage {
         res.send("FirstPage index running");
     }
 
+    @GetMapping("/first/sendJson")
+    public sendJson() {
+        log("FirstPage sendJson running");
+        return {
+            "from" : "sendJson",
+            "to" : "Browser"
+        }
+    }
+
+    @GetMapping("/first/sendResult")
+    public sendResult() {
+        log("FirstPage sendResult running");
+        return "sendResult";
+    }
+
     public getTestFromFirstPage() {
         return "getTestFromFirstPage";
     }

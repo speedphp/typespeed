@@ -17,9 +17,15 @@ function setRouter(app: express.Application) {
 
 function mapperFunction(method: string, value: string) {
   return (target: any, propertyKey: string) => {
-    routerMapper[method][value] = (...args) => {
-      const getBean = BeanFactory.getBean(target.constructor);
-      return getBean[propertyKey](...args);
+    routerMapper[method][value] = (req, res, next) => {
+      const routerBean = BeanFactory.getBean(target.constructor);
+      const testResult = routerBean[propertyKey](req, res, next);
+      if (typeof testResult === "object") {
+        res.json(testResult);
+      } else if (typeof testResult !== "undefined") {
+        res.send(testResult);
+      }
+      return testResult;
     }
   }
 }
