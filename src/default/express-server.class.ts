@@ -1,6 +1,8 @@
 import * as express from "express";
 import * as consolidate from "consolidate";
 import * as serveFavicon from "serve-favicon";
+import * as compression from "compression";
+import * as cookieParser from "cookie-parser";
 import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route-mapping.decorator";
 import { bean, log, value } from "../speed";
@@ -15,6 +17,12 @@ export default class ExpressServer extends ServerFactory {
 
     @value("favicon")
     private favicon: string;
+
+    @value("compression")
+    private compression: object;
+
+    @value("cookie")
+    private cookieConfig: object;
 
     @bean
     public getSever(): ServerFactory {
@@ -54,6 +62,13 @@ export default class ExpressServer extends ServerFactory {
             const faviconPath = process.cwd() + this.favicon;
             this.app.use(serveFavicon(faviconPath));
         }
+
+        if(this.compression) {
+            this.app.use(compression(this.compression));
+        }
+
+        this.app.use(cookieParser(this.cookieConfig["secret"] || undefined, this.cookieConfig["options"] || {}));
+
 
         setRouter(this.app);
     }
