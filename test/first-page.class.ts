@@ -25,6 +25,11 @@ export default class FirstPage {
         return "sendResult";
     }
 
+    @GetMapping("/first/renderTest")
+    public renderTest(req: any, res: any) {
+        res.render("index", {name:"zzz"});
+    }
+
     public getTestFromFirstPage() {
         return "getTestFromFirstPage";
     }
