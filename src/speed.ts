@@ -53,6 +53,21 @@ function bean(target: any, propertyName: string, descriptor: PropertyDescriptor)
     BeanFactory.putBean(returnType, target[propertyName]);
 }
 
+function value(configPath: string): any {
+    return function (target: any, propertyKey: string) {
+      let pathNodes = configPath.split(".");
+      let nodeValue = globalConfig;
+      for (let i = 0; i < pathNodes.length; i++) {
+        nodeValue = nodeValue[pathNodes[i]];
+      }
+      Object.defineProperty(target, propertyKey, {
+        get: () => {
+          return nodeValue;
+        }
+      });
+    };
+  }
+
 function autoware(target: any, propertyName: string): void {
     let type = Reflect.getMetadata("design:type", target, propertyName);
     Object.defineProperty(target, propertyName, {
@@ -118,4 +133,4 @@ function after(constructorFunction, methodName: string) {
 
 
 
-export { onClass, bean, autoware, inject, log, app, before, after, globalConfig };
+export { onClass, bean, autoware, inject, log, app, before, after, value };
