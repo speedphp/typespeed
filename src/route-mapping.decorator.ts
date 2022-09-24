@@ -22,17 +22,12 @@ function setRouter(app: express.Application) {
 function GetMapping(value: string) {
   return function (target, propertyKey: string) {
     routerMapper["get"][value] = (...args) => {
+      log(target.constructor.name + " " + propertyKey);
       let getBean = BeanFactory.getBean(target.constructor);
-      if(getBean === undefined) {
-        log("GetMapping, getBean is undefined");
-        log(target.constructor.name)
-        BeanFactory.putBean(target.constructor, target);
-        getBean = target;
-      }
+
       log("getBean: " + getBean);
-      log(getBean)
-      let targetObject = new target.constructor();
-      return targetObject[propertyKey](...args);
+
+      return getBean[propertyKey](...args);
     }
   };
 }
