@@ -1,8 +1,7 @@
-import { log } from "../src/speed";
+import { log, onClass } from "../src/speed";
 import { GetMapping } from "../src/route-mapping.decorator";
 
-
-
+@onClass
 export default class FirstPage {
 
     @GetMapping("/first")
