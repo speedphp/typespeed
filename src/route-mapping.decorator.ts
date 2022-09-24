@@ -9,7 +9,7 @@ const routerMapper = {
 
 function setRouter(app: express.Application) {
   for (let key in routerMapper["get"]) {
-    app.get(key, routerMapper["get"][key]());
+    app.get(key, routerMapper["get"][key]);
   }
   for (let key in routerMapper["post"]) {
     app.post(key, routerMapper["post"][key]);
@@ -21,7 +21,7 @@ function setRouter(app: express.Application) {
 
 function GetMapping(value: string) {
   return function (target, propertyKey: string) {
-    routerMapper["get"][value] = () => {
+    routerMapper["get"][value] = (...args) => {
       let getBean = BeanFactory.getBean(target.constructor);
       if(getBean === undefined) {
         log("GetMapping, getBean is undefined");
@@ -31,7 +31,8 @@ function GetMapping(value: string) {
       }
       log("getBean: " + getBean);
       log(getBean)
-      return getBean[propertyKey];
+      let targetObject = new target.constructor();
+      return targetObject[propertyKey](...args);
     }
   };
 }
