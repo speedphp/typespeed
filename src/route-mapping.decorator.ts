@@ -8,14 +8,19 @@ const routerMapper = {
 }
 
 function setRouter(app: express.Application) {
-  for (let key in routerMapper["get"]) {
-    app.get(key, routerMapper["get"][key]);
-  }
-  for (let key in routerMapper["post"]) {
-    app.post(key, routerMapper["post"][key]);
-  }
-  for (let key in routerMapper["all"]) {
-    app.all(key, routerMapper["all"][key]);
+  ["get", "post", "all"].forEach(method => {
+    for (let key in routerMapper[method]) {
+      app[method](key, routerMapper[method][key]);
+    }
+  });
+}
+
+function mapperFunction(method: string, value: string) {
+  return (target: any, propertyKey: string) => {
+    routerMapper[method][value] = (...args) => {
+      const getBean = BeanFactory.getBean(target.constructor);
+      return getBean[propertyKey](...args);
+    }
   }
 }
 
