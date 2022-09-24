@@ -1,4 +1,4 @@
-import { before, log, onClass } from "../src/speed";
+import { before, log, onClass, after } from "../src/speed";
 import FirstPage from "./first-page.class";
 
 @onClass
@@ -18,6 +18,12 @@ export default class AopTest {
     @before(FirstPage, "getTestFromFirstPage")
     public testGetTestFromFirstPage() {
         log("AopTest testGetTestFromFirstPage run over.");
+    }
+
+    @after(FirstPage, "index")
+    public testFirstIndexAfter(result) {
+        log("AopTest testFirstIndexAfter run over, result: " + result);
+        log(result);
     }
 
 }
