@@ -83,11 +83,27 @@ function before(constructorFunction, methodName: string) {
             [methodName]: function (...args) {
                 target[propertyKey](...args);
                 log("========== before ==========");
-                currentMethod.apply(targetBean, args);
+                return currentMethod.apply(targetBean, args);
+            }
+        })
+    };
+}
+
+function after(constructorFunction, methodName: string) {
+    const targetBean = BeanFactory.getBean(constructorFunction);
+    return function (target, propertyKey: string) {
+        const currentMethod = targetBean[methodName];
+        Object.assign(targetBean, {
+            [methodName]: function (...args) {
+                const result = currentMethod.apply(targetBean, args);
+                const afterResult = target[propertyKey](result);
+                log("========== after ==========");
+                return afterResult ?? result;
             }
         })
     };
 }
 
 
-export { onClass, bean, autoware, inject, log, app, before };
+
+export { onClass, bean, autoware, inject, log, app, before, after };
