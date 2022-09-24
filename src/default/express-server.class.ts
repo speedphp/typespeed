@@ -2,7 +2,7 @@ import * as express from "express";
 import * as consolidate from "consolidate";
 import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route-mapping.decorator";
-import { bean, log } from "../speed";
+import { bean, log, globalConfig } from "../speed";
 
 export default class ExpressServer extends ServerFactory {
     @bean
@@ -27,11 +27,8 @@ export default class ExpressServer extends ServerFactory {
     }
 
     private setDefaultMiddleware() {
-        const viewConfig = {
-            "engine": "mustache",
-            "path": "/test/views",
-            "suffix": "html"
-        };
+        const viewConfig = globalConfig["view"];
+        log(viewConfig)
         this.app.engine(viewConfig["suffix"], consolidate[viewConfig["engine"]]);
         this.app.set('view engine', viewConfig["suffix"]);
         this.app.set('views', process.cwd() + viewConfig["path"]);

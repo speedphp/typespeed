@@ -8,7 +8,7 @@
         "name": "test"
     },
     "view": {
-        "engine": "pug",
+        "engine": "mustache",
         "path": "./views",
         "suffix": "html"
     }

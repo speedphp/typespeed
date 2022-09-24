@@ -1,7 +1,19 @@
 import "reflect-metadata";
+import * as fs from "fs"
 import * as walkSync from "walk-sync";
 import BeanFactory from "./bean-factory.class";
 import LogFactory from "./factory/log-factory.class";
+
+let globalConfig = {};
+const configPath = process.cwd() + "/test/config.json";
+if (fs.existsSync(configPath)) {
+    globalConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+    const nodeEnv = process.env.NODE_ENV || "development";
+    const envConfigFile = process.cwd() + "/test/config-" + nodeEnv + ".json";
+    if (fs.existsSync(envConfigFile)) {
+        globalConfig = Object.assign(globalConfig, JSON.parse(fs.readFileSync(envConfigFile, "utf-8")));
+    }
+}
 
 function app<T extends { new(...args: any[]): {} }>(constructor: T) {
     const srcDir = process.cwd() + "/src";
@@ -106,4 +118,4 @@ function after(constructorFunction, methodName: string) {
 
 
 
-export { onClass, bean, autoware, inject, log, app, before, after };
+export { onClass, bean, autoware, inject, log, app, before, after, globalConfig };
