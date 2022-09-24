@@ -12,13 +12,22 @@
         "path": "./views",
         "suffix": "html"
     },
-    "static" : "/static",
-    "favicon" : "/favicon.ico",
+    "static": "/static",
+    "favicon": "/favicon.ico",
     "compression": {
-        "level" : 9
+        "level": 9
     },
-    "cookie" : {
-        "secret" : "catme",
-        "options" : {}
+    "cookie": {
+        "secret": "catme",
+        "options": {}
+    },
+    "session": {
+        "trust proxy": false,
+        "secret": "keyboard cat",
+        "resave": false,
+        "saveUninitialized": true,
+        "cookie": {
+            "secure": false
+        }
     }
 }
