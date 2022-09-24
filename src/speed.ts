@@ -55,18 +55,26 @@ function bean(target: any, propertyName: string, descriptor: PropertyDescriptor)
 
 function value(configPath: string): any {
     return function (target: any, propertyKey: string) {
-      let pathNodes = configPath.split(".");
-      let nodeValue = globalConfig;
-      for (let i = 0; i < pathNodes.length; i++) {
-        nodeValue = nodeValue[pathNodes[i]];
-      }
-      Object.defineProperty(target, propertyKey, {
-        get: () => {
-          return nodeValue;
+        if (globalConfig === undefined) {
+            Object.defineProperty(target, propertyKey, {
+                get: () => {
+                    return undefined;
+                }
+            });
+        } else {
+            let pathNodes = configPath.split(".");
+            let nodeValue = globalConfig;
+            for (let i = 0; i < pathNodes.length; i++) {
+                nodeValue = nodeValue[pathNodes[i]];
+            }
+            Object.defineProperty(target, propertyKey, {
+                get: () => {
+                    return nodeValue;
+                }
+            });
         }
-      });
     };
-  }
+}
 
 function autoware(target: any, propertyName: string): void {
     let type = Reflect.getMetadata("design:type", target, propertyName);

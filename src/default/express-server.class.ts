@@ -32,7 +32,6 @@ export default class ExpressServer extends ServerFactory {
 
     private setDefaultMiddleware() {
         const viewConfig = this.view;
-        log(viewConfig)
         this.app.engine(viewConfig["suffix"], consolidate[viewConfig["engine"]]);
         this.app.set('view engine', viewConfig["suffix"]);
         this.app.set('views', process.cwd() + viewConfig["path"]);

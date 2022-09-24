@@ -9,7 +9,7 @@
     },
     "view": {
         "engine": "mustache",
-        "path": "./views",
+        "path": "/test/views",
         "suffix": "html"
     }
 }
