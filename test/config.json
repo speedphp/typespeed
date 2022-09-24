@@ -12,5 +12,6 @@
         "path": "./views",
         "suffix": "html"
     },
-    "static" : "/static"
+    "static" : "/static",
+    "favicon" : "/favicon.ico"
 }

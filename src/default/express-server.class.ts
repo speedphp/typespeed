@@ -1,5 +1,6 @@
 import * as express from "express";
 import * as consolidate from "consolidate";
+import * as serveFavicon from "serve-favicon";
 import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route-mapping.decorator";
 import { bean, log, value } from "../speed";
@@ -11,6 +12,9 @@ export default class ExpressServer extends ServerFactory {
 
     @value("static")
     private static: string;
+
+    @value("favicon")
+    private favicon: string;
 
     @bean
     public getSever(): ServerFactory {
@@ -44,6 +48,11 @@ export default class ExpressServer extends ServerFactory {
         if(this.static) {
             const staticPath = process.cwd() + this.static;
             this.app.use(express.static(staticPath))
+        }
+
+        if(this.favicon) {
+            const faviconPath = process.cwd() + this.favicon;
+            this.app.use(serveFavicon(faviconPath));
         }
 
         setRouter(this.app);

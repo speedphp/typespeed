@@ -24,6 +24,7 @@
     "tracer":"^1.1.6",
     "express":"^4.18.1",
     "consolidate":"^0.16.0",
-    "mustache":"^4.2.0"
+    "mustache":"^4.2.0",
+    "serve-favicon":"^2.5.0"
   }
 }
