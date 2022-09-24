@@ -30,18 +30,9 @@ function app<T extends { new(...args: any[]): {} }>(constructor: T) {
     }());
 }
 
-function onClass<T extends { new(...args: any[]): {} }>(constructorFunction: T) {
+function onClass(constructorFunction) {
     log("decorator onClass: " + constructorFunction.name);
-    const newConstructorFunction: any = function (...args) {
-        const func: any = function () {
-          return new constructorFunction(...args);
-        };
-        func.prototype = constructorFunction.prototype;
-        return new func();
-      };
-      newConstructorFunction.prototype = constructorFunction.prototype;
-      let modelObject = newConstructorFunction();
-    BeanFactory.putBean(constructorFunction, modelObject);
+    BeanFactory.putBean(constructorFunction, new constructorFunction());
 }
 
 function bean(target: any, propertyName: string, descriptor: PropertyDescriptor) {
@@ -86,16 +77,15 @@ function log(message?: any, ...optionalParams: any[]) {
 
 function before(constructorFunction, methodName: string) {
     const targetBean = BeanFactory.getBean(constructorFunction);
-    return function (
-        target,
-        propertyKey: string
-    ) {
+    return function (target, propertyKey: string) {
         const currentMethod = targetBean[methodName];
-        targetBean[methodName] = (...args) => {
-            target[propertyKey]();
-            log("eeeeeeee")
-            return currentMethod(...args);
-        }
+        Object.assign(targetBean, {
+            [methodName]: function (...args) {
+                target[propertyKey](...args);
+                log("========== before ==========");
+                currentMethod.apply(targetBean, args);
+            }
+        })
     };
 }
 
