@@ -13,5 +13,12 @@
         "suffix": "html"
     },
     "static" : "/static",
-    "favicon" : "/favicon.ico"
+    "favicon" : "/favicon.ico",
+    "compression": {
+        "level" : 9
+    },
+    "cookie" : {
+        "secret" : "catme",
+        "options" : {}
+    }
 }
