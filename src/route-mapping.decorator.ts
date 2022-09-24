@@ -24,30 +24,8 @@ function mapperFunction(method: string, value: string) {
   }
 }
 
-function GetMapping(value: string) {
-  return function (target, propertyKey: string) {
-    routerMapper["get"][value] = (...args) => {
-      log(target.constructor.name + " " + propertyKey);
-      let getBean = BeanFactory.getBean(target.constructor);
-
-      log("getBean: " + getBean);
-
-      return getBean[propertyKey](...args);
-    }
-  };
-}
-
-function PostMapping(value: string) {
-  return function (target, propertyKey: string) {
-    routerMapper["post"][value] = target[propertyKey];
-  };
-}
-
-function RequestMapping(value: string) {
-  return function (target, propertyKey: string) {
-    routerMapper["all"][value] = target[propertyKey];
-  };
-}
-
+const GetMapping = (value: string) => mapperFunction("get", value);
+const PostMapping = (value: string) => mapperFunction("post", value);
+const RequestMapping = (value: string) => mapperFunction("all", value);
 
 export { GetMapping, PostMapping, RequestMapping, setRouter };
