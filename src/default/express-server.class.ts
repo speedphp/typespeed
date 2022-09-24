@@ -9,6 +9,9 @@ export default class ExpressServer extends ServerFactory {
     @value("view")
     public view: string;
 
+    @value("static")
+    private static: string;
+
     @bean
     public getSever(): ServerFactory {
         const server = new ExpressServer();
@@ -31,10 +34,17 @@ export default class ExpressServer extends ServerFactory {
     }
 
     private setDefaultMiddleware() {
-        const viewConfig = this.view;
-        this.app.engine(viewConfig["suffix"], consolidate[viewConfig["engine"]]);
-        this.app.set('view engine', viewConfig["suffix"]);
-        this.app.set('views', process.cwd() + viewConfig["path"]);
+        if (this.view) {
+            const viewConfig = this.view;
+            this.app.engine(viewConfig["suffix"], consolidate[viewConfig["engine"]]);
+            this.app.set('view engine', viewConfig["suffix"]);
+            this.app.set('views', process.cwd() + viewConfig["path"]);
+        }
+
+        if(this.static) {
+            const staticPath = process.cwd() + this.static;
+            this.app.use(express.static(staticPath))
+        }
 
         setRouter(this.app);
     }

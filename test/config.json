@@ -11,5 +11,6 @@
         "engine": "pug",
         "path": "./views",
         "suffix": "html"
-    }
+    },
+    "static" : "/static"
 }
