@@ -3,6 +3,7 @@ import * as consolidate from "consolidate";
 import * as serveFavicon from "serve-favicon";
 import * as compression from "compression";
 import * as cookieParser from "cookie-parser";
+import * as expressSession from "express-session";
 import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route-mapping.decorator";
 import { bean, log, value } from "../speed";
@@ -23,6 +24,9 @@ export default class ExpressServer extends ServerFactory {
 
     @value("cookie")
     private cookieConfig: object;
+
+    @value("session")
+    private session: object;
 
     @bean
     public getSever(): ServerFactory {
@@ -51,6 +55,14 @@ export default class ExpressServer extends ServerFactory {
             this.app.engine(viewConfig["suffix"], consolidate[viewConfig["engine"]]);
             this.app.set('view engine', viewConfig["suffix"]);
             this.app.set('views', process.cwd() + viewConfig["path"]);
+        }
+
+        if(this.session) {
+            const sessionConfig = this.session;
+            if(sessionConfig["trust proxy"] === 1){
+                this.app.set('trust proxy', 1);
+            }
+            this.app.use(expressSession(sessionConfig));
         }
 
         if(this.static) {
