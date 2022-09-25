@@ -2,14 +2,13 @@ import * as express from "express";
 import * as multiparty from "multiparty";
 import { expressjwt } from "express-jwt";
 import BeanFactory from "./bean-factory.class";
-import { log } from "./speed"
+
 const routerMapper = {
   "get": {},
   "post": {},
   "all": {}
 };
 
-const uploadMapper = [];
 const routerMiddleware = {};
 function setRouter(app: express.Application) {
   ["get", "post", "all"].forEach(method => {
