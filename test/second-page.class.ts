@@ -31,7 +31,7 @@ export default class SecondPage {
         res.send("upload success");
     }
 
-    @jwt
+    @jwt({ secret: "shhhhhhared-secret", algorithms: ["HS256"] })
     @GetMapping("/form")
     form(req, res) {
         res.render("upload");
