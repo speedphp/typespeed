@@ -40,12 +40,18 @@ function upload(target: any, propertyKey: string) {
   uploadMapper[target.constructor.name + "#" + propertyKey] = (req, res, next) => {
     if (req.method === 'POST') {
       const form = new multiparty.Form();
-      log("upload start");
-      form.parse(req, function (err, fields, files) {
-        req.files = files;
-        log("upload end");
-        next();
-      });
+      const getFiles = (req) => {
+        return new Promise((resolve) => {
+          form.parse(req, function(err, fields, files) {
+            log("uploaded files: " + JSON.stringify(files));
+            resolve(files)
+          });
+        });
+    }
+    (async() => {
+      let files = await getFiles(req);
+      log("set to res files: " + JSON.stringify(files));
+    })();
     };
   }
 }
