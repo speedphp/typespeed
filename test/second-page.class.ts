@@ -1,6 +1,5 @@
-import * as util from "util"
 import { log, onClass } from "../src/speed";
-import { GetMapping, PostMapping, upload } from "../src/route-mapping.decorator";
+import { GetMapping, PostMapping, upload, jwt } from "../src/route-mapping.decorator";
 
 @onClass
 export default class SecondPage {
@@ -32,6 +31,7 @@ export default class SecondPage {
         res.send("upload success");
     }
 
+    @jwt
     @GetMapping("/form")
     form(req, res) {
         res.render("upload");

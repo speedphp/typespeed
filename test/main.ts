@@ -9,9 +9,9 @@ class Main {
     public server : ServerFactory;
 
     public main(){
-        this.server.setMiddleware(basicAuth({
-            users: { 'admin': 'supersecret' }
-        }));
+        // this.server.setMiddleware(basicAuth({
+        //     users: { 'admin': 'supersecret' }
+        // }));
         this.server.start(8080);
         log('start application');
     }

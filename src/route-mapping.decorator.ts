@@ -1,5 +1,6 @@
 import * as express from "express";
 import * as multiparty from "multiparty";
+import { expressjwt } from "express-jwt";
 import BeanFactory from "./bean-factory.class";
 import { log } from "./speed"
 const routerMapper = {
@@ -9,13 +10,14 @@ const routerMapper = {
 };
 
 const uploadMapper = [];
-
+const routerMiddleware = {};
 function setRouter(app: express.Application) {
   ["get", "post", "all"].forEach(method => {
     for (let key in routerMapper[method]) {
       let rounterFunction = routerMapper[method][key];
-      if (method === "post" && uploadMapper.includes(rounterFunction["name"])) {
-        app[method](key, uploadMiddleware, rounterFunction["invoker"]);
+      if (routerMiddleware[rounterFunction["name"]]) {
+        let args: Array<any> = [key, ...routerMiddleware[rounterFunction["name"]], rounterFunction["invoker"]];
+        app[method].apply(app, args);
       } else {
         app[method](key, rounterFunction["invoker"]);
       }
@@ -43,7 +45,11 @@ function mapperFunction(method: string, value: string) {
 }
 
 function upload(target: any, propertyKey: string) {
-  uploadMapper.push(target.constructor.name + "#" + propertyKey)
+  if (routerMiddleware[target.constructor.name + "#" + propertyKey]) {
+    routerMiddleware[target.constructor.name + "#" + propertyKey].push(uploadMiddleware);
+  } else {
+    routerMiddleware[target.constructor.name + "#" + propertyKey] = [uploadMiddleware];
+  }
 }
 
 function uploadMiddleware(req, res, next) {
@@ -54,8 +60,22 @@ function uploadMiddleware(req, res, next) {
   });
 }
 
+function jwtMiddleware(req, res, next) {
+  log("testMiddleware running");
+  next();
+}
+
+function jwt(target: any, propertyKey: string) {
+  if (routerMiddleware[target.constructor.name + "#" + propertyKey]) {
+    routerMiddleware[target.constructor.name + "#" + propertyKey].push(jwtMiddleware);
+  } else {
+    routerMiddleware[target.constructor.name + "#" + propertyKey] = [jwtMiddleware];
+  }
+}
+
+
 const GetMapping = (value: string) => mapperFunction("get", value);
 const PostMapping = (value: string) => mapperFunction("post", value);
 const RequestMapping = (value: string) => mapperFunction("all", value);
 
-export { GetMapping, PostMapping, RequestMapping, setRouter, upload };
+export { GetMapping, PostMapping, RequestMapping, setRouter, upload, jwt };

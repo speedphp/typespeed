@@ -30,6 +30,7 @@
     "cookie-parser":"^1.4.6",
     "express-session":"^1.17.3",
     "multiparty":"^4.2.3",
-    "express-basic-auth":"^1.2.1"
+    "express-basic-auth":"^1.2.1",
+    "express-jwt":"^7.7.5"
   }
 }
