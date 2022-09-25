@@ -86,18 +86,33 @@ export default class ExpressServer extends ServerFactory {
         setRouter(this.app);
 
         this.app.use((req, res, next) => {
-            error("404 not found");
-            res.status = 404;
-            res.write("404 Not Found");
-            res.end();
+            error("404 not found, for page: " + req.url);
+            if (req.accepts('html')) {
+                res.render(process.cwd() + "/static/error-page/404.html");
+            } else if (req.accepts('json')) {
+                // respond with json
+                res.json({ error: 'Not found' });
+            } else {
+                // default to plain-text. send()
+                res.type('txt').send('Not found');
+            }
         });
 
         this.app.use((err, req, res, next) => {
             if (!err) {
                 next();
             }
+            error(err);
             res.status(err.status || 500);
-            res.send("500 Server Error");
+            if (req.accepts('html')) {
+                res.render(process.cwd() + "/static/error-page/500.html");
+            } else if (req.accepts('json')) {
+                // respond with json
+                res.json({ error: 'Internal Server Error' });
+            } else {
+                // default to plain-text. send()
+                res.type('txt').send('Internal Server Error');
+            }
         });
     }
 }
