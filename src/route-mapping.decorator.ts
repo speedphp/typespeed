@@ -60,19 +60,15 @@ function uploadMiddleware(req, res, next) {
   });
 }
 
-function jwtMiddleware(req, res, next) {
-  log("testMiddleware running");
-  next();
-}
-
-function jwt(target: any, propertyKey: string) {
-  if (routerMiddleware[target.constructor.name + "#" + propertyKey]) {
-    routerMiddleware[target.constructor.name + "#" + propertyKey].push(jwtMiddleware);
-  } else {
-    routerMiddleware[target.constructor.name + "#" + propertyKey] = [jwtMiddleware];
+function jwt(jwtConfig) {
+  return (target: any, propertyKey: string) => {
+    if (routerMiddleware[target.constructor.name + "#" + propertyKey]) {
+      routerMiddleware[target.constructor.name + "#" + propertyKey].push(expressjwt(jwtConfig));
+    } else {
+      routerMiddleware[target.constructor.name + "#" + propertyKey] = [expressjwt(jwtConfig)];
+    }
   }
 }
-
 
 const GetMapping = (value: string) => mapperFunction("get", value);
 const PostMapping = (value: string) => mapperFunction("post", value);
