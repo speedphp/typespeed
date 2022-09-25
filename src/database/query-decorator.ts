@@ -38,32 +38,37 @@ function Param(name: string) {
     };
 }
 
-async function queryForExecute(sql: string, args: any[], target, propertyKey: string): Promise<ResultSetHeader> {
+async function queryForExecute(sql: string, args: any[], target, propertyKey: string,): Promise<ResultSetHeader> {
+    let sqlValues = [];
+    let newSql = sql;
+    if (args.length > 0) {
+        [newSql, sqlValues] = convertSQLParams(args, target, propertyKey, newSql);
+    }
+    const [result] = await pool.query(newSql, sqlValues);
+    return <ResultSetHeader>result;
+}
+
+function convertSQLParams(args: any[], target: any, propertyKey: string, decoratorSQL: string,): [string, any[]] {
     const queryValues = [];
-    const existingParameters: [string, number][] = Reflect.getOwnMetadata(paramMetadataKey, target, propertyKey,);
-    log(existingParameters);
     let argsVal;
     if (typeof args[0] === 'object') {
         argsVal = new Map(
             Object.getOwnPropertyNames(args[0]).map((valName) => [valName, args[0][valName]]),
         );
     } else {
-        const existingParameters: [string, number][] = Reflect.getOwnMetadata(paramMetadataKey,target, propertyKey);
+        const existingParameters: [string, number][] = Reflect.getOwnMetadata(paramMetadataKey, target, propertyKey);
         argsVal = new Map(
             existingParameters.map(([argName, argIdx]) => [argName, args[argIdx]]),
         );
     }
-    log(argsVal);
     const regExp = /#{(\w+)}/;
     let match;
-    while (match = regExp.exec(sql)) {
+    while (match = regExp.exec(decoratorSQL)) {
         const [replaceTag, matchName] = match;
-        sql = sql.replace(new RegExp(replaceTag, 'g'), '?');
+        decoratorSQL = decoratorSQL.replace(new RegExp(replaceTag, 'g'), '?');
         queryValues.push(argsVal.get(matchName));
     }
-    log(queryValues);
-    const [result] = await pool.query(sql, queryValues);
-    return <ResultSetHeader>result;
+    return [decoratorSQL, queryValues];
 }
 
 export { Insert, Update, Update as Delete, Select, Param };

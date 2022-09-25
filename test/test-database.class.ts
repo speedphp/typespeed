@@ -7,7 +7,7 @@ export default class TestDatabase {
 
     @GetMapping("/db/insert")
     async insert(req, res) {
-        const newId = await this.addRow("new name 21", 21);
+        const newId = await this.addRow("new name 21", 24);
         log("Insert newId: " + newId);
         res.send("Insert success");
     }
@@ -15,7 +15,7 @@ export default class TestDatabase {
     @GetMapping("/db/insert2")
     async insertByObject(req, res) {
         const newId = await this.addRowByObject({
-            "id": 22, "name": "new name 22"
+            "id": 23, "name": "new name 22"
         });
         log("Insert newId: " + newId);
         res.send("Insert success");
