@@ -36,7 +36,7 @@ function app<T extends { new(...args: any[]): {} }>(constructor: T) {
         } catch (err) {
             console.error(err);
         }
-        log("main start")
+        //log("main start")
         const main = new constructor();
         main["main"]();
     }());
@@ -47,7 +47,6 @@ function config(node: string) {
 }
 
 function onClass(constructorFunction) {
-    log("decorator onClass: " + constructorFunction.name);
     BeanFactory.putObject(constructorFunction, new constructorFunction());
 }
 

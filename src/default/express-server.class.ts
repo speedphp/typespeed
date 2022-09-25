@@ -40,7 +40,6 @@ export default class ExpressServer extends ServerFactory {
     }
 
     public start(port: number) {
-        log(this.middlewareList);
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
