@@ -28,6 +28,7 @@ export default class SecondPage {
     public upload(req, res) {
         const files = req.files;
         log(files);
+        log("uploaded");
         res.send("upload success");
     }
 
