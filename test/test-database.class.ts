@@ -35,6 +35,13 @@ export default class TestDatabase {
         res.send(rows);
     }
 
+    @GetMapping("/db/select1")
+    async selectById(req, res) {
+        const row = await this.findRow(req.query.id || 1);
+        log("select rows: " + row);
+        res.send(row);
+    }
+
     @Insert("Insert into `user` (id, name) values (#{id}, #{name})")
     private async addRow(@Param("name") newName: string, @Param("id") id: number) { }
 
@@ -46,4 +53,7 @@ export default class TestDatabase {
 
     @Select("Select * from `user`")
     private async selectRow() { }
+
+    @Select("Select * from `user` where id = #{id}")
+    private async findRow(@Param("id")id: number) { }
 }

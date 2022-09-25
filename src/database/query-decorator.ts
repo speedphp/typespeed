@@ -24,7 +24,12 @@ function Update(sql: string) {
 function Select(sql: string) {
     return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
         descriptor.value = async (...args: any[]) => {
-            const [rows] = await pool.query(sql);
+            let newSql = sql;
+            let sqlValues = [];
+            if (args.length > 0) {
+                [newSql, sqlValues] = convertSQLParams(args, target, propertyKey, newSql);
+            }
+            const [rows] = await pool.query(newSql, sqlValues);
             return rows;
         };
     }
