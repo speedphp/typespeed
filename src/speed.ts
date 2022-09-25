@@ -112,6 +112,15 @@ function log(message?: any, ...optionalParams: any[]) {
     }
 }
 
+function error(message?: any, ...optionalParams: any[]) {
+    const logObject = BeanFactory.getBean(LogFactory);
+    if (logObject) {
+        logObject["factory"].error(message, ...optionalParams);
+    } else {
+        console.error(message, ...optionalParams);
+    }
+}
+
 function before(constructorFunction, methodName: string) {
     const targetBean = BeanFactory.getObject(constructorFunction);
     return function (target, propertyKey: string) {
@@ -143,4 +152,4 @@ function after(constructorFunction, methodName: string) {
 
 
 
-export { onClass, bean, autoware, inject, log, app, before, after, value };
+export { onClass, bean, autoware, inject, log, app, before, after, value, error };
