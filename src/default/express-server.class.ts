@@ -6,7 +6,7 @@ import * as cookieParser from "cookie-parser";
 import * as expressSession from "express-session";
 import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route-mapping.decorator";
-import { bean, log, value } from "../speed";
+import { bean, log, value, error } from "../speed";
 
 export default class ExpressServer extends ServerFactory {
 
@@ -86,6 +86,7 @@ export default class ExpressServer extends ServerFactory {
         setRouter(this.app);
 
         this.app.use((req, res, next) => {
+            error("404 not found");
             res.status = 404;
             res.write("404 Not Found");
             res.end();
