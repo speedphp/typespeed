@@ -42,6 +42,10 @@ function app<T extends { new(...args: any[]): {} }>(constructor: T) {
     }());
 }
 
+function config(node: string) {
+    return globalConfig[node] ?? {};
+}
+
 function onClass(constructorFunction) {
     log("decorator onClass: " + constructorFunction.name);
     BeanFactory.putObject(constructorFunction, new constructorFunction());
@@ -152,4 +156,4 @@ function after(constructorFunction, methodName: string) {
 
 
 
-export { onClass, bean, autoware, inject, log, app, before, after, value, error };
+export { onClass, bean, autoware, inject, log, app, before, after, value, error, config };

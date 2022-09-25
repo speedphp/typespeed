@@ -2,10 +2,11 @@
     "server": {
         "port": "8081"
     },
-    "database": {
-        "host": "localhost",
-        "port": "27017",
-        "name": "test"
+    "mysql": {
+        "host":"localhost", 
+        "user": "root", 
+        "password": "",
+        "database": "test"
     },
     "view": {
         "engine": "pug",
