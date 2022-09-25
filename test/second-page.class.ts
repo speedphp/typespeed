@@ -32,7 +32,7 @@ export default class SecondPage {
     }
 
     @jwt({ secret: "shhhhhhared-secret", algorithms: ["HS256"] })
-    @GetMapping("/form")
+    @PostMapping("/form")
     form(req, res) {
         res.render("upload");
     }
