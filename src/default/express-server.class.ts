@@ -58,25 +58,25 @@ export default class ExpressServer extends ServerFactory {
             this.app.set('views', process.cwd() + viewConfig["path"]);
         }
 
-        if(this.session) {
+        if (this.session) {
             const sessionConfig = this.session;
-            if(sessionConfig["trust proxy"] === 1){
+            if (sessionConfig["trust proxy"] === 1) {
                 this.app.set('trust proxy', 1);
             }
             this.app.use(expressSession(sessionConfig));
         }
 
-        if(this.static) {
+        if (this.static) {
             const staticPath = process.cwd() + this.static;
             this.app.use(express.static(staticPath))
         }
 
-        if(this.favicon) {
+        if (this.favicon) {
             const faviconPath = process.cwd() + this.favicon;
             this.app.use(serveFavicon(faviconPath));
         }
 
-        if(this.compression) {
+        if (this.compression) {
             this.app.use(compression(this.compression));
         }
 
@@ -84,5 +84,19 @@ export default class ExpressServer extends ServerFactory {
 
 
         setRouter(this.app);
+
+        this.app.use((req, res, next) => {
+            res.status = 404;
+            res.write("404 Not Found");
+            res.end();
+        });
+
+        this.app.use((err, req, res, next) => {
+            if (!err) {
+                next();
+            }
+            res.status(err.status || 500);
+            res.send("500 Server Error");
+        });
     }
 }
