@@ -11,9 +11,18 @@ function Insert(sql: string) {
     };
 }
 
+function Update(sql: string) {
+    return function (target, propertyKey: string, descriptor: PropertyDescriptor) {
+        descriptor.value = async (...args: any[]) => {
+            const result: ResultSetHeader = await queryForExecute(sql);
+            return result.affectedRows;
+        };
+    };
+  }
+
 async function queryForExecute(sql: string): Promise<ResultSetHeader> {
   const [result] = await pool.query(sql);
   return <ResultSetHeader>result;
 }
 
-export { Insert };
+export { Insert, Update, Update as Delete };
