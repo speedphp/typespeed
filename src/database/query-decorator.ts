@@ -42,7 +42,17 @@ async function queryForExecute(sql: string, args: any[], target, propertyKey: st
     const queryValues = [];
     const existingParameters: [string, number][] = Reflect.getOwnMetadata(paramMetadataKey, target, propertyKey,);
     log(existingParameters);
-    const argsVal = new Map(existingParameters.map(([argName, argIdx]) => [argName, args[argIdx]]));
+    let argsVal;
+    if (typeof args[0] === 'object') {
+        argsVal = new Map(
+            Object.getOwnPropertyNames(args[0]).map((valName) => [valName, args[0][valName]]),
+        );
+    } else {
+        const existingParameters: [string, number][] = Reflect.getOwnMetadata(paramMetadataKey,target, propertyKey);
+        argsVal = new Map(
+            existingParameters.map(([argName, argIdx]) => [argName, args[argIdx]]),
+        );
+    }
     log(argsVal);
     const regExp = /#{(\w+)}/;
     let match;
