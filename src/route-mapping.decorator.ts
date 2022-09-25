@@ -29,7 +29,7 @@ function mapperFunction(method: string, value: string) {
       "path": value,
       "name": target.constructor.name + "#" + propertyKey,
       "invoker": (req, res) => {
-        const routerBean = BeanFactory.getBean(target.constructor);
+        const routerBean = BeanFactory.getObject(target.constructor);
         const testResult = routerBean[propertyKey](req, res);
         if (typeof testResult === "object") {
           res.json(testResult);
