@@ -7,7 +7,7 @@ export default class TestDatabase {
 
     @GetMapping("/db/insert")
     async insert(req, res) {
-        this.addRow();
+        await this.addRow();
         res.send("Insert success");
     }
 
