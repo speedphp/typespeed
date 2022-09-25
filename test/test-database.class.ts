@@ -1,4 +1,4 @@
-import { Insert, Update, Select } from "../src/database/query-decorator";
+import { Insert, Update, Select, Param } from "../src/database/query-decorator";
 import { GetMapping } from "../src/route-mapping.decorator";
 import { onClass, log } from "../src/speed";
 
@@ -7,7 +7,7 @@ export default class TestDatabase {
 
     @GetMapping("/db/insert")
     async insert(req, res) {
-        const newId = await this.addRow();
+        const newId = await this.addRow("new name 21", 21);
         log("Insert newId: " + newId);
         res.send("Insert success");
     }
@@ -26,12 +26,12 @@ export default class TestDatabase {
         res.send(rows);
     }
 
-    @Insert("Insert into `user` (name) values ('test')")
-    private async addRow() {}
+    @Insert("Insert into `user` (id, name) values (#{id}, #{name})")
+    private async addRow(@Param("name") newName: string, @Param("id") id: number) { }
 
     @Update("Update `user` set `name` = 'test5' where id = 5")
-    private async editRow() {}
+    private async editRow() { }
 
     @Select("Select * from `user`")
-    private async selectRow() {}
+    private async selectRow() { }
 }
