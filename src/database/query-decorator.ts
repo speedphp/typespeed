@@ -2,6 +2,7 @@ import { createPool, ResultSetHeader } from 'mysql2';
 import { config, log } from '../speed';
 const pool = createPool(config("mysql")).promise();
 const paramMetadataKey = Symbol('param');
+const resultTypeMap = new Map<string, object>();
 
 function Insert(sql: string) {
     return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
@@ -35,11 +36,18 @@ function Select(sql: string) {
     }
 }
 
+function ResultType(dataClass) {
+    return function (target, propertyKey: string) {
+      resultTypeMap.set([target.constructor.name, propertyKey].toString(), new dataClass());
+      //never return
+    };
+  }
+
 function Param(name: string) {
     return function (target: any, propertyKey: string | symbol, parameterIndex: number) {
         const existingParameters: [string, number][] = Reflect.getOwnMetadata(paramMetadataKey, target, propertyKey) || [];
         existingParameters.push([name, parameterIndex]);
-        Reflect.defineMetadata(paramMetadataKey, existingParameters, target, propertyKey,);
+        Reflect.defineMetadata(paramMetadataKey, existingParameters, target, propertyKey);
     };
 }
 
@@ -76,4 +84,4 @@ function convertSQLParams(args: any[], target: any, propertyKey: string, decorat
     return [decoratorSQL, queryValues];
 }
 
-export { Insert, Update, Update as Delete, Select, Param };
+export { Insert, Update, Update as Delete, Select, Param, ResultType };
