@@ -31,17 +31,38 @@ function Select(sql: string) {
                 [newSql, sqlValues] = convertSQLParams(args, target, propertyKey, newSql);
             }
             const [rows] = await pool.query(newSql, sqlValues);
-            return rows;
+            if (Object.keys(rows).length === 0) {
+                return;
+            }
+
+            const records = [];
+            const resultType = resultTypeMap.get(
+                [target.constructor.name, propertyKey].toString(),
+            );
+            for (const rowIndex in rows) {
+                const entity = Object.create(resultType);
+                Object.getOwnPropertyNames(resultType).forEach(function (propertyRow) {
+                    if (rows[rowIndex].hasOwnProperty(propertyRow)) {
+                        Object.defineProperty(
+                            entity,
+                            propertyRow,
+                            Object.getOwnPropertyDescriptor(rows[rowIndex], propertyRow),
+                        );
+                    }
+                });
+                records.push(entity);
+            }
+            return records;
         };
     }
 }
 
 function ResultType(dataClass) {
     return function (target, propertyKey: string) {
-      resultTypeMap.set([target.constructor.name, propertyKey].toString(), new dataClass());
-      //never return
+        resultTypeMap.set([target.constructor.name, propertyKey].toString(), new dataClass());
+        //never return
     };
-  }
+}
 
 function Param(name: string) {
     return function (target: any, propertyKey: string | symbol, parameterIndex: number) {

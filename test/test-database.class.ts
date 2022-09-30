@@ -46,7 +46,7 @@ export default class TestDatabase {
     @GetMapping("/db/select-user")
     async selectUser(req, res) {
         const users:UserDto[] = await this.findUsers();
-        log("select users: " + users[0].name);
+        log("select users: " + users);
         res.send(users);
     }
 
