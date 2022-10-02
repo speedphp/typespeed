@@ -1,8 +1,12 @@
 import { createPool, ResultSetHeader } from 'mysql2';
 import { config, log } from '../speed';
+import BeanFactory from "../bean-factory.class";
+import CacheFactory from '../factory/cache-factory.class';
 const pool = createPool(config("mysql")).promise();
 const paramMetadataKey = Symbol('param');
 const resultTypeMap = new Map<string, object>();
+const cacheDefindMap = new Map<string, number>();
+let cacheBean: CacheFactory;
 
 function Insert(sql: string) {
     return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
@@ -30,15 +34,29 @@ function Select(sql: string) {
             if (args.length > 0) {
                 [newSql, sqlValues] = convertSQLParams(args, target, propertyKey, newSql);
             }
-            const [rows] = await pool.query(newSql, sqlValues);
-            if (Object.keys(rows).length === 0) {
-                return;
+            let rows;
+            if (cacheBean && cacheDefindMap.has([target.constructor.name, propertyKey].toString())) {
+                const cacheKey = JSON.stringify([newSql, sqlValues]);
+                if (cacheBean.get(cacheKey)) {
+                    rows = cacheBean.get(cacheKey);
+                } else {
+                    [rows] = await pool.query(newSql, sqlValues);
+                    log("cache miss, and select result for " + rows);
+                    const ttl = cacheDefindMap.get([target.constructor.name, propertyKey].toString());
+                    cacheBean.set(cacheKey, rows, ttl);
+                }
+            } else {
+                [rows] = await pool.query(newSql, sqlValues);
             }
 
+            if (rows === null || Object.keys(rows).length === 0) {
+                return;
+            }
             const records = [];
-            const resultType = resultTypeMap.get(
-                [target.constructor.name, propertyKey].toString(),
-            );
+            const resultType = resultTypeMap.get([target.constructor.name, propertyKey].toString());
+            if(!resultType){
+                return rows;
+            }
             for (const rowIndex in rows) {
                 const entity = Object.create(resultType);
                 Object.getOwnPropertyNames(resultType).forEach(function (propertyRow) {
@@ -105,4 +123,17 @@ function convertSQLParams(args: any[], target: any, propertyKey: string, decorat
     return [decoratorSQL, queryValues];
 }
 
-export { Insert, Update, Update as Delete, Select, Param, ResultType };
+function cache(ttl: number) {
+    return function (target: any, propertyKey: string) {
+        cacheDefindMap.set([target.constructor.name, propertyKey].toString(), ttl);
+        if (cacheBean == null) {
+            const cacheFactory = BeanFactory.getBean(CacheFactory);
+            if (cacheFactory || cacheFactory["factory"]) {
+                cacheBean = cacheFactory["factory"];
+            }
+        }
+        log(cacheDefindMap);
+    }
+}
+
+export { Insert, Update, Update as Delete, Select, Param, ResultType, cache };
