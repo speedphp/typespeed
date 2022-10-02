@@ -32,7 +32,7 @@ export default class NodeCache extends CacheFactory {
     public has(key: string): boolean {
         return this.NodeCache.has(key);
     }
-    public clear(): void {
+    public flush(): void {
         this.NodeCache.flushAll();
     }
 
