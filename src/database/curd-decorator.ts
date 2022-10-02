@@ -6,14 +6,14 @@ const pool = createPool(config("mysql")).promise();
 const paramMetadataKey = Symbol('param');
 const resultTypeMap = new Map<string, object>();
 const cacheDefindMap = new Map<string, number>();
-const tableVersionMap =  new Map<string, number>();
+const tableVersionMap = new Map<string, number>();
 let cacheBean: CacheFactory;
 
 function Insert(sql: string) {
     return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
         descriptor.value = async (...args: any[]) => {
             const result: ResultSetHeader = await queryForExecute(sql, args, target, propertyKey);
-            if(cacheBean && result.affectedRows > 0){
+            if (cacheBean && result.affectedRows > 0) {
                 const [tableName, tableVersion] = getTableAndVersion("insert", sql);
                 tableVersionMap.set(tableName, tableVersion + 1);
             }
@@ -26,7 +26,7 @@ function Update(sql: string) {
     return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
         descriptor.value = async (...args: any[]) => {
             const result: ResultSetHeader = await queryForExecute(sql, args, target, propertyKey);
-            if(cacheBean && result.affectedRows > 0){
+            if (cacheBean && result.affectedRows > 0) {
                 const [tableName, tableVersion] = getTableAndVersion("update", sql);
                 tableVersionMap.set(tableName, tableVersion + 1);
             }
@@ -39,7 +39,7 @@ function Delete(sql: string) {
     return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
         descriptor.value = async (...args: any[]) => {
             const result: ResultSetHeader = await queryForExecute(sql, args, target, propertyKey);
-            if(cacheBean && result.affectedRows > 0){
+            if (cacheBean && result.affectedRows > 0) {
                 const [tableName, tableVersion] = getTableAndVersion("delete", sql);
                 tableVersionMap.set(tableName, tableVersion + 1);
             }
@@ -51,49 +51,21 @@ function Delete(sql: string) {
 function Select(sql: string) {
     return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
         descriptor.value = async (...args: any[]) => {
-            let newSql = sql;
-            let sqlValues = [];
-            if (args.length > 0) {
-                [newSql, sqlValues] = convertSQLParams(args, target, propertyKey, newSql);
-            }
-            let rows;
+            const [newSql, sqlValues] = convertSQLParams(sql, target, propertyKey, args);
+            const resultType = resultTypeMap.get([target.constructor.name, propertyKey].toString());
             if (cacheBean && cacheDefindMap.has([target.constructor.name, propertyKey].toString())) {
                 const [tableName, tableVersion] = getTableAndVersion("select", newSql);
                 const cacheKey = JSON.stringify([tableName, tableVersion, newSql, sqlValues]);
                 if (cacheBean.get(cacheKey)) {
-                    rows = cacheBean.get(cacheKey);
+                    return cacheBean.get(cacheKey);
                 } else {
-                    [rows] = await pool.query(newSql, sqlValues);
-                    log("cache miss, and select result for " + rows);
-                    const ttl = cacheDefindMap.get([target.constructor.name, propertyKey].toString());
-                    cacheBean.set(cacheKey, rows, ttl);
+                    const rows = await actionQuery(newSql, sqlValues, resultType);
+                    cacheBean.set(cacheKey, rows, cacheDefindMap.get([target.constructor.name, propertyKey].toString()));
+                    return rows;
                 }
             } else {
-                [rows] = await pool.query(newSql, sqlValues);
+                return await actionQuery(newSql, sqlValues, resultType);
             }
-
-            if (rows === null || Object.keys(rows).length === 0) {
-                return;
-            }
-            const records = [];
-            const resultType = resultTypeMap.get([target.constructor.name, propertyKey].toString());
-            if(!resultType){
-                return rows;
-            }
-            for (const rowIndex in rows) {
-                const entity = Object.create(resultType);
-                Object.getOwnPropertyNames(resultType).forEach(function (propertyRow) {
-                    if (rows[rowIndex].hasOwnProperty(propertyRow)) {
-                        Object.defineProperty(
-                            entity,
-                            propertyRow,
-                            Object.getOwnPropertyDescriptor(rows[rowIndex], propertyRow),
-                        );
-                    }
-                });
-                records.push(entity);
-            }
-            return records;
         };
     }
 }
@@ -113,35 +85,51 @@ function Param(name: string) {
     };
 }
 
-async function queryForExecute(sql: string, args: any[], target, propertyKey: string,): Promise<ResultSetHeader> {
-    let sqlValues = [];
-    let newSql = sql;
-    if (args.length > 0) {
-        [newSql, sqlValues] = convertSQLParams(args, target, propertyKey, newSql);
-    }
+async function queryForExecute(sql: string, args: any[], target, propertyKey: string): Promise<ResultSetHeader> {
+    const [newSql, sqlValues] = convertSQLParams(sql, target, propertyKey, args);
+    return actionExecute(newSql, sqlValues);
+}
+
+async function actionExecute(newSql, sqlValues): Promise<ResultSetHeader> {
     const [result] = await pool.query(newSql, sqlValues);
     return <ResultSetHeader>result;
 }
 
-function convertSQLParams(args: any[], target: any, propertyKey: string, decoratorSQL: string,): [string, any[]] {
-    const queryValues = [];
-    let argsVal;
-    if (typeof args[0] === 'object') {
-        argsVal = new Map(
-            Object.getOwnPropertyNames(args[0]).map((valName) => [valName, args[0][valName]]),
-        );
-    } else {
-        const existingParameters: [string, number][] = Reflect.getOwnMetadata(paramMetadataKey, target, propertyKey);
-        argsVal = new Map(
-            existingParameters.map(([argName, argIdx]) => [argName, args[argIdx]]),
-        );
+async function actionQuery(newSql, sqlValues, dataClassType?) {
+    const [rows] = await pool.query(newSql, sqlValues);
+    if (rows === null || Object.keys(rows).length === 0 || !dataClassType) {
+        return rows;
     }
-    const regExp = /#{(\w+)}/;
-    let match;
-    while (match = regExp.exec(decoratorSQL)) {
-        const [replaceTag, matchName] = match;
-        decoratorSQL = decoratorSQL.replace(new RegExp(replaceTag, 'g'), '?');
-        queryValues.push(argsVal.get(matchName));
+    const records = [];
+    for (const rowIndex in rows) {
+        const entity = new dataClassType();
+        Object.getOwnPropertyNames(entity).forEach((propertyRow) => {
+            if (rows[rowIndex].hasOwnProperty(propertyRow)) {
+                Object.defineProperty(entity, propertyRow, Object.getOwnPropertyDescriptor(rows[rowIndex], propertyRow));
+            }
+        });
+        records.push(entity);
+    }
+    return records;
+}
+
+function convertSQLParams(decoratorSQL: string, target: any, propertyKey: string, args: any[]): [string, any[]] {
+    const queryValues = [];
+    if (args.length > 0) {
+        let argsVal;
+        if (typeof args[0] === 'object') {
+            argsVal = new Map(Object.getOwnPropertyNames(args[0]).map((valName) => [valName, args[0][valName]]));
+        } else {
+            const existingParameters: [string, number][] = Reflect.getOwnMetadata(paramMetadataKey, target, propertyKey,);
+            argsVal = new Map(existingParameters.map(([argName, argIdx]) => [argName, args[argIdx]]));
+        }
+        const regExp = /#{(\w+)}/;
+        let match;
+        while (match = regExp.exec(decoratorSQL)) {
+            const [replaceTag, matchName] = match;
+            decoratorSQL = decoratorSQL.replace(new RegExp(replaceTag, 'g'), '?');
+            queryValues.push(argsVal.get(matchName));
+        }
     }
     return [decoratorSQL, queryValues];
 }
@@ -173,9 +161,9 @@ function getTableAndVersion(name: string, sql: string): [string, number] {
         tableVersionMap.set(tableName, tableVersion);
         log(tableVersionMap);
         return [tableName, tableVersion];
-    }else{
+    } else {
         throw new Error("can not find table name");
     }
 }
 
-export { Insert, Update, Delete, Select, Param, ResultType, cache };
+export { Insert, Update, Delete, Select, Param, ResultType, cache, actionQuery, actionExecute };
