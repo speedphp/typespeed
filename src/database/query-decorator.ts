@@ -6,6 +6,7 @@ const pool = createPool(config("mysql")).promise();
 const paramMetadataKey = Symbol('param');
 const resultTypeMap = new Map<string, object>();
 const cacheDefindMap = new Map<string, number>();
+const tableVersionMap =  new Map<string, number>();
 let cacheBean: CacheFactory;
 
 function Insert(sql: string) {
@@ -42,7 +43,9 @@ function Select(sql: string) {
             }
             let rows;
             if (cacheBean && cacheDefindMap.has([target.constructor.name, propertyKey].toString())) {
-                const cacheKey = JSON.stringify([newSql, sqlValues]);
+                const tableName = getTableName("select", newSql);
+                const tableVersion = tableVersionMap.get(tableName) || 1;
+                const cacheKey = JSON.stringify([tableName, tableVersion, newSql, sqlValues]);
                 if (cacheBean.get(cacheKey)) {
                     rows = cacheBean.get(cacheKey);
                 } else {
@@ -50,6 +53,7 @@ function Select(sql: string) {
                     log("cache miss, and select result for " + rows);
                     const ttl = cacheDefindMap.get([target.constructor.name, propertyKey].toString());
                     cacheBean.set(cacheKey, rows, ttl);
+                    tableVersionMap.set(tableName, tableVersion);
                 }
             } else {
                 [rows] = await pool.query(newSql, sqlValues);
@@ -139,6 +143,21 @@ function cache(ttl: number) {
             }
         }
         log(cacheDefindMap);
+    }
+}
+
+function getTableName(name: string, sql: string) {
+    const regExpMap = {
+        insert: /insert\sinto\s+([\w`\'\"]+)/i,
+        update: /update\s+([\w`\'\"]+)/i,
+        delete: /delete\sfrom\s+([\w`\'\"]+)/i,
+        select: /\s+from\s+([\w`\'\"]+)/i
+    }
+    const macths = sql.match(regExpMap[name]);
+    if (macths && macths.length > 1) {
+        return macths[1];
+    }else{
+        throw new Error("can not find table name");
     }
 }
 

@@ -2,7 +2,7 @@
 
 const sql = "select * From `user` where id = ?";
 
-console.log(sql.match(/(from|join)\s+([\w`\'\"]+)/i));
+console.log(sql.match(/\s+from\s+([\w`\'\"]+)/i));
 
 const insert = "Insert into `user` (id, name) values (#{id}, #{name})";
 
