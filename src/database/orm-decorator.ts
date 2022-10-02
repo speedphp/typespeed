@@ -22,21 +22,23 @@ export default class Model {
         this.tableName = _tableName
     }
 
-    async findAll(conditions: string | object, _sort?, fields?, _limit?) {
-        let sort = _sort ? ' ORDER BY ' + _sort : ''
-        let [where, params] = this._where(conditions)
-        let sql = ' FROM ' + this.tableName + where
-        let limit: string | number = _limit;
-        if (_limit === undefined || typeof _limit === 'string') {
-            sql += (_limit === undefined) ? '' : ' LIMIT ' + _limit
-        } else {
-            let total = await this.query('SELECT COUNT(*) AS M_COUNTER ' + sql, params)
-            if (!total[0]['M_COUNTER'] || total[0]['M_COUNTER'] == 0) return false
-            limit = lodash.merge([1, 10, 10], _limit)
-            limit = this.pager(limit[0], limit[1], limit[2], total[0]['M_COUNTER'])
-            limit = lodash.isEmpty(limit) ? '' : ' LIMIT ' + limit['offset'] + ',' + limit['limit']
-        }
-        return await actionQuery('SELECT ' + fields + sql + sort + limit, params)
+    async findAll(conditions, _sort = '', fields = '*', _limit = undefined) {
+        console.log(this.where(conditions));
+        // let sort = _sort ? ' ORDER BY ' + _sort : ''
+        // let [where, params] = this._where(conditions)
+        // let sql = ' FROM ' + this.tableName + where
+        // let limit: string | number = _limit;
+        // if (_limit === undefined || typeof _limit === 'string') {
+        //     sql += (_limit === undefined) ? '' : ' LIMIT ' + _limit
+        // } 
+        // else {
+        //     let total = await this.query('SELECT COUNT(*) AS M_COUNTER ' + sql, params)
+        //     if (!total[0]['M_COUNTER'] || total[0]['M_COUNTER'] == 0) return false
+        //     limit = lodash.merge([1, 10, 10], _limit)
+        //     limit = this.pager(limit[0], limit[1], limit[2], total[0]['M_COUNTER'])
+        //     limit = lodash.isEmpty(limit) ? '' : ' LIMIT ' + limit['offset'] + ',' + limit['limit']
+        // }
+        //return await actionQuery('SELECT ' + fields + sql + sort + limit, params);
     }
 
     async create(row) {
@@ -171,5 +173,36 @@ export default class Model {
         return db_instances[instance_key]
     }
 
+    private where(conditions) {
+        let result = {sql: '1 ', values: {}};
+        if (typeof conditions === 'object' && Object.keys(conditions).length > 0) {
+            Object.keys(conditions).map((key) => {
+                if(typeof conditions[key] === 'object') {
+                    result = copyWhereStatsments(result, operatorFormat(key, conditions[key]));
+                }else{
+                    result["sql"] += ` AND ${key} = :${key}`
+                    result["values"][key] = conditions[key]
+                }
+            });
+        }
+        return result
+    }
 }
+
+const copyWhereStatsments = (result, addiction) => {
+    return {
+        sql: result.sql + addiction.sql,
+        values: Object.assign(result.values, addiction.values)
+    }
+}
+
+const operatorFormat = (key, value) => {
+    const operator = {$lt: '<', $lte: '<=', $gt: '>', $gte: '>=', $ne: '!='};
+    return {
+        sql: ` AND ${key} ${operator[Object.keys(value)[0]]} :${key}`,
+        values: {[key]: value["$lt"]}
+    }
+}
+
+
 
