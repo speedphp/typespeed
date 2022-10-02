@@ -21,7 +21,7 @@ export default class Model {
         this.tableName = _tableName
     }
 
-    async findAll(conditions, _sort, fields = '*', _limit) {
+    async findAll(conditions: string | object, _sort?, fields?, _limit?) {
         let sort = _sort ? ' ORDER BY ' + _sort : ''
         let [where, params] = this._where(conditions)
         let sql = ' FROM ' + this.tableName + where

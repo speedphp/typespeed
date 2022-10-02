@@ -9,9 +9,9 @@ export default class TestOrm {
     private userModel: UserModel;
 
     @GetMapping("/orm/first")
-    firstTest(req, res) {
+    async firstTest(req, res) {
         log(this.userModel);
-        this.userModel.findAll({}, {}, "*", 10);
+        const results = await this.userModel.findAll("1=1");
         res.send("first test");
     }
 
