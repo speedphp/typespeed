@@ -11,6 +11,11 @@ export default class UserModel extends Model {
         });
         log("users", users);
         return "getUsers";
+    }
 
+    public async getUser(id: number) {
+        const user = await this.findOne({ id : id });
+        log("user", user);
+        return "getUser";
     }
 }

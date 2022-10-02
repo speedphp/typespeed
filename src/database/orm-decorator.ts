@@ -21,8 +21,6 @@ export default class Model {
     async find<T>(conditions, _sort = '', fields = '*', limit = undefined): Promise<T[]> {
         let sort = _sort ? ' ORDER BY ' + _sort : '';
         const { sql, values } = this.where(conditions);
-        log(sql)
-        log(values)
         let newSql = 'SELECT ' + fields + ' FROM ' + this.table + ' WHERE ' + sql + sort;
         if (limit === undefined || typeof limit === 'string') {
             newSql += (limit === undefined) ? '' : ' LIMIT ' + limit
@@ -46,10 +44,10 @@ export default class Model {
     //     return res
     // }
 
-    // async find(conditions, _sort, fields = '*') {
-    //     let res = await this.findAll(conditions, _sort, fields, 1)
-    //     return !lodash.isEmpty(res) ? res[0] : false
-    // }
+    async findOne<T>(conditions, sort = '', fields = '*'): Promise<T> {
+        let res = await this.find(conditions, sort, fields, 1);
+        return  res.length > 0 ? <T> res[0] : null;
+    }
 
     // async update(conditions, row) {
     //     let [where, params] = this._where(conditions)
