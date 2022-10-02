@@ -174,30 +174,61 @@ export default class Model {
     // }
 
     private where(conditions) {
-        const result = { sql: '1 ', values: {} };
+        const result = { sql: '', values: {} };
         if (typeof conditions === 'object' && Object.keys(conditions).length > 0) {
-            Object.keys(conditions).map((key) => {
-                if (typeof conditions[key] === 'object') {
-                    result["sql"] += this.operatorFormat(key, conditions[key]);
-                    result["values"][key] = conditions[key]["$lt"];
+            Object.keys(conditions).map((field) => {
+                if(result["sql"].length > 0){
+                    result["sql"] += " AND "
+                }
+                if (typeof conditions[field] === 'object') {
+                    if (field === '$or') {
+                        let orSql = "";
+                        conditions[field].map((item) => {
+                            const { sql, values } = this.where(item);
+                            orSql += (orSql.length > 0 ? " OR " : "") + `(${sql})`;
+                            result["values"] = Object.assign(result["values"], values);
+                        });
+                        result["sql"] += `(${orSql})`;
+                    } else {
+                        const { sql, values } = this.operatorFormat(field, conditions[field]);
+                        result["sql"] += sql;
+                        result["values"] = Object.assign(result["values"], values);
+                    }
+                    
                 } else {
-                    result["sql"] += ` AND ${key} = :${key}`;
-                    result["values"][key] = conditions[key];
+                    const fieldNum = `${field}_${this.suffixNumber++}`.toLocaleUpperCase();
+                    result["sql"] += `${field} = :${fieldNum}`;
+                    result["values"][fieldNum] = conditions[field];
                 }
             });
         }
         return result
     }
 
-    private operatorFormat = (key, value) => {
-        let sql;
-        const operatorTemplate = { $lt: `< :{key}`, $lte: '<=', $gt: '>', $gte: '>=', $ne: '!=' };
-        Object.keys(value).map((operator) => {
+    private suffixNumber = 1;
+
+    private operatorFormat = (field, expression) => {
+        
+        const result = { sql: '', values: {} };
+        const operatorTemplate = {
+            $lt: (f) => `< :${f}`,
+            $lte: (f) => `<= :${f}`,
+            $gt: (f) => `> :${f}`,
+            $gte: (f) => `>= :${f}`,
+            $ne: (f) => `!= :${f}`,
+            $like: (f) => `LIKE :${f}`
+        };
+        let firstCondition: boolean = Object.keys(expression).length > 1;
+        Object.keys(expression).map((operator) => {
             if (operatorTemplate[operator]) {
-                sql += ` AND ${key} ${operatorTemplate[operator]} :${key}`;
+                const fieldNum = `${field}_${this.suffixNumber++}`.toLocaleUpperCase();
+                const operatorValue = operatorTemplate[operator](fieldNum);
+                result["sql"] += `${field} ${operatorValue}` + (firstCondition ? " AND " : "");
+                result["values"][fieldNum] = expression[operator];
+                firstCondition = false;
             }
         });
-        return sql;
+        return result;
     }
 }
 
