@@ -1,5 +1,6 @@
 import * as lodash from 'lodash';
 import { Connection, createPool, ResultSetHeader } from 'mysql2';
+import { actionQuery, actionExecute } from '../database/curd-decorator';
 import { config, log } from "../speed";
 const db_instances = {}
 
@@ -35,7 +36,7 @@ export default class Model {
             limit = this.pager(limit[0], limit[1], limit[2], total[0]['M_COUNTER'])
             limit = lodash.isEmpty(limit) ? '' : ' LIMIT ' + limit['offset'] + ',' + limit['limit']
         }
-        return this.query('SELECT ' + fields + sql + sort + limit, params)
+        return await actionQuery('SELECT ' + fields + sql + sort + limit, params)
     }
 
     async create(row) {

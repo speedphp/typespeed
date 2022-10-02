@@ -82,7 +82,7 @@ function value(configPath: string): any {
     };
 }
 
-function autoware(target: any, propertyKey: string): void {
+function inject(target: any, propertyKey: string): void {
     const type = Reflect.getMetadata("design:type", target, propertyKey);
     Object.defineProperty(target, propertyKey, {
         get: () => {
@@ -93,6 +93,17 @@ function autoware(target: any, propertyKey: string): void {
             return targetObject["factory"];
         }
     });
+}
+
+function autoware(...args): any {
+    return (target: any, propertyKey: string) => {
+        const type = Reflect.getMetadata("design:type", target, propertyKey);
+        Object.defineProperty(target, propertyKey, {
+            get: () => {
+                return new type(...args);
+            }
+        });
+    }
 }
 
 function log(message?: any, ...optionalParams: any[]) {
@@ -144,4 +155,4 @@ function after(constructorFunction, methodName: string) {
 
 
 
-export { component, bean, autoware, log, app, before, after, value, error, config };
+export { component, bean, autoware, log, app, before, after, value, error, config, inject };
