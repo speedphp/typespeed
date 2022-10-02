@@ -3,5 +3,5 @@ export default abstract class CacheFactory {
     public abstract set(key: string, value: any, expire?: number): void;
     public abstract del(key: string): void;
     public abstract has(key: string): boolean;
-    public abstract clear(): void;
+    public abstract flush(): void;
 }

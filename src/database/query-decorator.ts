@@ -12,6 +12,9 @@ function Insert(sql: string) {
     return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
         descriptor.value = async (...args: any[]) => {
             const result: ResultSetHeader = await queryForExecute(sql, args, target, propertyKey);
+            if(cacheBean && result.affectedRows > 0){
+                cacheBean.flush();
+            }
             return result.insertId;
         };
     };
@@ -21,6 +24,9 @@ function Update(sql: string) {
     return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
         descriptor.value = async (...args: any[]) => {
             const result: ResultSetHeader = await queryForExecute(sql, args, target, propertyKey);
+            if(cacheBean && result.affectedRows > 0){
+                cacheBean.flush();
+            }
             return result.affectedRows;
         };
     };
