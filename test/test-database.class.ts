@@ -1,10 +1,14 @@
+import CacheFactory from "../src/factory/cache-factory.class";
 import { Insert, Update, Select, Param, ResultType } from "../src/database/query-decorator";
 import { GetMapping } from "../src/route-mapping.decorator";
-import { onClass, log } from "../src/speed";
+import { onClass, log, autoware } from "../src/speed";
 import UserDto from "./entities/user-dto.class";
 
 @onClass
 export default class TestDatabase {
+
+    @autoware
+    private cacheBean: CacheFactory;
 
     @GetMapping("/db/insert")
     async insert(req, res) {
@@ -45,9 +49,20 @@ export default class TestDatabase {
 
     @GetMapping("/db/select-user")
     async selectUser(req, res) {
-        const users:UserDto[] = await this.findUsers();
+        const users: UserDto[] = await this.findUsers();
         log("select users: " + users);
         res.send(users);
+    }
+
+    @GetMapping("/db/set-cache")
+    testCache(req, res) {
+        this.cacheBean.set("test", req.query.value || "test");
+        res.send("set cache success");
+    }
+
+    @GetMapping("/db/get-cache")
+    displayCache(req, res) {
+        res.send(this.cacheBean.get("test"));
     }
 
     @Insert("Insert into `user` (id, name) values (#{id}, #{name})")
@@ -63,9 +78,9 @@ export default class TestDatabase {
     private async selectRow() { }
 
     @Select("Select * from `user` where id = #{id}")
-    private async findRow(@Param("id")id: number) { }
+    private async findRow(@Param("id") id: number) { }
 
     @ResultType(UserDto)
     @Select("Select * from `user`")
-    private findUsers(): UserDto[] {return;}
+    private findUsers(): UserDto[] { return; }
 }

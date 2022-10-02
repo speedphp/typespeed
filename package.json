@@ -33,6 +33,7 @@
     "express-basic-auth":"^1.2.1",
     "express-jwt":"^7.7.5",
     "jsonwebtoken":"^8.5.1",
-    "mysql2":"^2.3.3"
+    "mysql2":"^2.3.3",
+    "node-cache":"^5.1.2"
   }
 }
