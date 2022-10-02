@@ -5,13 +5,14 @@ import UserModel from "./user-model.class";
 @component
 export default class TestOrm {
 
-    @autoware
+    @autoware("user")
     private userModel: UserModel;
 
     @GetMapping("/orm/first")
     async firstTest(req, res) {
         log(this.userModel);
-        const results = await this.userModel.findAll("1=1");
+        const results = await this.userModel.findAll("1=1", "", "*");
+        log(results);
         res.send("first test");
     }
 

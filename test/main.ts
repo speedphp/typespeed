@@ -1,11 +1,11 @@
 import ServerFactory from "../src/factory/server-factory.class";
-import { app, log, autoware } from "../src/speed";
+import { app, log, inject } from "../src/speed";
 import * as basicAuth from "express-basic-auth"
 
 @app
 class Main {
 
-    @autoware
+    @inject
     public server : ServerFactory;
 
     public main(){
