@@ -1,5 +1,5 @@
 import CacheFactory from "../src/factory/cache-factory.class";
-import { Insert, Update, Select, Param, ResultType, cache } from "../src/database/query-decorator";
+import { Insert, Update, Select, Param, ResultType, cache } from "../src/database/curd-decorator";
 import { GetMapping } from "../src/route-mapping.decorator";
 import { onClass, log, autoware } from "../src/speed";
 import UserDto from "./entities/user-dto.class";
