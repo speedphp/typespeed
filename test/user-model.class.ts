@@ -1,7 +1,7 @@
-import model from "../src/database/orm-decorator";
+import Model from "../src/database/orm-decorator";
 
-@model("user")
-export default class UserModel{
 
-    
+export default class UserModel extends Model{
+
+
 }

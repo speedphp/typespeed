@@ -1,8 +1,8 @@
 import * as jwttoken from "jsonwebtoken";
-import { log, onClass } from "../src/speed";
+import { log, component } from "../src/speed";
 import { GetMapping } from "../src/route-mapping.decorator";
 
-@onClass
+@component
 export default class FirstPage {
 
     @GetMapping("/first")

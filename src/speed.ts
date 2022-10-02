@@ -46,7 +46,7 @@ function config(node: string) {
     return globalConfig[node] ?? {};
 }
 
-function onClass(constructorFunction) {
+function component(constructorFunction) {
     BeanFactory.putObject(constructorFunction, new constructorFunction());
 }
 
@@ -82,28 +82,17 @@ function value(configPath: string): any {
     };
 }
 
-function autoware(target: any, propertyName: string): void {
-    let type = Reflect.getMetadata("design:type", target, propertyName);
-    Object.defineProperty(target, propertyName, {
+function autoware(target: any, propertyKey: string): void {
+    const type = Reflect.getMetadata("design:type", target, propertyKey);
+    Object.defineProperty(target, propertyKey, {
         get: () => {
             const targetObject = BeanFactory.getBean(type);
+            if (targetObject === undefined) {
+                return new type();
+            }
             return targetObject["factory"];
         }
     });
-}
-
-function inject(): any {
-    console.log("decorator inject, outside the return.");
-    return (target: any, propertyKey: string) => {
-        console.log("decorator inject, in the return, propertyKey: " + propertyKey);
-        let type = Reflect.getMetadata("design:type", target, propertyKey);
-        console.log("decorator inject, in the return, type.name: " + type.name);
-        return {
-            get: function () {
-                return "decorator inject, in the return get function";
-            }
-        };
-    }
 }
 
 function log(message?: any, ...optionalParams: any[]) {
@@ -155,4 +144,4 @@ function after(constructorFunction, methodName: string) {
 
 
 
-export { onClass, bean, autoware, inject, log, app, before, after, value, error, config };
+export { component, bean, autoware, log, app, before, after, value, error, config };

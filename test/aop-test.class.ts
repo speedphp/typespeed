@@ -1,7 +1,7 @@
-import { before, log, onClass, after } from "../src/speed";
+import { before, log, component, after } from "../src/speed";
 import FirstPage from "./first-page.class";
 
-@onClass
+@component
 export default class AopTest {
 
     @before(FirstPage, "index")

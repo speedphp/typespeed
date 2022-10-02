@@ -34,6 +34,7 @@
     "express-jwt":"^7.7.5",
     "jsonwebtoken":"^8.5.1",
     "mysql2":"^2.3.3",
-    "node-cache":"^5.1.2"
+    "node-cache":"^5.1.2",
+    "lodash":"^4.17.21"
   }
 }

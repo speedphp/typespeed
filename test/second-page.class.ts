@@ -1,7 +1,7 @@
-import { log, onClass } from "../src/speed";
+import { log, component } from "../src/speed";
 import { GetMapping, PostMapping, upload, jwt } from "../src/route-mapping.decorator";
 
-@onClass
+@component
 export default class SecondPage {
 
     @GetMapping("/second/setCookie")

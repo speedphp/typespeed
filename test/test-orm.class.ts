@@ -1,8 +1,8 @@
 import { GetMapping } from "../src/route-mapping.decorator";
-import { autoware, onClass, log } from "../src/speed";
+import { autoware, component, log } from "../src/speed";
 import UserModel from "./user-model.class";
 
-@onClass
+@component
 export default class TestOrm {
 
     @autoware
