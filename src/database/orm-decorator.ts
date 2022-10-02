@@ -7,30 +7,26 @@ const db_instances = {}
 export default class Model {
 
     private _page;
-    private tableName: string;
+    private table: string;
 
-    constructor(_tableName: string) {
-        if (_tableName !== undefined) this.tableName = _tableName
-        this._page = null
+    constructor(table?: string) {
+        if (table) this.table = table;
+        this._page = null;
     }
 
     get page() {
         return this._page
     }
 
-    set table(_tableName) {
-        this.tableName = _tableName
-    }
-
-    async findAll(conditions, _sort = '', fields = '*', _limit = undefined) {
-        console.log(this.where(conditions));
-        // let sort = _sort ? ' ORDER BY ' + _sort : ''
-        // let [where, params] = this._where(conditions)
-        // let sql = ' FROM ' + this.tableName + where
-        // let limit: string | number = _limit;
-        // if (_limit === undefined || typeof _limit === 'string') {
-        //     sql += (_limit === undefined) ? '' : ' LIMIT ' + _limit
-        // } 
+    async find<T>(conditions, _sort = '', fields = '*', limit = undefined): Promise<T[]> {
+        let sort = _sort ? ' ORDER BY ' + _sort : '';
+        const { sql, values } = this.where(conditions);
+        log(sql)
+        log(values)
+        let newSql = 'SELECT ' + fields + ' FROM ' + this.table + ' WHERE ' + sql + sort;
+        if (limit === undefined || typeof limit === 'string') {
+            newSql += (limit === undefined) ? '' : ' LIMIT ' + limit
+        }
         // else {
         //     let total = await this.query('SELECT COUNT(*) AS M_COUNTER ' + sql, params)
         //     if (!total[0]['M_COUNTER'] || total[0]['M_COUNTER'] == 0) return false
@@ -38,7 +34,7 @@ export default class Model {
         //     limit = this.pager(limit[0], limit[1], limit[2], total[0]['M_COUNTER'])
         //     limit = lodash.isEmpty(limit) ? '' : ' LIMIT ' + limit['offset'] + ',' + limit['limit']
         // }
-        //return await actionQuery('SELECT ' + fields + sql + sort + limit, params);
+        return <T[]> await actionQuery(newSql, values);
     }
 
     // async create(row) {
@@ -174,10 +170,10 @@ export default class Model {
     // }
 
     private where(conditions) {
-        const result = { sql: '', values: {} };
+        const result = { sql: '', values: [] };
         if (typeof conditions === 'object' && Object.keys(conditions).length > 0) {
             Object.keys(conditions).map((field) => {
-                if(result["sql"].length > 0){
+                if (result["sql"].length > 0) {
                     result["sql"] += " AND "
                 }
                 if (typeof conditions[field] === 'object') {
@@ -186,49 +182,28 @@ export default class Model {
                         conditions[field].map((item) => {
                             const { sql, values } = this.where(item);
                             orSql += (orSql.length > 0 ? " OR " : "") + `(${sql})`;
-                            result["values"] = Object.assign(result["values"], values);
+                            result["values"] = result["values"].concat(values);
                         });
                         result["sql"] += `(${orSql})`;
                     } else {
-                        const { sql, values } = this.operatorFormat(field, conditions[field]);
-                        result["sql"] += sql;
-                        result["values"] = Object.assign(result["values"], values);
+                        const operatorTemplate = { $lt: "<", $lte: "<=", $gt: ">", $gte: ">=", $ne: "!=", $like: "LIKE" };
+                        let firstCondition: boolean = Object.keys(conditions[field]).length > 1;
+                        Object.keys(conditions[field]).map((operator) => {
+                            if (operatorTemplate[operator]) {
+                                const operatorValue = operatorTemplate[operator];
+                                result["sql"] += ` ${field} ${operatorValue} ? ` + (firstCondition ? " AND " : "");
+                                result["values"].push(conditions[field][operator]);
+                                firstCondition = false;
+                            }
+                        });
                     }
-                    
                 } else {
-                    const fieldNum = `${field}_${this.suffixNumber++}`.toLocaleUpperCase();
-                    result["sql"] += `${field} = :${fieldNum}`;
-                    result["values"][fieldNum] = conditions[field];
+                    result["sql"] += ` ${field} = ? `;
+                    result["values"].push(conditions[field]);
                 }
             });
         }
         return result
-    }
-
-    private suffixNumber = 1;
-
-    private operatorFormat = (field, expression) => {
-        
-        const result = { sql: '', values: {} };
-        const operatorTemplate = {
-            $lt: (f) => `< :${f}`,
-            $lte: (f) => `<= :${f}`,
-            $gt: (f) => `> :${f}`,
-            $gte: (f) => `>= :${f}`,
-            $ne: (f) => `!= :${f}`,
-            $like: (f) => `LIKE :${f}`
-        };
-        let firstCondition: boolean = Object.keys(expression).length > 1;
-        Object.keys(expression).map((operator) => {
-            if (operatorTemplate[operator]) {
-                const fieldNum = `${field}_${this.suffixNumber++}`.toLocaleUpperCase();
-                const operatorValue = operatorTemplate[operator](fieldNum);
-                result["sql"] += `${field} ${operatorValue}` + (firstCondition ? " AND " : "");
-                result["values"][fieldNum] = expression[operator];
-                firstCondition = false;
-            }
-        });
-        return result;
     }
 }
 
