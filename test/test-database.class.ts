@@ -12,7 +12,8 @@ export default class TestDatabase {
 
     @GetMapping("/db/insert")
     async insert(req, res) {
-        const newId = await this.addRow("new name 21", 24);
+        const id = req.query.id || 1;
+        const newId = await this.addRow("new name " + id, id);
         log("Insert newId: " + newId);
         res.send("Insert success");
     }

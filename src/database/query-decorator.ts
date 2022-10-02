@@ -14,7 +14,8 @@ function Insert(sql: string) {
         descriptor.value = async (...args: any[]) => {
             const result: ResultSetHeader = await queryForExecute(sql, args, target, propertyKey);
             if(cacheBean && result.affectedRows > 0){
-                cacheBean.flush();
+                const [tableName, tableVersion] = getTableAndVersion("insert", sql);
+                tableVersionMap.set(tableName, tableVersion + 1);
             }
             return result.insertId;
         };
@@ -26,7 +27,21 @@ function Update(sql: string) {
         descriptor.value = async (...args: any[]) => {
             const result: ResultSetHeader = await queryForExecute(sql, args, target, propertyKey);
             if(cacheBean && result.affectedRows > 0){
-                cacheBean.flush();
+                const [tableName, tableVersion] = getTableAndVersion("update", sql);
+                tableVersionMap.set(tableName, tableVersion + 1);
+            }
+            return result.affectedRows;
+        };
+    };
+}
+
+function Delete(sql: string) {
+    return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
+        descriptor.value = async (...args: any[]) => {
+            const result: ResultSetHeader = await queryForExecute(sql, args, target, propertyKey);
+            if(cacheBean && result.affectedRows > 0){
+                const [tableName, tableVersion] = getTableAndVersion("delete", sql);
+                tableVersionMap.set(tableName, tableVersion + 1);
             }
             return result.affectedRows;
         };
@@ -43,8 +58,7 @@ function Select(sql: string) {
             }
             let rows;
             if (cacheBean && cacheDefindMap.has([target.constructor.name, propertyKey].toString())) {
-                const tableName = getTableName("select", newSql);
-                const tableVersion = tableVersionMap.get(tableName) || 1;
+                const [tableName, tableVersion] = getTableAndVersion("select", newSql);
                 const cacheKey = JSON.stringify([tableName, tableVersion, newSql, sqlValues]);
                 if (cacheBean.get(cacheKey)) {
                     rows = cacheBean.get(cacheKey);
@@ -53,7 +67,6 @@ function Select(sql: string) {
                     log("cache miss, and select result for " + rows);
                     const ttl = cacheDefindMap.get([target.constructor.name, propertyKey].toString());
                     cacheBean.set(cacheKey, rows, ttl);
-                    tableVersionMap.set(tableName, tableVersion);
                 }
             } else {
                 [rows] = await pool.query(newSql, sqlValues);
@@ -146,7 +159,7 @@ function cache(ttl: number) {
     }
 }
 
-function getTableName(name: string, sql: string) {
+function getTableAndVersion(name: string, sql: string): [string, number] {
     const regExpMap = {
         insert: /insert\sinto\s+([\w`\'\"]+)/i,
         update: /update\s+([\w`\'\"]+)/i,
@@ -155,10 +168,14 @@ function getTableName(name: string, sql: string) {
     }
     const macths = sql.match(regExpMap[name]);
     if (macths && macths.length > 1) {
-        return macths[1];
+        const tableName = macths[1].replace(/[`\'\"]/g, "");
+        const tableVersion = tableVersionMap.get(tableName) || 1;
+        tableVersionMap.set(tableName, tableVersion);
+        log(tableVersionMap);
+        return [tableName, tableVersion];
     }else{
         throw new Error("can not find table name");
     }
 }
 
-export { Insert, Update, Update as Delete, Select, Param, ResultType, cache };
+export { Insert, Update, Delete, Select, Param, ResultType, cache };
