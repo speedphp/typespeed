@@ -8,6 +8,9 @@ export default class ReadWriteDb extends DataSourceFactory {
 
     @bean
     public getDataSource(): DataSourceFactory {
+        if (!config("mysql")) {
+            return null;
+        }
         return new ReadWriteDb();
     }
 
