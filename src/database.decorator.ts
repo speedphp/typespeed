@@ -1,6 +1,8 @@
 import { createPool, ResultSetHeader } from 'mysql2';
 import { config, log, getBean } from './speed';
 import CacheFactory from './factory/cache-factory.class';
+import DataSourceFactory from './factory/data-source-factory.class';
+
 const pool = createPool(config("mysql")).promise();
 const paramMetadataKey = Symbol('param');
 const resultTypeMap = new Map<string, object>();
@@ -90,12 +92,14 @@ async function queryForExecute(sql: string, args: any[], target, propertyKey: st
 }
 
 async function actionExecute(newSql, sqlValues): Promise<ResultSetHeader> {
-    const [result] = await pool.query(newSql, sqlValues);
+    const writeConnection = await getBean(DataSourceFactory).writeConnection();
+    const [result] = await writeConnection.query(newSql, sqlValues);
     return <ResultSetHeader>result;
 }
 
 async function actionQuery(newSql, sqlValues, dataClassType?) {
-    const [rows] = await pool.query(newSql, sqlValues);
+    const readConnection = await getBean(DataSourceFactory).readConnection();
+    const [rows] = await readConnection.query(newSql, sqlValues);
     if (rows === null || Object.keys(rows).length === 0 || !dataClassType) {
         return rows;
     }
