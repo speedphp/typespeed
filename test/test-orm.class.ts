@@ -42,6 +42,13 @@ export default class TestOrm {
         const results = await this.userModel.newUsers();
         res.send("new user test, to " + results);
     }
+
+    @GetMapping("/orm/page/calculate")
+    async calculatePage(req, res) {
+        const pages = this.userModel.pager(15, 376);
+        log(pages);
+        res.send("pages calculate result: " + JSON.stringify(pages));
+    }
  
     @PostMapping("/orm/edit")
     async updateTest(req, res) {
