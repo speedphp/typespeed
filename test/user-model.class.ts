@@ -5,7 +5,7 @@ import UserDto from "./entities/user-dto.class";
 export default class UserModel extends Model {
 
 
-    public async getUsers() {
+    async getUsers() {
         const users = await this.find({
             id: { $lt: 10, $lte: 20 }, "name": { $like: "%a%" },
             $or: [{ id: 1 }, { id: 2 }]
@@ -14,8 +14,8 @@ export default class UserModel extends Model {
         return "getUsers";
     }
 
-    public async getUser(id: number) {
-        const user = await this.findOne({ id : id });
+    async getUser(id: number) {
+        const user = await this.findOne({ id: id }, "");
         log("user", user);
         return "getUser";
     }
@@ -24,8 +24,18 @@ export default class UserModel extends Model {
         const users = await this.create([
             new UserDto(30, "UserDto 30"),
             new UserDto(31, "UserDto 31"),
-            {id : 33, name : "UserDto 33"}
+            { id: 33, name: "UserDto 33" }
         ]);
         return "newUsers";
+    }
+
+    async remove(id: number) {
+        const result = await this.delete({ id: id });
+        return "remove rows: " + result;
+    }
+
+    async count() {
+        const result = await this.findCount("1");
+        return "we had users : " + result;
     }
 }
