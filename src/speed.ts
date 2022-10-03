@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import * as fs from "fs"
 import * as walkSync from "walk-sync";
+import * as cron from "cron";
 import LogFactory from "./factory/log-factory.class";
 
 let globalConfig = {};
@@ -173,6 +174,10 @@ function after(constructorFunction, methodName: string) {
     };
 }
 
+function schedule(cronTime: string | Date) {
+    return (target: any, propertyKey: string) => {
+        new cron.CronJob(cronTime, target[propertyKey]).start();
+    }
+}
 
-
-export { component, bean, resource, log, app, before, after, value, error, config, autoware, getBean, getComponent };
+export { component, bean, resource, log, app, before, after, value, error, config, autoware, getBean, getComponent, schedule };
