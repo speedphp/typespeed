@@ -1,6 +1,5 @@
 import { createPool, ResultSetHeader } from 'mysql2';
-import { config, log } from '../speed';
-import BeanFactory from "../bean-factory.class";
+import { config, log, getBean } from '../speed';
 import CacheFactory from '../factory/cache-factory.class';
 const pool = createPool(config("mysql")).promise();
 const paramMetadataKey = Symbol('param');
@@ -138,7 +137,7 @@ function cache(ttl: number) {
     return function (target: any, propertyKey: string) {
         cacheDefindMap.set([target.constructor.name, propertyKey].toString(), ttl);
         if (cacheBean == null) {
-            const cacheFactory = BeanFactory.getBean(CacheFactory);
+            const cacheFactory = getBean(CacheFactory);
             if (cacheFactory || cacheFactory["factory"]) {
                 cacheBean = cacheFactory["factory"];
             }

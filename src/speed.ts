@@ -1,12 +1,14 @@
 import "reflect-metadata";
 import * as fs from "fs"
 import * as walkSync from "walk-sync";
-import BeanFactory from "./bean-factory.class";
 import LogFactory from "./factory/log-factory.class";
 
 let globalConfig = {};
 const resourceObjects = new Map<string, object>();
+const beanMapper: Map<string, any> = new Map<string, any>();
+const objectMapper: Map<string, any> = new Map<string, any>();
 const configPath = process.cwd() + "/test/config.json";
+
 if (fs.existsSync(configPath)) {
     globalConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
     const nodeEnv = process.env.NODE_ENV || "development";
@@ -48,16 +50,25 @@ function config(node: string) {
 }
 
 function component(constructorFunction) {
-    BeanFactory.putObject(constructorFunction, new constructorFunction());
+    objectMapper.set(constructorFunction.name, new constructorFunction());
+}
+
+function getComponent(constructorFunction) {
+    return objectMapper.get(constructorFunction.name);
 }
 
 function bean(target: any, propertyName: string) {
     let returnType = Reflect.getMetadata("design:returntype", target, propertyName);
     const targetObject = new target.constructor();
-    BeanFactory.putBean(returnType, {
+    beanMapper.set(returnType.name, {
         "target": target, "propertyKey": propertyName,
         "factory": targetObject[propertyName]()
     });
+}
+
+function getBean(mappingClass: Function): any {
+    const bean = beanMapper.get(mappingClass.name);
+    return bean["factory"];
 }
 
 function value(configPath: string): any {
@@ -83,11 +94,11 @@ function value(configPath: string): any {
     };
 }
 
-function inject(target: any, propertyKey: string): void {
+function autoware(target: any, propertyKey: string): void {
     const type = Reflect.getMetadata("design:type", target, propertyKey);
     Object.defineProperty(target, propertyKey, {
         get: () => {
-            const targetObject = BeanFactory.getBean(type);
+            const targetObject = beanMapper.get(type.name);
             if (targetObject === undefined) {
                 return new type();
             }
@@ -112,7 +123,7 @@ function resource(...args): any {
 }
 
 function log(message?: any, ...optionalParams: any[]) {
-    const logObject = BeanFactory.getBean(LogFactory);
+    const logObject = beanMapper.get(LogFactory.name);
     if (logObject) {
         logObject["factory"].log(message, ...optionalParams);
     } else {
@@ -121,7 +132,7 @@ function log(message?: any, ...optionalParams: any[]) {
 }
 
 function error(message?: any, ...optionalParams: any[]) {
-    const logObject = BeanFactory.getBean(LogFactory);
+    const logObject = beanMapper.get(LogFactory.name);
     if (logObject) {
         logObject["factory"].error(message, ...optionalParams);
     } else {
@@ -130,7 +141,7 @@ function error(message?: any, ...optionalParams: any[]) {
 }
 
 function before(constructorFunction, methodName: string) {
-    const targetBean = BeanFactory.getObject(constructorFunction);
+    const targetBean = getComponent(constructorFunction);
     return function (target, propertyKey: string) {
         const currentMethod = targetBean[methodName];
         Object.assign(targetBean, {
@@ -144,7 +155,7 @@ function before(constructorFunction, methodName: string) {
 }
 
 function after(constructorFunction, methodName: string) {
-    const targetBean = BeanFactory.getObject(constructorFunction);
+    const targetBean = getComponent(constructorFunction);
     return function (target, propertyKey: string) {
         const currentMethod = targetBean[methodName];
         Object.assign(targetBean, {
@@ -160,4 +171,4 @@ function after(constructorFunction, methodName: string) {
 
 
 
-export { component, bean, resource, log, app, before, after, value, error, config, inject };
+export { component, bean, resource, log, app, before, after, value, error, config, autoware, getBean, getComponent };
