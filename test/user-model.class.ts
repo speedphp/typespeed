@@ -38,4 +38,9 @@ export default class UserModel extends Model {
         const result = await this.findCount("1");
         return "we had users : " + result;
     }
+
+    async editUser(id: number, name: string) {
+        const result = await this.update({ id: id }, { name: name });
+        return "edit user: " + result;
+    }
 }

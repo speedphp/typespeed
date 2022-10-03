@@ -1,4 +1,4 @@
-import { GetMapping } from "../src/route-mapping.decorator";
+import { GetMapping, PostMapping, upload } from "../src/route-mapping.decorator";
 import { autoware, component, log } from "../src/speed";
 import UserModel from "./user-model.class";
 
@@ -41,5 +41,12 @@ export default class TestOrm {
         log(this.userModel);
         const results = await this.userModel.newUsers();
         res.send("new user test, to " + results);
+    }
+ 
+    @PostMapping("/orm/edit")
+    async updateTest(req, res) {
+        log(req.body);
+        const results = await this.userModel.editUser(req.body.id, req.body.name);
+        res.send(results);
     }
 }

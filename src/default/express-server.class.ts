@@ -40,9 +40,12 @@ export default class ExpressServer extends ServerFactory {
     }
 
     public start(port: number) {
+        this.app.use(express.urlencoded({ extended: true }));
+        this.app.use(express.json());
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
+
         this.setDefaultMiddleware();
         this.app.listen(port, () => {
             log("server start at port: " + port);
