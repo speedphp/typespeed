@@ -54,7 +54,7 @@ function upload(target: any, propertyKey: string) {
 function uploadMiddleware(req, res, next) {
   const form = new multiparty.Form();
   form.parse(req, (err, fields, files) => {
-    req.files = files["upload"] || undefined;
+    req.files = files || undefined;
     next();
   });
 }

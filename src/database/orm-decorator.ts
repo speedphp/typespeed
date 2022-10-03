@@ -60,18 +60,12 @@ export default class Model {
         return res.length > 0 ? <T>res[0] : null;
     }
 
-    // async update(conditions, row) {
-    //     let [where, params] = this._where(conditions)
-    //     let values = {}
-    //     let sql = 'UPDATE ' + this.tableName
-    //         + ' SET ' + lodash.map(row, (v, k) => {
-    //             values[k] = v
-    //             return '`' + k + '` = :' + k
-    //         }).join(', ')
-    //         + where
-    //     let res = await this.execute(sql, lodash.merge(params, values))
-    //     return res
-    // }
+    async update(conditions, fieldToValues): Promise<number> {
+        const { sql, values } = this.where(conditions);
+        const newSql = 'UPDATE ' + this.table + ' SET ' + Object.keys(fieldToValues).map((field) => { return '`' + field + '` = ? ' }).join(', ') + ' WHERE ' + sql;
+        const result: ResultSetHeader = await actionExecute(newSql, Object.values(fieldToValues).concat(values));
+        return result.affectedRows;
+    }
 
     async delete(conditions): Promise<number> {
         const { sql, values } = this.where(conditions);
