@@ -81,17 +81,17 @@ export default class Model {
         return result[0]['M_COUNTER'] || 0;
     }
 
-    // async incr(conditions, field, optval = 1) {
-    //     let [where, params] = this._where(conditions)
-    //     let sql = 'UPDATE ' + this.tableName + ' SET `' + field + '` = `'
-    //         + field + '` + :M_INCR_VAL' + where
-    //     let res = await this.execute(sql, lodash.merge(params, { 'M_INCR_VAL': optval }))
-    //     return res
-    // }
-
-    // decr(conditions, field, optval = 1) {
-    //     return this.incr(conditions, field, -optval)
-    // }
+    async incr(conditions, field, optval = 1): Promise<number> {
+        const { sql, values } = this.where(conditions);
+        const newSql = 'UPDATE ' + this.table + ' SET `' + field + '` = `' + field + '` + ? WHERE ' + sql;
+        values.unshift(optval); // increase at the top
+        const result: ResultSetHeader = await actionExecute(newSql, values);
+        return result.affectedRows;
+      }
+    
+      async decr(conditions, field, optval = 1): Promise<number> {
+        return await this.incr(conditions, field, -optval);
+      }
 
     // pager(page, pageSize = 10, scope = 10, total) {
     //     this._page = null
@@ -174,7 +174,7 @@ export default class Model {
     //     return db_instances[instance_key]
     // }
 
-    private where(conditions: object | string): { sql: string, values: object } {
+    private where(conditions: object | string): { sql: string, values: any[] } {
         const result = { sql: '', values: [] };
         if (typeof conditions === 'object') {
             Object.keys(conditions).map((field) => {
