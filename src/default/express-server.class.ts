@@ -5,7 +5,7 @@ import * as compression from "compression";
 import * as cookieParser from "cookie-parser";
 import * as expressSession from "express-session";
 import ServerFactory from "../factory/server-factory.class";
-import { setRouter } from "../route-mapping.decorator";
+import { setRouter } from "../route.decorator";
 import { bean, log, value, error } from "../speed";
 
 export default class ExpressServer extends ServerFactory {

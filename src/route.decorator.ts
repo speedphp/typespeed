@@ -69,8 +69,8 @@ function jwt(jwtConfig) {
   }
 }
 
-const GetMapping = (value: string) => mapperFunction("get", value);
-const PostMapping = (value: string) => mapperFunction("post", value);
-const RequestMapping = (value: string) => mapperFunction("all", value);
+const getMapping = (value: string) => mapperFunction("get", value);
+const postMapping = (value: string) => mapperFunction("post", value);
+const requestMapping = (value: string) => mapperFunction("all", value);
 
-export { GetMapping, PostMapping, RequestMapping, setRouter, upload, jwt };
+export { getMapping, postMapping, requestMapping, setRouter, upload, jwt };

@@ -1,6 +1,6 @@
 import CacheFactory from "../src/factory/cache-factory.class";
-import { Insert, Update, Select, Param, ResultType, cache } from "../src/database/curd-decorator";
-import { GetMapping } from "../src/route-mapping.decorator";
+import { insert, update, select, param, resultType, cache } from "../src/database.decorator";
+import { getMapping } from "../src/route.decorator";
 import { component, log, autoware } from "../src/speed";
 import UserDto from "./entities/user-dto.class";
 
@@ -10,7 +10,7 @@ export default class TestDatabase {
     @autoware
     private cacheBean: CacheFactory;
 
-    @GetMapping("/db/insert")
+    @getMapping("/db/insert")
     async insert(req, res) {
         const id = req.query.id || 1;
         const newId = await this.addRow("new name " + id, id);
@@ -18,7 +18,7 @@ export default class TestDatabase {
         res.send("Insert success");
     }
 
-    @GetMapping("/db/insert2")
+    @getMapping("/db/insert2")
     async insertByObject(req, res) {
         const newId = await this.addRowByObject({
             "id": 25, "name": "new name 25"
@@ -27,62 +27,62 @@ export default class TestDatabase {
         res.send("Insert success");
     }
 
-    @GetMapping("/db/update")
+    @getMapping("/db/update")
     async update(req, res) {
         const affectedRows = await this.editRow();
         log("Update rows: " + affectedRows);
         res.send("update success");
     }
 
-    @GetMapping("/db/select")
+    @getMapping("/db/select")
     async select(req, res) {
         const rows = await this.selectRow();
         log("select rows: " + rows);
         res.send(rows);
     }
 
-    @GetMapping("/db/select1")
+    @getMapping("/db/select1")
     async selectById(req, res) {
         const row = await this.findRow(req.query.id || 1);
         log("select rows: " + row);
         res.send(row);
     }
 
-    @GetMapping("/db/select-user")
+    @getMapping("/db/select-user")
     async selectUser(req, res) {
         const users: UserDto[] = await this.findUsers();
         log("select users: " + users);
         res.send(users);
     }
 
-    @GetMapping("/db/set-cache")
+    @getMapping("/db/set-cache")
     testCache(req, res) {
         this.cacheBean.set("test", req.query.value || "test");
         res.send("set cache success");
     }
 
-    @GetMapping("/db/get-cache")
+    @getMapping("/db/get-cache")
     displayCache(req, res) {
         res.send(this.cacheBean.get("test"));
     }
 
-    @Insert("Insert into `user` (id, name) values (#{id}, #{name})")
-    private async addRow(@Param("name") newName: string, @Param("id") id: number) { }
+    @insert("Insert into `user` (id, name) values (#{id}, #{name})")
+    private async addRow(@param("name") newName: string, @param("id") id: number) { }
 
-    @Insert("Insert into `user` (id, name) values (#{id}, #{name})")
+    @insert("Insert into `user` (id, name) values (#{id}, #{name})")
     private async addRowByObject(myParams: object) { }
 
-    @Update("Update `user` set `name` = 'test5' where id = 5")
+    @update("Update `user` set `name` = 'test5' where id = 5")
     private async editRow() { }
 
-    @Select("Select * from `user`")
+    @select("Select * from `user`")
     private async selectRow() { }
 
     @cache(1800)
-    @Select("Select * from `user` where id = #{id}")
-    private async findRow(@Param("id") id: number) { }
+    @select("Select * from `user` where id = #{id}")
+    private async findRow(@param("id") id: number) { }
 
-    @ResultType(UserDto)
-    @Select("Select * from `user`")
+    @resultType(UserDto)
+    @select("Select * from `user`")
     private findUsers(): UserDto[] { return; }
 }

@@ -1,17 +1,17 @@
 import * as jwttoken from "jsonwebtoken";
 import { log, component } from "../src/speed";
-import { GetMapping } from "../src/route-mapping.decorator";
+import { getMapping } from "../src/route.decorator";
 
 @component
 export default class FirstPage {
 
-    @GetMapping("/first")
+    @getMapping("/first")
     public index(req: any, res: any) {
         log("FirstPage index running" + this.getTestFromFirstPage());
         res.send("FirstPage index running");
     }
 
-    @GetMapping("/first/sendJson")
+    @getMapping("/first/sendJson")
     public sendJson() {
         log("FirstPage sendJson running");
         return {
@@ -20,18 +20,18 @@ export default class FirstPage {
         }
     }
 
-    @GetMapping("/first/sendResult")
+    @getMapping("/first/sendResult")
     public sendResult() {
         log("FirstPage sendResult running");
         return "sendResult";
     }
 
-    @GetMapping("/first/renderTest")
+    @getMapping("/first/renderTest")
     public renderTest(req: any, res: any) {
         res.render("index", { name: "zzz" });
     }
 
-    @GetMapping("/login")
+    @getMapping("/login")
     login() {
         const token = jwttoken.sign({ foo: 'bar' }, 'shhhhhhared-secret');
         /**
