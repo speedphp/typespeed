@@ -28,7 +28,7 @@ function mapperFunction(method: string, value: string) {
   return (target: any, propertyKey: string) => {
     routerMapper[method][value] = {
       "path": value,
-      "name": target.constructor.name + "#" + propertyKey,
+      "name": [target.constructor.name, propertyKey].toString(),
       "invoker": async (req, res) => {
         const routerBean = getComponent(target.constructor);
         const testResult = await routerBean[propertyKey](req, res);
@@ -44,10 +44,11 @@ function mapperFunction(method: string, value: string) {
 }
 
 function upload(target: any, propertyKey: string) {
-  if (routerMiddleware[target.constructor.name + "#" + propertyKey]) {
-    routerMiddleware[target.constructor.name + "#" + propertyKey].push(uploadMiddleware);
+  const key = [target.constructor.name, propertyKey].toString();
+  if (routerMiddleware[key]) {
+    routerMiddleware[key].push(uploadMiddleware);
   } else {
-    routerMiddleware[target.constructor.name + "#" + propertyKey] = [uploadMiddleware];
+    routerMiddleware[key] = [uploadMiddleware];
   }
 }
 
@@ -61,10 +62,11 @@ function uploadMiddleware(req, res, next) {
 
 function jwt(jwtConfig) {
   return (target: any, propertyKey: string) => {
-    if (routerMiddleware[target.constructor.name + "#" + propertyKey]) {
-      routerMiddleware[target.constructor.name + "#" + propertyKey].push(expressjwt(jwtConfig));
+    const key = [target.constructor.name, propertyKey].toString();
+    if (routerMiddleware[key]) {
+      routerMiddleware[key].push(expressjwt(jwtConfig));
     } else {
-      routerMiddleware[target.constructor.name + "#" + propertyKey] = [expressjwt(jwtConfig)];
+      routerMiddleware[key] = [expressjwt(jwtConfig)];
     }
   }
 }
