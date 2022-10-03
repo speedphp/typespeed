@@ -22,5 +22,10 @@ export default class TestOrm {
         res.send("find one test, to " + results);
     }
 
-
+    @GetMapping("/orm/new")
+    async newUserTest(req, res) {
+        log(this.userModel);
+        const results = await this.userModel.newUsers();
+        res.send("new user test, to " + results);
+    }
 }

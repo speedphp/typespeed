@@ -1,5 +1,6 @@
 import Model from "../src/database/orm-decorator";
 import { log } from "../src/speed";
+import UserDto from "./entities/user-dto.class";
 
 export default class UserModel extends Model {
 
@@ -17,5 +18,14 @@ export default class UserModel extends Model {
         const user = await this.findOne({ id : id });
         log("user", user);
         return "getUser";
+    }
+
+    async newUsers() {
+        const users = await this.create([
+            new UserDto(30, "UserDto 30"),
+            new UserDto(31, "UserDto 31"),
+            {id : 33, name : "UserDto 33"}
+        ]);
+        return "newUsers";
     }
 }
