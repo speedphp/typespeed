@@ -100,7 +100,11 @@ function autoware(target: any, propertyKey: string): void {
         get: () => {
             const targetObject = beanMapper.get(type.name);
             if (targetObject === undefined) {
-                return new type();
+                const resourceKey = [target.constructor.name, propertyKey, type.name].toString();
+                if (!resourceObjects[resourceKey]) {
+                    resourceObjects[resourceKey] = new type();
+                }
+                return resourceObjects[resourceKey];
             }
             return targetObject["factory"];
         }

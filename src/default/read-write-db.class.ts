@@ -16,9 +16,9 @@ export default class ReadWriteDb extends DataSourceFactory {
         const dbConfig = config("mysql");
         if (dbConfig["master"] && dbConfig["slave"]) {
             this.writeSession = this.getConnectionByConfig(dbConfig["master"]);
-            if(Array.isArray(dbConfig["slave"])){
+            if (Array.isArray(dbConfig["slave"])) {
                 this.readSession = dbConfig["slave"].map(config => this.getConnectionByConfig(config));
-            }else{
+            } else {
                 this.readSession = [this.getConnectionByConfig(dbConfig["slave"])];
             }
         } else {
@@ -30,7 +30,7 @@ export default class ReadWriteDb extends DataSourceFactory {
     private getConnectionByConfig(config: object) {
         if (config["PoolOptions"] !== undefined) {
             // we need pool
-            if(Object.keys(config["PoolOptions"]).length !== 0){
+            if (Object.keys(config["PoolOptions"]).length !== 0) {
                 config = Object.assign(config, config["PoolOptions"]);
             }
             return createPool(config).promise();
@@ -43,7 +43,7 @@ export default class ReadWriteDb extends DataSourceFactory {
     public readConnection() {
         return this.readSession[Math.floor(Math.random() * this.readSession.length)];
     }
-    
+
     public writeConnection() {
         return this.writeSession;
     }

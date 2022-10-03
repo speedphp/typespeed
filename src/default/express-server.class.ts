@@ -40,8 +40,6 @@ export default class ExpressServer extends ServerFactory {
     }
 
     public start(port: number) {
-        this.app.use(express.urlencoded({ extended: true }));
-        this.app.use(express.json());
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
@@ -53,6 +51,8 @@ export default class ExpressServer extends ServerFactory {
     }
 
     private setDefaultMiddleware() {
+        this.app.use(express.urlencoded({ extended: true }));
+        this.app.use(express.json());
         if (this.view) {
             const viewConfig = this.view;
             this.app.engine(viewConfig["suffix"], consolidate[viewConfig["engine"]]);
@@ -92,10 +92,8 @@ export default class ExpressServer extends ServerFactory {
             if (req.accepts('html')) {
                 res.render(process.cwd() + "/static/error-page/404.html");
             } else if (req.accepts('json')) {
-                // respond with json
                 res.json({ error: 'Not found' });
             } else {
-                // default to plain-text. send()
                 res.type('txt').send('Not found');
             }
         });
@@ -109,10 +107,8 @@ export default class ExpressServer extends ServerFactory {
             if (req.accepts('html')) {
                 res.render(process.cwd() + "/static/error-page/500.html");
             } else if (req.accepts('json')) {
-                // respond with json
                 res.json({ error: 'Internal Server Error' });
             } else {
-                // default to plain-text. send()
                 res.type('txt').send('Internal Server Error');
             }
         });
