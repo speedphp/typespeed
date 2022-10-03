@@ -1,12 +1,24 @@
 import { getMapping, postMapping } from "../src/route.decorator";
-import { resource, component, log } from "../src/speed";
+import { resource, component, log, autoware } from "../src/speed";
 import UserModel from "./user-model.class";
+import Redis from "../src/default/redis.class";
 
 @component
 export default class TestOrm {
 
     @resource("user")
     private userModel: UserModel;
+
+    @autoware
+    private redisObj: Redis;
+
+    @getMapping("/redis")
+    async redisTest() {
+        await this.redisObj.set("redisKey", "Hello World");
+        const value = await this.redisObj.get("redisKey");
+        log(value)
+        return "get from redis: " + value;
+    }
 
     @getMapping("/orm/first")
     async firstTest(req, res) {
