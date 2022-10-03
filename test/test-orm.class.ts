@@ -49,7 +49,15 @@ export default class TestOrm {
         log(pages);
         res.send("pages calculate result: " + JSON.stringify(pages));
     }
- 
+
+    @GetMapping("/orm/pages/:id")
+    async findPage(req, res) {
+        const results = await this.userModel.findAll("1", { id: -1 }, "*", { page: req.query.id, pageSize: 3 });
+        log(results);
+        log(this.userModel.page);
+        res.send("pages find result: " + JSON.stringify(results));
+    }
+
     @PostMapping("/orm/edit")
     async updateTest(req, res) {
         log(req.body);

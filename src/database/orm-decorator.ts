@@ -13,20 +13,30 @@ export default class Model {
         if (table) this.table = table;
     }
 
-    async find<T>(conditions, _sort?, fields = '*', limit = undefined): Promise<T[]> {
-        let sort = _sort ? ' ORDER BY ' + _sort : '';
+    async findAll<T>(conditions: object | string, sort: string | object = '', fields: string | [string] = '*', limit?: number | object): Promise<T[]> {
         const { sql, values } = this.where(conditions);
-        let newSql = 'SELECT ' + fields + ' FROM ' + this.table + ' WHERE ' + sql + sort;
-        if (limit === undefined || typeof limit === 'string') {
-            newSql += (limit === undefined) ? '' : ' LIMIT ' + limit
+        if (typeof fields !== 'string') {
+            fields = fields.join(", ");
         }
-        // else {
-        //     let total = await this.query('SELECT COUNT(*) AS M_COUNTER ' + sql, params)
-        //     if (!total[0]['M_COUNTER'] || total[0]['M_COUNTER'] == 0) return false
-        //     limit = lodash.merge([1, 10, 10], _limit)
-        //     limit = this.pager(limit[0], limit[1], limit[2], total[0]['M_COUNTER'])
-        //     limit = lodash.isEmpty(limit) ? '' : ' LIMIT ' + limit['offset'] + ',' + limit['limit']
-        // }
+        if (typeof sort !== 'string') {
+            sort = Object.keys(sort).map(s => {
+                return s + (sort[s] === 1 ? " ASC" : " DESC");
+            }).join(", ");
+        }
+        let newSql = 'SELECT ' + fields + ' FROM ' + this.table + ' WHERE ' + sql + " ORDER BY " + sort;
+        if (typeof limit === 'number') {
+            newSql += ' LIMIT ' + limit
+        } else if (typeof limit === 'object') {
+            const total = await actionQuery('SELECT COUNT(*) AS M_COUNTER  FROM ' + this.table + ' WHERE ' + sql, values);
+            if (total === undefined || total[0]['M_COUNTER'] === 0) {
+                return [];
+            }
+            if (limit['pageSize'] !== undefined && limit['pageSize'] < total[0]['M_COUNTER']) {
+                const pager = this.pager(limit["page"] || 1, total[0]['M_COUNTER'], limit["pageSize"] || 10, limit["scope"] || 10);
+                newSql += ' LIMIT ' + pager['offset'] + ',' + pager['limit'];
+                this.page = pager;
+            }
+        }
         return <T[]>await actionQuery(newSql, values);
     }
 
@@ -50,9 +60,9 @@ export default class Model {
         return result.insertId;
     }
 
-    async findOne<T>(conditions, sort, fields = '*'): Promise<T> {
-        let res = await this.find(conditions, sort, fields, 1);
-        return res.length > 0 ? <T>res[0] : null;
+    async find<T>(conditions, sort, fields = '*'): Promise<T> {
+        const result = await this.findAll(conditions, sort, fields, 1);
+        return result.length > 0 ? <T>result[0] : null;
     }
 
     async update(conditions, fieldToValues): Promise<number> {
