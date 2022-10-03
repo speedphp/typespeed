@@ -32,21 +32,32 @@ export default class Model {
         //     limit = this.pager(limit[0], limit[1], limit[2], total[0]['M_COUNTER'])
         //     limit = lodash.isEmpty(limit) ? '' : ' LIMIT ' + limit['offset'] + ',' + limit['limit']
         // }
-        return <T[]> await actionQuery(newSql, values);
+        return <T[]>await actionQuery(newSql, values);
     }
 
-    // async create(row) {
-    //     let sql = 'INSERT INTO ' + this.tableName
-    //         + ' (' + Object.keys(row).map((k) => '`' + k + '`').join(', ')
-    //         + ') VALUES (' + Object.keys(row).map((k) => ':' + k).join(', ')
-    //         + ')'
-    //     let res = await this.execute(sql, row)
-    //     return res
-    // }
+    async create(rows): Promise<number> {
+        let newSql = "";
+        let values = [];
+        if (!Array.isArray(rows)) {
+            rows = [rows];
+        }
+        const firstRow = rows[0];
+        newSql += 'INSERT INTO ' + this.table + ' (' + Object.keys(firstRow).map((field) => '`' + field + '`').join(', ') + ') VALUES';
+        rows.forEach((row) => {
+            const valueRow = [];
+            Object.keys(row).map((field) => {
+                values.push(row[field]);
+                valueRow.push('?');
+            });
+            newSql += '(' + valueRow.map((value) => '?').join(', ') + ')' + (rows.indexOf(row) === rows.length - 1 ? '' : ',');
+        });
+        const result: ResultSetHeader = await actionExecute(newSql, values);
+        return result.insertId;
+    }
 
     async findOne<T>(conditions, sort = '', fields = '*'): Promise<T> {
         let res = await this.find(conditions, sort, fields, 1);
-        return  res.length > 0 ? <T> res[0] : null;
+        return res.length > 0 ? <T>res[0] : null;
     }
 
     // async update(conditions, row) {
