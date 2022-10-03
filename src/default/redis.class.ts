@@ -1,11 +1,11 @@
-import { bean, config } from "../speed";
+import { bean, config, log } from "../speed";
 import IoRedis from "ioredis";
 
 export default class Redis extends IoRedis {
 
     @bean
     public getRedis(): Redis {
-        if (config("redis") === undefined) {
+        if (!config("redis")) {
             return null;
         }
         return new Redis(config("redis"));
