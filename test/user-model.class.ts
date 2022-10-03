@@ -1,4 +1,4 @@
-import Model from "../src/database/orm-decorator";
+import { Model } from "../src/database.decorator";
 import { log } from "../src/speed";
 import UserDto from "./entities/user-dto.class";
 

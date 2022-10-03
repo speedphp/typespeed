@@ -1,5 +1,5 @@
 import { log, component } from "../src/speed";
-import { GetMapping, PostMapping, upload, jwt } from "../src/route-mapping.decorator";
+import { GetMapping, PostMapping, upload, jwt } from "../src/route.decorator";
 
 @component
 export default class SecondPage {
