@@ -25,18 +25,25 @@
             "secure": false
         }
     },
-    "mysql" : {
-        "master" : {
-            "host":"localhost", 
-            "user": "root", 
+    "mysql": {
+        "master": {
+            "host": "localhost",
+            "user": "root",
             "password": "123456",
             "database": "test"
         },
-        "slave" :[{
-            "host":"localhost", 
-            "user": "root", 
-            "password": "123456",
-            "database": "test"
-        }]
+        "slave": [
+            {
+                "host": "localhost",
+                "user": "root",
+                "password": "123456",
+                "database": "test"
+            }
+        ]
+    },
+    "redis": {
+        "host": "localhost",
+        "port": "6379",
+        "db": 0
     }
 }
