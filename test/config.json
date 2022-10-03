@@ -2,12 +2,6 @@
     "server": {
         "port": "8081"
     },
-    "mysql": {
-        "host":"localhost", 
-        "user": "root", 
-        "password": "123456",
-        "database": "test"
-    },
     "view": {
         "engine": "pug",
         "path": "./views",
@@ -30,5 +24,19 @@
         "cookie": {
             "secure": false
         }
+    },
+    "mysql" : {
+        "master" : {
+            "host":"localhost", 
+            "user": "root", 
+            "password": "123456",
+            "database": "test"
+        },
+        "slave" :[{
+            "host":"localhost", 
+            "user": "root", 
+            "password": "",
+            "database": "test"
+        }]
     }
 }
