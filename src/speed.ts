@@ -57,12 +57,12 @@ function getComponent(constructorFunction) {
     return objectMapper.get(constructorFunction.name);
 }
 
-function bean(target: any, propertyName: string) {
-    let returnType = Reflect.getMetadata("design:returntype", target, propertyName);
-    const targetObject = new target.constructor();
+function bean(target: any, propertyKey: string) {
+    let returnType = Reflect.getMetadata("design:returntype", target, propertyKey);
+    //const targetObject = new target.constructor();
     beanMapper.set(returnType.name, {
-        "target": target, "propertyKey": propertyName,
-        "factory": targetObject[propertyName]()
+        "target": target, "propertyKey": propertyKey,
+        "factory": target[propertyKey]()
     });
 }
 
