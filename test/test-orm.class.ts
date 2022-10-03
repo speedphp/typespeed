@@ -22,6 +22,20 @@ export default class TestOrm {
         res.send("find one test, to " + results);
     }
 
+    @GetMapping("/orm/delete")
+    async deleteTest(req, res) {
+        log(this.userModel);
+        const results = await this.userModel.remove(req.query.id || 0);
+        res.send("remove user, results: " + results);
+    }
+
+    @GetMapping("/orm/count")
+    async countTest(req, res) {
+        log(this.userModel);
+        const results = await this.userModel.count();
+        res.send(results);
+    }
+
     @GetMapping("/orm/new")
     async newUserTest(req, res) {
         log(this.userModel);

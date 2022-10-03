@@ -18,7 +18,7 @@ export default class Model {
         return this._page
     }
 
-    async find<T>(conditions, _sort = '', fields = '*', limit = undefined): Promise<T[]> {
+    async find<T>(conditions, _sort?, fields = '*', limit = undefined): Promise<T[]> {
         let sort = _sort ? ' ORDER BY ' + _sort : '';
         const { sql, values } = this.where(conditions);
         let newSql = 'SELECT ' + fields + ' FROM ' + this.table + ' WHERE ' + sql + sort;
@@ -55,7 +55,7 @@ export default class Model {
         return result.insertId;
     }
 
-    async findOne<T>(conditions, sort = '', fields = '*'): Promise<T> {
+    async findOne<T>(conditions, sort, fields = '*'): Promise<T> {
         let res = await this.find(conditions, sort, fields, 1);
         return res.length > 0 ? <T>res[0] : null;
     }
@@ -73,17 +73,19 @@ export default class Model {
     //     return res
     // }
 
-    // async delete(conditions) {
-    //     let [where, params] = this._where(conditions)
-    //     let res = await this.execute('DELETE FROM ' + this.tableName + where, params)
-    //     return res
-    // }
+    async delete(conditions): Promise<number> {
+        const { sql, values } = this.where(conditions);
+        const newSql = 'DELETE FROM ' + this.table + ' WHERE ' + sql;
+        const result: ResultSetHeader = await actionExecute(newSql, values);
+        return result.affectedRows;
+    }
 
-    // async findCount(conditions) {
-    //     let [where, params] = this._where(conditions)
-    //     let res = await this.query('SELECT COUNT(*) AS M_COUNTER FROM ' + this.tableName + where, params)
-    //     return res[0]['M_COUNTER'] || 0
-    // }
+    async findCount(conditions): Promise<number> {
+        const { sql, values } = this.where(conditions);
+        const newSql = 'SELECT COUNT(*) AS M_COUNTER FROM ' + this.table + ' WHERE ' + sql;
+        const result = await actionQuery(newSql, values);
+        return result[0]['M_COUNTER'] || 0;
+    }
 
     // async incr(conditions, field, optval = 1) {
     //     let [where, params] = this._where(conditions)
@@ -178,9 +180,9 @@ export default class Model {
     //     return db_instances[instance_key]
     // }
 
-    private where(conditions) {
+    private where(conditions: object | string): { sql: string, values: object } {
         const result = { sql: '', values: [] };
-        if (typeof conditions === 'object' && Object.keys(conditions).length > 0) {
+        if (typeof conditions === 'object') {
             Object.keys(conditions).map((field) => {
                 if (result["sql"].length > 0) {
                     result["sql"] += " AND "
@@ -211,6 +213,8 @@ export default class Model {
                     result["values"].push(conditions[field]);
                 }
             });
+        } else {
+            result["sql"] = conditions;
         }
         return result
     }
