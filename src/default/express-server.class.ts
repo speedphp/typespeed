@@ -4,9 +4,11 @@ import * as serveFavicon from "serve-favicon";
 import * as compression from "compression";
 import * as cookieParser from "cookie-parser";
 import * as expressSession from "express-session";
+import * as connectRedis from "connect-redis";
 import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route.decorator";
-import { bean, log, value, error } from "../speed";
+import { bean, log, value, error, autoware } from "../speed";
+import Redis from "./redis.class";
 
 export default class ExpressServer extends ServerFactory {
 
@@ -27,6 +29,12 @@ export default class ExpressServer extends ServerFactory {
 
     @value("session")
     private session: object;
+
+    @value("redis")
+    private redisConfig: object;
+
+    @autoware
+    private redisClient: Redis;
 
     @bean
     public getSever(): ServerFactory {
@@ -65,6 +73,11 @@ export default class ExpressServer extends ServerFactory {
             if (sessionConfig["trust proxy"] === 1) {
                 this.app.set('trust proxy', 1);
             }
+            if (this.redisConfig) {
+                const RedisStore = connectRedis(expressSession);
+                sessionConfig["store"] = new RedisStore({ client: this.redisClient });
+            }
+
             this.app.use(expressSession(sessionConfig));
         }
 
@@ -83,7 +96,6 @@ export default class ExpressServer extends ServerFactory {
         }
 
         this.app.use(cookieParser(this.cookieConfig["secret"] || undefined, this.cookieConfig["options"] || {}));
-
 
         setRouter(this.app);
 
