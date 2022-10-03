@@ -1,13 +1,13 @@
 import CacheFactory from "../src/factory/cache-factory.class";
 import { Insert, Update, Select, Param, ResultType, cache } from "../src/database/curd-decorator";
 import { GetMapping } from "../src/route-mapping.decorator";
-import { component, log, inject } from "../src/speed";
+import { component, log, autoware } from "../src/speed";
 import UserDto from "./entities/user-dto.class";
 
 @component
 export default class TestDatabase {
 
-    @inject
+    @autoware
     private cacheBean: CacheFactory;
 
     @GetMapping("/db/insert")
