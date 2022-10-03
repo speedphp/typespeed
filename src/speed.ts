@@ -46,7 +46,7 @@ function app<T extends { new(...args: any[]): {} }>(constructor: T) {
 }
 
 function config(node: string) {
-    return globalConfig[node] ?? {};
+    return globalConfig[node] || null;
 }
 
 function component(constructorFunction) {

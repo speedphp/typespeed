@@ -1,9 +1,8 @@
-import { createPool, ResultSetHeader } from 'mysql2';
-import { config, log, getBean } from './speed';
+import { ResultSetHeader } from 'mysql2';
+import { log, getBean } from './speed';
 import CacheFactory from './factory/cache-factory.class';
 import DataSourceFactory from './factory/data-source-factory.class';
 
-const pool = createPool(config("mysql")).promise();
 const paramMetadataKey = Symbol('param');
 const resultTypeMap = new Map<string, object>();
 const cacheDefindMap = new Map<string, number>();
@@ -146,7 +145,6 @@ function cache(ttl: number) {
                 cacheBean = cacheFactory["factory"];
             }
         }
-        log(cacheDefindMap);
     }
 }
 
