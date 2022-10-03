@@ -1,5 +1,5 @@
 import { getMapping, postMapping } from "../src/route.decorator";
-import { resource, component, log, autoware } from "../src/speed";
+import { resource, component, log, autoware, schedule } from "../src/speed";
 import UserModel from "./user-model.class";
 import Redis from "../src/default/redis.class";
 
@@ -67,5 +67,10 @@ export default class TestOrm {
     async updateTest(req, res) {
         const results = await this.userModel.editUser(req.body.id, req.body.name);
         res.send(results);
+    }
+
+    //@schedule("* * * * * *")
+    myTimer() {
+        log("myTimer running");
     }
 }
