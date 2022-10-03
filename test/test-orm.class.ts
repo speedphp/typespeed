@@ -1,11 +1,11 @@
 import { GetMapping, PostMapping, upload } from "../src/route-mapping.decorator";
-import { autoware, component, log } from "../src/speed";
+import { resource, component, log } from "../src/speed";
 import UserModel from "./user-model.class";
 
 @component
 export default class TestOrm {
 
-    @autoware("user")
+    @resource("user")
     private userModel: UserModel;
 
     @GetMapping("/orm/first")

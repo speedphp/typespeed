@@ -5,6 +5,7 @@ import BeanFactory from "./bean-factory.class";
 import LogFactory from "./factory/log-factory.class";
 
 let globalConfig = {};
+const resourceObjects = new Map<string, object>();
 const configPath = process.cwd() + "/test/config.json";
 if (fs.existsSync(configPath)) {
     globalConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
@@ -95,12 +96,16 @@ function inject(target: any, propertyKey: string): void {
     });
 }
 
-function autoware(...args): any {
+function resource(...args): any {
     return (target: any, propertyKey: string) => {
         const type = Reflect.getMetadata("design:type", target, propertyKey);
         Object.defineProperty(target, propertyKey, {
             get: () => {
-                return new type(...args);
+                const resourceKey = [target.constructor.name, propertyKey, type.name].toString();
+                if (!resourceObjects[resourceKey]) {
+                    resourceObjects[resourceKey] = new type(...args);
+                }
+                return resourceObjects[resourceKey];
             }
         });
     }
@@ -155,4 +160,4 @@ function after(constructorFunction, methodName: string) {
 
 
 
-export { component, bean, autoware, log, app, before, after, value, error, config, inject };
+export { component, bean, resource, log, app, before, after, value, error, config, inject };
