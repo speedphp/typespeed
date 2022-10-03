@@ -29,15 +29,19 @@ function mapperFunction(method: string, value: string) {
     routerMapper[method][value] = {
       "path": value,
       "name": [target.constructor.name, propertyKey].toString(),
-      "invoker": async (req, res) => {
+      "invoker": async (req, res, next) => {
         const routerBean = getComponent(target.constructor);
-        const testResult = await routerBean[propertyKey](req, res);
-        if (typeof testResult === "object") {
-          res.json(testResult);
-        } else if (typeof testResult !== "undefined") {
-          res.send(testResult);
+        try {
+          const testResult = await routerBean[propertyKey](req, res);
+          if (typeof testResult === "object") {
+            res.json(testResult);
+          } else if (typeof testResult !== "undefined") {
+            res.send(testResult);
+          }
+          return testResult;
+        } catch (err) {
+          next(err)
         }
-        return testResult;
       }
     }
   }

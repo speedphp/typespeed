@@ -58,7 +58,7 @@ export default class TestOrm {
 
     @getMapping("/orm/pages/:id")
     async findPage(req, res) {
-        const results = await this.userModel.findAll("1", { id: -1 }, "*", { page: req.query.id, pageSize: 3 });
+        const results = await this.userModel.findAll("1", { id: -1 }, "*", { page: req.params.id, pageSize: 3 });
         log(this.userModel.page);
         res.send("pages find result: " + JSON.stringify(results));
     }
