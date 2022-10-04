@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import * as fs from "fs"
+import * as fs from "fs";
+import * as path from "path";
 import * as walkSync from "walk-sync";
 import * as cron from "cron";
 import LogFactory from "./factory/log-factory.class";
@@ -20,22 +21,22 @@ if (fs.existsSync(configPath)) {
 }
 
 function app<T extends { new(...args: any[]): {} }>(constructor: T) {
-    const srcDir = process.cwd() + "/src";
-    const srcFiles = walkSync(srcDir, { globs: ['**/*.ts'] });
+    const mainPath = path.dirname(process.argv[1]);
+    const coreDir = __dirname;
 
-    const testDir = process.cwd() + "/test";
-    const testFiles = walkSync(testDir, { globs: ['**/*.ts'] });
+    const coreFiles = walkSync(coreDir, { globs: ['**/*.ts'] });
+    const mainFiles = walkSync(mainPath, { globs: ['**/*.ts'] });
 
     (async function () {
         try {
-            for (let p of srcFiles) {
+            for (let p of coreFiles) {
                 let moduleName = p.replace(".d.ts", "").replace(".ts", "");
-                await import(srcDir + "/" + moduleName);
+                await import(coreDir + "/" + moduleName);
             }
 
-            for (let p of testFiles) {
+            for (let p of mainFiles) {
                 let moduleName = p.replace(".d.ts", "").replace(".ts", "");
-                await import(testDir + "/" + moduleName);
+                await import(mainPath + "/" + moduleName);
             }
         } catch (err) {
             console.error(err);

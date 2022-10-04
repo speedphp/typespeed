@@ -95,13 +95,15 @@ export default class ExpressServer extends ServerFactory {
             this.app.use(compression(this.compression));
         }
 
-        this.app.use(cookieParser(this.cookieConfig["secret"] || undefined, this.cookieConfig["options"] || {}));
+        if (this.cookieConfig) {
+            this.app.use(cookieParser(this.cookieConfig["secret"] || undefined, this.cookieConfig["options"] || {}));
+        }
 
         setRouter(this.app);
 
         this.app.use((req, res, next) => {
             error("404 not found, for page: " + req.url);
-            if (req.accepts('html')) {
+            if (req.accepts('html') && this.view) {
                 res.render(process.cwd() + "/static/error-page/404.html");
             } else if (req.accepts('json')) {
                 res.json({ error: 'Not found' });
@@ -116,7 +118,7 @@ export default class ExpressServer extends ServerFactory {
             }
             error(err);
             res.status(err.status || 500);
-            if (req.accepts('html')) {
+            if (req.accepts('html') && this.view) {
                 res.render(process.cwd() + "/static/error-page/500.html");
             } else if (req.accepts('json')) {
                 res.json({ error: 'Internal Server Error' });
