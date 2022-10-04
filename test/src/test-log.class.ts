@@ -1,4 +1,4 @@
-import { component } from "../../src/speed";
+import { component } from "../../";
 
 @component
 export default class TestLog {

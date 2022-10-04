@@ -1,4 +1,4 @@
-import { resource, component, log, autoware, schedule, getMapping, postMapping, Redis } from "../../src/speed";
+import { resource, component, log, autoware, schedule, getMapping, postMapping, Redis } from "../../";
 import UserModel from "./user-model.class";
 
 @component

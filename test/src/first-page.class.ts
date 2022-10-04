@@ -1,5 +1,5 @@
 //import * as jwttoken from "jsonwebtoken";
-import { log, component, getMapping } from "../../src/speed";
+import { log, component, getMapping } from "../../";
 
 @component
 export default class FirstPage {

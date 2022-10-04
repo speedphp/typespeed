@@ -1,4 +1,4 @@
-import { getMapping, postMapping, upload, jwt, log, component } from "../../src/speed";
+import { getMapping, postMapping, upload, jwt, log, component } from "../../";
 
 @component
 export default class SecondPage {

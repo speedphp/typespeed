@@ -1,4 +1,4 @@
-import { log, Model } from "../../src/speed";
+import { log, Model } from "../../";
 import UserDto from "./entities/user-dto.class";
 
 export default class UserModel extends Model {

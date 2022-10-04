@@ -8,7 +8,8 @@
     "dev": "nodemon",
     "test": "ts-node test/main.ts",
     "start": "ts-node --transpile-only test/main.ts",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "postbuild": "cp -r src/default/pages dist/default/pages"
   },
   "main": "dist/speed.js",
   "homepage": "https://github.com/speedphp/typespeed#readme",

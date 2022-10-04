@@ -1,4 +1,4 @@
-import { app, log, autoware, ServerFactory } from "../../src/speed";
+import { app, log, autoware, ServerFactory } from "../../";
 //import * as basicAuth from "express-basic-auth"
 
 @app
