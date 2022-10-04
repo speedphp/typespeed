@@ -11,18 +11,18 @@ let globalConfig = {};
 const resourceObjects = new Map();
 const beanMapper = new Map();
 const objectMapper = new Map();
-const configPath = process.cwd() + "/test/config.json";
-if (fs.existsSync(configPath)) {
-    globalConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+const coreDir = __dirname;
+const mainPath = path.dirname(process.argv[1]);
+const configFile = mainPath + "/config.json";
+if (fs.existsSync(configFile)) {
+    globalConfig = JSON.parse(fs.readFileSync(configFile, "utf-8"));
     const nodeEnv = process.env.NODE_ENV || "development";
-    const envConfigFile = process.cwd() + "/test/config-" + nodeEnv + ".json";
+    const envConfigFile = mainPath + "/config-" + nodeEnv + ".json";
     if (fs.existsSync(envConfigFile)) {
         globalConfig = Object.assign(globalConfig, JSON.parse(fs.readFileSync(envConfigFile, "utf-8")));
     }
 }
 function app(constructor) {
-    const mainPath = path.dirname(process.argv[1]);
-    const coreDir = __dirname;
     const coreFiles = walkSync(coreDir, { globs: ['**/*.ts'] });
     const mainFiles = walkSync(mainPath, { globs: ['**/*.ts'] });
     (async function () {
