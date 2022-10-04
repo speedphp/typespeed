@@ -28,7 +28,7 @@ commander_1.program.on('--help', () => {
 commander_1.program.parse(process.argv);
 function mkFile(fileName, targetPath, appName) {
     const tplPath = __dirname + "/templates";
-    const fileContents = fs.readFileSync(tplPath + "/tpl." + fileName, "utf-8");
+    const fileContents = fs.readFileSync(tplPath + "/" + fileName + ".tpl", "utf-8");
     fs.writeFileSync(targetPath + "/" + fileName, fileContents.replace("###appName###", appName));
 }
 //# sourceMappingURL=command.js.map
