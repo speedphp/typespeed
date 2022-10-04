@@ -1,6 +1,5 @@
-import { bean, log } from "../src/core.decorator";
 import * as tracer from "tracer";
-import LogFactory from "../src/factory/log-factory.class";
+import { bean, LogFactory } from "../../src/speed";
 
 export default class CustomLog extends LogFactory {
     private logger = tracer.console({

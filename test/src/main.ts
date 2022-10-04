@@ -1,6 +1,5 @@
-import ServerFactory from "../src/factory/server-factory.class";
-import { app, log, autoware } from "../src/speed";
-import * as basicAuth from "express-basic-auth"
+import { app, log, autoware, ServerFactory } from "../../src/speed";
+//import * as basicAuth from "express-basic-auth"
 
 @app
 class Main {
@@ -12,7 +11,7 @@ class Main {
         // this.server.setMiddleware(basicAuth({
         //     users: { 'admin': 'supersecret' }
         // }));
-        this.server.start(8080);
+        this.server.start(8081);
         log('start application');
     }
 }
