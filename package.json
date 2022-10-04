@@ -1,17 +1,18 @@
 {
   "name": "typespeed",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "A new Framework for TypeScript.",
   "author": "speedphp",
   "license": "MIT License",
   "scripts": {
-    "dev": "nodemon",
-    "test": "ts-node test/main.ts",
-    "start": "ts-node --transpile-only test/main.ts",
     "build": "tsc -p .",
-    "postbuild": "cp -r src/default/pages dist/default/pages"
+    "postbuild": "cp -r src/default/pages dist/default/pages",
+    "prebuild": "rm -rf dist",
+    "prepublish": "npm version patch && npm run build",
+    "upgrade": "npm version minor",
+    "postpublish": "git push"
   },
-  "main": "dist/speed.js",
+  "main": "dist/typespeed.js",
   "homepage": "https://github.com/speedphp/typespeed#readme",
   "repository": {
     "type": "git",
