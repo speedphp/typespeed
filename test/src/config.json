@@ -8,7 +8,7 @@
         "suffix": "html"
     },
     "static": "/static",
-    "favicon": "/favicon.ico",
+    "favicon": "/static/favicon.ico",
     "compression": {
         "level": 9
     },
