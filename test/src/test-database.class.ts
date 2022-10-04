@@ -1,4 +1,4 @@
-import { insert, update, select, param, resultType, cache, CacheFactory, getMapping, component, log, autoware } from "../../src/speed";
+import { insert, update, select, param, resultType, cache, CacheFactory, getMapping, component, log, autoware } from "../../";
 import UserDto from "./entities/user-dto.class";
 
 @component
