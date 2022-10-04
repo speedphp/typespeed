@@ -13,6 +13,9 @@
     "postpublish": "git push && git push --tags"
   },
   "main": "dist/typespeed.js",
+  "bin": {
+    "typespeed": "./dist/scaffold/command.js"
+  },
   "homepage": "https://github.com/speedphp/typespeed#readme",
   "repository": {
     "type": "git",
@@ -39,6 +42,7 @@
     "node-cache": "^5.1.2",
     "ioredis": "^5.2.3",
     "connect-redis": "^6.1.3",
-    "cron": "^2.1.0"
+    "cron": "^2.1.0",
+    "commander": "^9.4.0"
   }
 }
