@@ -1,5 +1,5 @@
 import { Model } from "../src/database.decorator";
-import { log } from "../src/speed";
+import { log } from "../src/core.decorator";
 import UserDto from "./entities/user-dto.class";
 
 export default class UserModel extends Model {

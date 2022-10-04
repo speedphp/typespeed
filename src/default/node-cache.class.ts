@@ -1,6 +1,6 @@
 import CacheFactory from "../factory/cache-factory.class";
 import * as cache from "node-cache";
-import { value, bean } from "../../src/speed";
+import { value, bean } from "../core.decorator";
 
 export default class NodeCache extends CacheFactory {
     private NodeCache: any;

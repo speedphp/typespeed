@@ -1,4 +1,4 @@
-import { log, component } from "../src/speed";
+import { log, component } from "../src/core.decorator";
 import { getMapping, postMapping, upload, jwt } from "../src/route.decorator";
 
 @component

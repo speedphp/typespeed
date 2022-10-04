@@ -1,4 +1,4 @@
-import { component, log } from "../src/speed";
+import { component, log } from "../src/core.decorator";
 
 @component
 export default class TestLog {

@@ -1,4 +1,4 @@
-import { bean, log } from "../src/speed";
+import { bean, log } from "../src/core.decorator";
 import * as tracer from "tracer";
 import LogFactory from "../src/factory/log-factory.class";
 
