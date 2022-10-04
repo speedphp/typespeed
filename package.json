@@ -8,7 +8,7 @@
     "build": "tsc -p .",
     "postbuild": "cp -r src/default/pages dist/default/pages",
     "prebuild": "rm -rf dist",
-    "prepublish": "npm version patch && npm run build",
+    "prepare": "npm version patch && npm run build",
     "upgrade": "npm version minor",
     "postpublish": "git push"
   },
