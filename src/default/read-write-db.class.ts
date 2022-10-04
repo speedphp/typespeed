@@ -1,6 +1,6 @@
 import { createConnection, createPool } from "mysql2";
 import DataSourceFactory from "../factory/data-source-factory.class";
-import { bean, config } from "../speed";
+import { bean, config } from "../core.decorator";
 
 export default class ReadWriteDb extends DataSourceFactory {
     private readonly readSession;

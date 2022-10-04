@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as multiparty from "multiparty";
 import { expressjwt } from "express-jwt";
-import { getComponent } from "./speed";
+import { getComponent } from "./core.decorator";
 
 const routerMapper = {
   "get": {},

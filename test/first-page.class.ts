@@ -1,5 +1,5 @@
 import * as jwttoken from "jsonwebtoken";
-import { log, component } from "../src/speed";
+import { log, component } from "../src/core.decorator";
 import { getMapping } from "../src/route.decorator";
 
 @component

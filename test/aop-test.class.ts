@@ -1,4 +1,4 @@
-import { before, log, component, after } from "../src/speed";
+import { before, log, component, after } from "../src/core.decorator";
 import FirstPage from "./first-page.class";
 
 @component

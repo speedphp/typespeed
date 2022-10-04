@@ -1,5 +1,5 @@
 import { ResultSetHeader } from 'mysql2';
-import { log, getBean } from './speed';
+import { log, getBean } from './core.decorator';
 import CacheFactory from './factory/cache-factory.class';
 import DataSourceFactory from './factory/data-source-factory.class';
 

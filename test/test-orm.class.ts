@@ -1,5 +1,5 @@
 import { getMapping, postMapping } from "../src/route.decorator";
-import { resource, component, log, autoware, schedule } from "../src/speed";
+import { resource, component, log, autoware, schedule } from "../src/core.decorator";
 import UserModel from "./user-model.class";
 import Redis from "../src/default/redis.class";
 
