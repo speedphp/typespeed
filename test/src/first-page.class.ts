@@ -1,6 +1,5 @@
-import * as jwttoken from "jsonwebtoken";
-import { log, component } from "../src/core.decorator";
-import { getMapping } from "../src/route.decorator";
+//import * as jwttoken from "jsonwebtoken";
+import { log, component, getMapping } from "../../src/speed";
 
 @component
 export default class FirstPage {
@@ -31,15 +30,15 @@ export default class FirstPage {
         res.render("index", { name: "zzz" });
     }
 
-    @getMapping("/login")
-    login() {
-        const token = jwttoken.sign({ foo: 'bar' }, 'shhhhhhared-secret');
-        /**
-         * 将这里获得的token，放到header的Authorization中。
-         * 值是：Bearer + token
-         */
-        return token;
-    }
+    // @getMapping("/login")
+    // login() {
+    //     const token = jwttoken.sign({ foo: 'bar' }, 'shhhhhhared-secret');
+    //     /**
+    //      * 将这里获得的token，放到header的Authorization中。
+    //      * 值是：Bearer + token
+    //      */
+    //     return token;
+    // }
 
     public getTestFromFirstPage() {
         return "getTestFromFirstPage";

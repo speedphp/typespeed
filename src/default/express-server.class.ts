@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import * as express from "express";
 import * as consolidate from "consolidate";
 import * as serveFavicon from "serve-favicon";
@@ -102,10 +103,11 @@ export default class ExpressServer extends ServerFactory {
         setRouter(this.app);
 
         const errorPageDir = __dirname + "/pages";
-        this.app.use((req, res, next) => {
+        this.app.use((req, res) => {
             error("404 not found, for page: " + req.url);
-            if (req.accepts('html') && this.view) {
-                res.render(errorPageDir + "/404.html");
+            res.status(404);
+            if (req.accepts('html')) {
+                res.type('html').send(fs.readFileSync(errorPageDir + "/404.html", "utf-8"));
             } else if (req.accepts('json')) {
                 res.json({ error: 'Not found' });
             } else {
@@ -119,8 +121,8 @@ export default class ExpressServer extends ServerFactory {
             }
             error(err);
             res.status(err.status || 500);
-            if (req.accepts('html') && this.view) {
-                res.render(errorPageDir + "500.html");
+            if (req.accepts('html')) {
+                res.type('html').send(fs.readFileSync(errorPageDir + "/500.html", "utf-8"));
             } else if (req.accepts('json')) {
                 res.json({ error: 'Internal Server Error' });
             } else {

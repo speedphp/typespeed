@@ -1,7 +1,4 @@
-import CacheFactory from "../src/factory/cache-factory.class";
-import { insert, update, select, param, resultType, cache } from "../src/database.decorator";
-import { getMapping } from "../src/route.decorator";
-import { component, log, autoware } from "../src/core.decorator";
+import { insert, update, select, param, resultType, cache, CacheFactory, getMapping, component, log, autoware } from "../../src/speed";
 import UserDto from "./entities/user-dto.class";
 
 @component

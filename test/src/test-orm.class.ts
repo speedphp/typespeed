@@ -1,7 +1,5 @@
-import { getMapping, postMapping } from "../src/route.decorator";
-import { resource, component, log, autoware, schedule } from "../src/core.decorator";
+import { resource, component, log, autoware, schedule, getMapping, postMapping, Redis } from "../../src/speed";
 import UserModel from "./user-model.class";
-import Redis from "../src/default/redis.class";
 
 @component
 export default class TestOrm {
