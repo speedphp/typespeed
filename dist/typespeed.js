@@ -36,4 +36,4 @@ var redis_class_1 = require("./default/redis.class");
 Object.defineProperty(exports, "Redis", { enumerable: true, get: function () { return redis_class_1.default; } });
 var read_write_db_class_1 = require("./default/read-write-db.class");
 Object.defineProperty(exports, "ReadWriteDb", { enumerable: true, get: function () { return read_write_db_class_1.default; } });
-//# sourceMappingURL=speed.js.map
+//# sourceMappingURL=typespeed.js.map
