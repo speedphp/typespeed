@@ -1,6 +1,6 @@
 {
   "name": "typespeed",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A new Framework for TypeScript.",
   "author": "speedphp",
   "license": "MIT License",
@@ -10,7 +10,7 @@
     "prebuild": "rm -rf dist",
     "prepare": "npm version patch && npm run build",
     "upgrade": "npm version minor",
-    "postpublish": "git push"
+    "postpublish": "git push && git push --tags"
   },
   "main": "dist/typespeed.js",
   "homepage": "https://github.com/speedphp/typespeed#readme",
