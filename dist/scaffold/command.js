@@ -1,8 +1,10 @@
+#!/usr/bin/env node
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const commander_1 = require("commander");
+const program = new commander_1.Command();
 const fs = require("fs");
-commander_1.program.command('new [appName]')
+program.command('new [appName]')
     .description('Create a new app.')
     .action((appName) => {
     const currentDir = process.cwd();
@@ -19,13 +21,13 @@ commander_1.program.command('new [appName]')
     console.log('  Please run `npm install` in the app directory.');
     console.log('');
 });
-commander_1.program.on('--help', () => {
+program.on('--help', () => {
     console.log('');
     console.log('  Examples:');
     console.log('');
     console.log('    $ speed new blog');
 });
-commander_1.program.parse(process.argv);
+program.parse(process.argv);
 function mkFile(fileName, targetPath, appName) {
     const tplPath = __dirname + "/templates";
     const fileContents = fs.readFileSync(tplPath + "/" + fileName + ".tpl", "utf-8");

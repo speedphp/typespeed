@@ -1,4 +1,6 @@
-import { program } from "commander";
+#!/usr/bin/env node
+import { Command } from 'commander';
+const program = new Command();
 import * as fs from "fs";
 
 program.command('new [appName]')
