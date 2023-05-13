@@ -10,7 +10,7 @@
     "prebuild": "rm -rf dist",
     "prepublishOnly": "npm version patch && npm run build",
     "upgrade": "npm version minor",
-    "postpublish": "git add . && git commit -m 'Added all built files in dist.' && git push && git push --tags"
+    "postpublish": "git push && git push --tags"
   },
   "main": "dist/typespeed.js",
   "bin": {
