@@ -23,7 +23,7 @@ if (fs.existsSync(configFile)) {
 }
 
 function app<T extends { new(...args: any[]): {} }>(constructor: T) {
-    const coreFiles = walkSync(coreDir, { globs: ['**/*.ts'] });
+    const coreFiles = walkSync(coreDir, { globs: ['**/*.ts'], ignore: ['**/*.d.ts', 'scaffold/**'] });
     const mainFiles = walkSync(mainPath, { globs: ['**/*.ts'] });
 
     (async function () {
