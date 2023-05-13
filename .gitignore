@@ -13,3 +13,4 @@ typings/
 .vscode
 .idea
 .DS_Store
+package-lock.json
