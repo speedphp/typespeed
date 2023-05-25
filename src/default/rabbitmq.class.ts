@@ -38,19 +38,21 @@ class RabbitMQ {
 async function getChannel() {
     if (rabbitConnection === null) {
         rabbitConnection = await connect(config("rabbitmq"));
+        process.once('SIGINT', async () => { 
+            await rabbitConnection.close();
+        });
     }
-    return await rabbitConnection.createChannel();
+    const channel = await rabbitConnection.createChannel();
+    return channel;
 }
 
 function rabbitListener(queue: string) {
-    console.log('rabbitListener outer');
-    return (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<(...args: any[]) => Promise<void>>) => {
-        descriptor.value = async function() {
-            console.log('rabbitListener inner');
+    return (target: any, propertyKey: string) => {
+        (async function () {
             const channel = await getChannel();
             await channel.checkQueue(queue);
             await channel.consume(queue, target[propertyKey], { noAck: true });
-        }
+        }());
     }
 }
 

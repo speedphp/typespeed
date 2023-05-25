@@ -17,6 +17,7 @@ export default class TestMq {
     @getMapping("/mq/sendByMQClass")
     async sendByMQClass() {
         this.rabbitMQ.send("myqueues", "hello world, by MQClass");
+        return "sent by MQClass";
     }
 
     @getMapping("/mq/sendByQueue")
