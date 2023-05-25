@@ -9,7 +9,7 @@ export default class TestMq {
     @autoware
     private rabbitMQ: RabbitMQ;
 
-    @rabbitListener("myqueues")
+    //@rabbitListener("myqueues")
     public async listen(message) {
         log(" Received by Decorator '%s'", message.content.toString());
     }
