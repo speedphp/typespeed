@@ -1,5 +1,4 @@
-import { component, getMapping, autoware, log } from "../../";
-import { RabbitMQ, rabbitListener } from "../../src/default/rabbitmq.class";
+import { component, getMapping, autoware, log, RabbitMQ, rabbitListener } from "../../";
 import { connect } from "amqplib";
 
 
