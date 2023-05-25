@@ -1,4 +1,4 @@
-import { bean, config, log } from "../core.decorator";
+import { bean, config } from "../core.decorator";
 import IoRedis from "ioredis";
 
 export default class Redis extends IoRedis {
