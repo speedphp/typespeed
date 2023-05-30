@@ -66,4 +66,3 @@ function rabbitListener(queue) {
     };
 }
 exports.rabbitListener = rabbitListener;
-//# sourceMappingURL=rabbitmq.class.js.map

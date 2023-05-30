@@ -63,4 +63,3 @@ __decorate([
     __metadata("design:returntype", data_source_factory_class_1.default)
 ], ReadWriteDb.prototype, "getDataSource", null);
 exports.default = ReadWriteDb;
-//# sourceMappingURL=read-write-db.class.js.map

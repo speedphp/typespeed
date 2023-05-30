@@ -29,4 +29,3 @@ __decorate([
     __metadata("design:returntype", log_factory_class_1.default)
 ], LogDefault.prototype, "createLog", null);
 exports.default = LogDefault;
-//# sourceMappingURL=log-default.class.js.map

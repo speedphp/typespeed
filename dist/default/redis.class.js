@@ -29,4 +29,3 @@ __decorate([
     __metadata("design:returntype", Redis)
 ], Redis.prototype, "getRedis", null);
 exports.default = Redis;
-//# sourceMappingURL=redis.class.js.map

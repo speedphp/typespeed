@@ -33,4 +33,3 @@ function mkFile(fileName, targetPath, appName) {
     const fileContents = fs.readFileSync(tplPath + "/" + fileName + ".tpl", "utf-8");
     fs.writeFileSync(targetPath + "/" + fileName, fileContents.replace("###appName###", appName));
 }
-//# sourceMappingURL=command.js.map

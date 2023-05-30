@@ -332,4 +332,3 @@ class Model {
     }
 }
 exports.Model = Model;
-//# sourceMappingURL=database.decorator.js.map

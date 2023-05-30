@@ -145,4 +145,3 @@ __decorate([
     __metadata("design:returntype", server_factory_class_1.default)
 ], ExpressServer.prototype, "getSever", null);
 exports.default = ExpressServer;
-//# sourceMappingURL=express-server.class.js.map

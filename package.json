@@ -6,7 +6,7 @@
   "license": "MIT License",
   "scripts": {
     "build": "tsc -p .",
-    "postbuild": "cp -r src/default/pages dist/default/pages && cp -r src/scaffold/templates dist/scaffold/templates",
+    "postbuild": "cp src/typespeed.d.ts dist/typespeed.d.ts && cp -r src/default/pages dist/default/pages && cp -r src/scaffold/templates dist/scaffold/templates",
     "prebuild": "rm -rf dist",
     "prepublishOnly": "npm version patch && npm run build",
     "upgrade": "npm version minor",

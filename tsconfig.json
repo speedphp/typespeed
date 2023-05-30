@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "module": "CommonJS",
-    "declaration": true,
+    //"declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "target": "ES2017",
-    "sourceMap": true,
+    //"sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "typeRoots": [
@@ -15,7 +15,8 @@
     ],
   },
   "include": [
-    "./src/**/*.ts"
+    "./src/**/*.ts",
+    "./src/typespeed.d.ts"
   ],
   "exclude": [
     "node_modules",
