@@ -28,7 +28,7 @@ program.on('--help', () => {
     console.log('');
     console.log('  Examples:');
     console.log('');
-    console.log('    $ speed new blog');
+    console.log('    $ typespeed new blog');
 });
 
 program.parse(process.argv);

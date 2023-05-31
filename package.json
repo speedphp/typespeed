@@ -20,6 +20,15 @@
     "type": "git",
     "url": "git+https://github.com/speedphp/typespeed.git"
   },
+  "keywords": [
+    "framework",
+    "express",
+    "web",
+    "app",
+    "api",
+    "model",
+    "middleware"
+  ],
   "dependencies": {
     "@types/node": "^18.0.6",
     "commander": "^9.4.0",
