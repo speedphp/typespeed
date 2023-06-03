@@ -42,5 +42,10 @@
         "host": "localhost",
         "port": "6379",
         "db": 0
+    },
+    "jwt" : {
+        "secret": "shhhhhhared-secret", 
+        "algorithms": ["HS256"],
+        "ignore": ["/first", "/second/testSession"]
     }
 }

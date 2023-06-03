@@ -32,8 +32,7 @@ class ExpressServer extends server_factory_class_1.default {
         this.middlewareList.push(middleware);
     }
     start(port) {
-        (0, core_decorator_1.log)("==============", this.interceptor);
-        this.app.use(this.interceptor.afterCompletion);
+        this.app.use(this.authentication.afterCompletion);
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
@@ -72,7 +71,7 @@ class ExpressServer extends server_factory_class_1.default {
         if (this.cookieConfig) {
             this.app.use(cookieParser(this.cookieConfig["secret"] || undefined, this.cookieConfig["options"] || {}));
         }
-        this.app.use(this.interceptor.preHandle);
+        this.app.use(this.authentication.preHandle);
         if (this.static) {
             const staticPath = process.cwd() + this.static;
             this.app.use(express.static(staticPath));
@@ -145,7 +144,7 @@ __decorate([
 __decorate([
     core_decorator_1.autoware,
     __metadata("design:type", authentication_factory_class_1.default)
-], ExpressServer.prototype, "interceptor", void 0);
+], ExpressServer.prototype, "authentication", void 0);
 __decorate([
     core_decorator_1.bean,
     __metadata("design:type", Function),

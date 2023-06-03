@@ -344,4 +344,4 @@ declare class ExpressServer extends ServerFactory {
     private setDefaultMiddleware;
 }
 
-export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, component, bean, resource, log, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, resultType, cache, Model };
+export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, AuthenticationFactory, component, bean, resource, log, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, resultType, cache, Model};
