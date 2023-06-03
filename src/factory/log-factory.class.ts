@@ -1,4 +1,11 @@
 export default abstract class LogFactory {
-    abstract log(message?: any, ...optionalParams: any[]) : void;
-    abstract error(message?: any, ...optionalParams: any[]) : void;
+    public log(message?: any, ...optionalParams: any[]) : void {
+        console.log(message, ...optionalParams);
+    }
+    public error(message?: any, ...optionalParams: any[]) : void {
+        console.error(message, ...optionalParams);
+    }
+    public debug(message?: any, ...optionalParams: any[]) : void {
+        console.debug(message, ...optionalParams);
+    }
 }

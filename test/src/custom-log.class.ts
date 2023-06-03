@@ -23,4 +23,10 @@ export default class CustomLog extends LogFactory {
     public error(message?: any, ...optionalParams: any[]) : void {
         this.logger.error(message, ...optionalParams);
     }
+
+    public debug(message?: any, ...optionalParams: any[]) : void {
+        if(process.env.NODE_ENV === "development"){
+            this.logger.debug(message, ...optionalParams);
+        }
+    }
 }

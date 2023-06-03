@@ -15,12 +15,6 @@ class LogDefault extends log_factory_class_1.default {
     createLog() {
         return new LogDefault();
     }
-    log(message, ...optionalParams) {
-        console.log(message, ...optionalParams);
-    }
-    error(message, ...optionalParams) {
-        console.error(message, ...optionalParams);
-    }
 }
 __decorate([
     core_decorator_1.bean,
