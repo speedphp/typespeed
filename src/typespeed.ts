@@ -7,6 +7,7 @@ export { default as LogFactory} from "./factory/log-factory.class";
 export { default as CacheFactory} from "./factory/cache-factory.class";
 export { default as DataSourceFactory} from "./factory/data-source-factory.class";
 export { default as ServerFactory} from "./factory/server-factory.class";
+export { default as AuthenticationFactory} from "./factory/authentication-factory.class";
 
 export { default as ExpressServer} from "./default/express-server.class";
 export { default as LogDefault} from "./default/log-default.class";

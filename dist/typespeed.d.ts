@@ -192,12 +192,17 @@ declare abstract class LogFactory {
      * 日志打印方法
      * @param message 日志内容
      */
-    abstract log(message?: any, ...optionalParams: any[]): void;
+    log(message?: any, ...optionalParams: any[]): void;
     /**
      * 错误日志打印方法
      * @param message 日志内容
      */
-    abstract error(message?: any, ...optionalParams: any[]): void;
+    error(message?: any, ...optionalParams: any[]): void;
+    /**
+     * 调试日志打印方法
+     * @param message 日志内容
+     */
+    debug(message?: any, ...optionalParams: any[]): void;
 }
 /**数据源工厂类 */
 declare abstract class DataSourceFactory {
@@ -233,6 +238,23 @@ declare abstract class CacheFactory {
     abstract has(key: string): boolean;
     /**清空缓存 */
     abstract flush(): void;
+}
+/**认证类 */
+declare abstract class AuthenticationFactory {
+    /**
+     * 路由页面执行前认证
+     * @param req 请求对象
+     * @param res 响应对象
+     * @param next 下一步函数
+     */
+    preHandle(req: express.Request, res: express.Response, next: express.NextFunction): void;
+    /**
+     * 开始执行中间件前认证
+     * @param req 请求对象
+     * @param res 响应对象
+     * @param next 下一步函数
+     */
+    afterCompletion(req: express.Request, res: express.Response, next: express.NextFunction): void;
 }
 /**Redis 操作类 */
 declare class Redis extends IoRedis {

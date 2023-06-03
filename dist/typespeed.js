@@ -14,7 +14,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReadWriteDb = exports.Redis = exports.NodeCache = exports.LogDefault = exports.ExpressServer = exports.ServerFactory = exports.DataSourceFactory = exports.CacheFactory = exports.LogFactory = void 0;
+exports.ReadWriteDb = exports.Redis = exports.NodeCache = exports.LogDefault = exports.ExpressServer = exports.AuthenticationFactory = exports.ServerFactory = exports.DataSourceFactory = exports.CacheFactory = exports.LogFactory = void 0;
 __exportStar(require("./core.decorator"), exports);
 __exportStar(require("./route.decorator"), exports);
 __exportStar(require("./database.decorator"), exports);
@@ -26,6 +26,8 @@ var data_source_factory_class_1 = require("./factory/data-source-factory.class")
 Object.defineProperty(exports, "DataSourceFactory", { enumerable: true, get: function () { return data_source_factory_class_1.default; } });
 var server_factory_class_1 = require("./factory/server-factory.class");
 Object.defineProperty(exports, "ServerFactory", { enumerable: true, get: function () { return server_factory_class_1.default; } });
+var authentication_factory_class_1 = require("./factory/authentication-factory.class");
+Object.defineProperty(exports, "AuthenticationFactory", { enumerable: true, get: function () { return authentication_factory_class_1.default; } });
 var express_server_class_1 = require("./default/express-server.class");
 Object.defineProperty(exports, "ExpressServer", { enumerable: true, get: function () { return express_server_class_1.default; } });
 var log_default_class_1 = require("./default/log-default.class");

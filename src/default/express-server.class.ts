@@ -10,6 +10,7 @@ import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route.decorator";
 import { bean, log, value, error, autoware } from "../core.decorator";
 import Redis from "./redis.class";
+import InterceptorFactory from "../factory/authentication-factory.class";
 
 export default class ExpressServer extends ServerFactory {
 
@@ -37,6 +38,9 @@ export default class ExpressServer extends ServerFactory {
     @autoware
     private redisClient: Redis;
 
+    @autoware
+    public interceptor: InterceptorFactory;
+
     @bean
     public getSever(): ServerFactory {
         const server = new ExpressServer();
@@ -49,6 +53,9 @@ export default class ExpressServer extends ServerFactory {
     }
 
     public start(port: number) {
+        log("==============", this.interceptor)
+        this.app.use(this.interceptor.afterCompletion);
+        
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
@@ -82,11 +89,6 @@ export default class ExpressServer extends ServerFactory {
             this.app.use(expressSession(sessionConfig));
         }
 
-        if (this.static) {
-            const staticPath = process.cwd() + this.static;
-            this.app.use(express.static(staticPath))
-        }
-
         if (this.favicon) {
             const faviconPath = process.cwd() + this.favicon;
             this.app.use(serveFavicon(faviconPath));
@@ -100,6 +102,12 @@ export default class ExpressServer extends ServerFactory {
             this.app.use(cookieParser(this.cookieConfig["secret"] || undefined, this.cookieConfig["options"] || {}));
         }
 
+        this.app.use(this.interceptor.preHandle);
+
+        if (this.static) {
+            const staticPath = process.cwd() + this.static;
+            this.app.use(express.static(staticPath))
+        }
         setRouter(this.app);
 
         const errorPageDir = __dirname + "/pages";
