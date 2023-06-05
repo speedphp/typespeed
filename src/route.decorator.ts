@@ -8,7 +8,7 @@ const routerMapper = {
   "post": {},
   "all": {}
 };
-
+const routerParams = {};
 const routerMiddleware = {};
 function setRouter(app: express.Application) {
   ["get", "post", "all"].forEach(method => {
@@ -75,8 +75,49 @@ function jwt(jwtConfig) {
   }
 }
 
+function req(target: any, propertyKey: string, parameterIndex: number) {
+  const key = [target.constructor.name, propertyKey, parameterIndex].toString();
+  routerParams[key] = (req, res, next) => req;
+}
+
+function res(target: any, propertyKey: string, parameterIndex: number) {
+  const key = [target.constructor.name, propertyKey, parameterIndex].toString();
+  routerParams[key] = (req, res, next) => res;
+}
+
+function next(target: any, propertyKey: string, parameterIndex: number) {
+  const key = [target.constructor.name, propertyKey, parameterIndex].toString();
+  routerParams[key] = (req, res, next) => next;
+}
+
+function requestBody(target: any, propertyKey: string, parameterIndex: number) {
+  const key = [target.constructor.name, propertyKey, parameterIndex].toString();
+  routerParams[key] = (req, res, next) => req.body;
+}
+
+function requestParam(paramName: string) {
+  return (target: any, propertyKey: string, parameterIndex: number) => {
+    const key = [target.constructor.name, propertyKey, parameterIndex].toString();
+    routerParams[key] = (req, res, next) => req.params[paramName];
+  }
+}
+
+function requestQuery(paramName: string) {
+  return (target: any, propertyKey: string, parameterIndex: number) => {
+    const key = [target.constructor.name, propertyKey, parameterIndex].toString();
+    routerParams[key] = (req, res, next) => req.query[paramName];
+  }
+}
+
+function formData(paramName: string) {
+  return (target: any, propertyKey: string, parameterIndex: number) => {
+    const key = [target.constructor.name, propertyKey, parameterIndex].toString();
+    routerParams[key] = (req, res, next) => req.body[paramName];
+  }
+}
+
 const getMapping = (value: string) => mapperFunction("get", value);
 const postMapping = (value: string) => mapperFunction("post", value);
 const requestMapping = (value: string) => mapperFunction("all", value);
 
-export { getMapping, postMapping, requestMapping, setRouter, upload, jwt };
+export { req, req as request, res, res as response, getMapping, postMapping, requestMapping, setRouter, upload, jwt };
