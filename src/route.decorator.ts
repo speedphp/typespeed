@@ -2,6 +2,7 @@ import * as express from "express";
 import * as multiparty from "multiparty";
 import { expressjwt } from "express-jwt";
 import { getComponent } from "./core.decorator";
+import { param } from "./database.decorator";
 
 const routerMapper = {
   "get": {},
@@ -9,6 +10,7 @@ const routerMapper = {
   "all": {}
 };
 const routerParams = {};
+const routerParamsTotal = {};
 const routerMiddleware = {};
 function setRouter(app: express.Application) {
   ["get", "post", "all"].forEach(method => {
@@ -32,6 +34,12 @@ function mapperFunction(method: string, value: string) {
       "invoker": async (req, res, next) => {
         const routerBean = getComponent(target.constructor);
         try {
+          console.log(routerParamsTotal)
+          let paramTotal = routerBean[propertyKey].length;
+          if(routerParamsTotal[[target.constructor.name, propertyKey].toString()]){
+            paramTotal = Math.max(paramTotal, routerParamsTotal[[target.constructor.name, propertyKey].toString()]);
+          }
+          console.log("routing method param lenght: ", [target.constructor.name, propertyKey].toString(), paramTotal);
           const testResult = await routerBean[propertyKey](req, res);
           if (typeof testResult === "object") {
             res.json(testResult);
@@ -73,6 +81,39 @@ function jwt(jwtConfig) {
       routerMiddleware[key] = [expressjwt(jwtConfig)];
     }
   }
+}
+
+function before(constructorFunction, methodName: string) {
+  const targetBean = getComponent(constructorFunction);
+  return function (target, propertyKey: string) {
+      const currentMethod = targetBean[methodName];
+      if(currentMethod.length > 0){
+        routerParamsTotal[[constructorFunction.name, methodName].toString()] = currentMethod.length;
+      }
+      Object.assign(targetBean, {
+          [methodName]: function (...args) {
+              target[propertyKey](...args);
+              return currentMethod.apply(targetBean, args);
+          }
+      })
+  };
+}
+
+function after(constructorFunction, methodName: string) {
+  const targetBean = getComponent(constructorFunction);
+  return function (target, propertyKey: string) {
+      const currentMethod = targetBean[methodName];
+      if(currentMethod.length > 0){
+        routerParamsTotal[[constructorFunction.name, methodName].toString()] = currentMethod.length;
+      }
+      Object.assign(targetBean, {
+          [methodName]: function (...args) {
+              const result = currentMethod.apply(targetBean, args);
+              const afterResult = target[propertyKey](result);
+              return afterResult ?? result;
+          }
+      })
+  };
 }
 
 function req(target: any, propertyKey: string, parameterIndex: number) {
@@ -120,4 +161,4 @@ const getMapping = (value: string) => mapperFunction("get", value);
 const postMapping = (value: string) => mapperFunction("post", value);
 const requestMapping = (value: string) => mapperFunction("all", value);
 
-export { req, req as request, res, res as response, getMapping, postMapping, requestMapping, setRouter, upload, jwt };
+export { req, req as request, res, res as response, before, after, getMapping, postMapping, requestMapping, setRouter, upload, jwt };

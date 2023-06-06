@@ -145,34 +145,6 @@ function error(message?: any, ...optionalParams: any[]) {
     }
 }
 
-function before(constructorFunction, methodName: string) {
-    const targetBean = getComponent(constructorFunction);
-    return function (target, propertyKey: string) {
-        const currentMethod = targetBean[methodName];
-        Object.assign(targetBean, {
-            [methodName]: function (...args) {
-                target[propertyKey](...args);
-                log("========== before ==========");
-                return currentMethod.apply(targetBean, args);
-            }
-        })
-    };
-}
-
-function after(constructorFunction, methodName: string) {
-    const targetBean = getComponent(constructorFunction);
-    return function (target, propertyKey: string) {
-        const currentMethod = targetBean[methodName];
-        Object.assign(targetBean, {
-            [methodName]: function (...args) {
-                const result = currentMethod.apply(targetBean, args);
-                const afterResult = target[propertyKey](result);
-                log("========== after ==========");
-                return afterResult ?? result;
-            }
-        })
-    };
-}
 
 function schedule(cronTime: string | Date) {
     return (target: any, propertyKey: string) => {
@@ -180,4 +152,4 @@ function schedule(cronTime: string | Date) {
     }
 }
 
-export { component, bean, resource, log, app, before, after, value, error, config, autoware, getBean, getComponent, schedule };
+export { component, bean, resource, log, app, value, error, config, autoware, getBean, getComponent, schedule };
