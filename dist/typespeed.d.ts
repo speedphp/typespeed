@@ -169,6 +169,21 @@ declare function after(constructorFunction: any, methodName: string): (target: a
 declare function schedule(cronTime: string | Date): (target: any, propertyKey: string) => void;
 /**RabbitMQ 监听装饰器，参数是监听的队列名称，当接受到消息时将执行被装饰方法 */
 declare function rabbitListener(queue: string): (target: any, propertyKey: string) => void;
+/** request 对象装饰器，作为路由页面方法参数，获取 request 对象 */
+declare function req(target: any, propertyKey: string, parameterIndex: number) : void;
+/** response 对象装饰器，作为路由页面方法参数，获取 response 对象 */
+declare function res(target: any, propertyKey: string, parameterIndex: number) : void;
+/** next 函数装饰器，作为路由页面方法参数，获取  next 函数 */
+declare function next(target: any, propertyKey: string, parameterIndex: number) : void;
+/** request.body 对象装饰器，作为路由页面方法参数，获取 request.body 对象 */
+declare function reqBody(target: any, propertyKey: string, parameterIndex: number) : void;
+/** request.param 值装饰器，作为路由页面方法参数，获取 request.params 内容 */
+declare function reqParam(paramName: string) : (target: any, propertyKey: string, parameterIndex: number) => void;
+/** request.query 值装饰器，作为路由页面方法参数，获取 request.query 内容 */
+declare function reqQuery(paramName: string) : (target: any, propertyKey: string, parameterIndex: number) => void;
+/** request 表单值装饰器，作为路由页面方法参数，获取 request.body 表单内容 */
+declare function reqForm(paramName: string) : (target: any, propertyKey: string, parameterIndex: number) => void;
+
 /**框架 Web 服务工厂类 */
 declare abstract class ServerFactory {
     /**Web 服务实例 */
@@ -344,4 +359,4 @@ declare class ExpressServer extends ServerFactory {
     private setDefaultMiddleware;
 }
 
-export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, AuthenticationFactory, component, bean, resource, log, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, resultType, cache, Model};
+export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, AuthenticationFactory, next, reqBody, reqQuery, reqForm, reqParam, req, req as request, res, res as response, component, bean, resource, log, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, resultType, cache, Model};
