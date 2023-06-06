@@ -34,13 +34,19 @@ function mapperFunction(method: string, value: string) {
       "invoker": async (req, res, next) => {
         const routerBean = getComponent(target.constructor);
         try {
-          console.log(routerParamsTotal)
           let paramTotal = routerBean[propertyKey].length;
           if(routerParamsTotal[[target.constructor.name, propertyKey].toString()]){
             paramTotal = Math.max(paramTotal, routerParamsTotal[[target.constructor.name, propertyKey].toString()]);
           }
-          console.log("routing method param lenght: ", [target.constructor.name, propertyKey].toString(), paramTotal);
-          const testResult = await routerBean[propertyKey](req, res);
+          let args = [req, res, next];
+          if(paramTotal > 0) {
+            for(let i = 0; i < paramTotal; i++) {
+              if(routerParams[[target.constructor.name, propertyKey, i].toString()]){
+                args[i] = routerParams[[target.constructor.name, propertyKey, i].toString()](req, res, next);
+              }
+            }
+          }
+          const testResult = await routerBean[propertyKey].apply(routerBean, args);
           if (typeof testResult === "object") {
             res.json(testResult);
           } else if (typeof testResult !== "undefined") {
@@ -131,26 +137,26 @@ function next(target: any, propertyKey: string, parameterIndex: number) {
   routerParams[key] = (req, res, next) => next;
 }
 
-function requestBody(target: any, propertyKey: string, parameterIndex: number) {
+function reqBody(target: any, propertyKey: string, parameterIndex: number) {
   const key = [target.constructor.name, propertyKey, parameterIndex].toString();
   routerParams[key] = (req, res, next) => req.body;
 }
 
-function requestParam(paramName: string) {
+function reqParam(paramName: string) {
   return (target: any, propertyKey: string, parameterIndex: number) => {
     const key = [target.constructor.name, propertyKey, parameterIndex].toString();
     routerParams[key] = (req, res, next) => req.params[paramName];
   }
 }
 
-function requestQuery(paramName: string) {
+function reqQuery(paramName: string) {
   return (target: any, propertyKey: string, parameterIndex: number) => {
     const key = [target.constructor.name, propertyKey, parameterIndex].toString();
     routerParams[key] = (req, res, next) => req.query[paramName];
   }
 }
 
-function formData(paramName: string) {
+function reqForm(paramName: string) {
   return (target: any, propertyKey: string, parameterIndex: number) => {
     const key = [target.constructor.name, propertyKey, parameterIndex].toString();
     routerParams[key] = (req, res, next) => req.body[paramName];
@@ -161,4 +167,4 @@ const getMapping = (value: string) => mapperFunction("get", value);
 const postMapping = (value: string) => mapperFunction("post", value);
 const requestMapping = (value: string) => mapperFunction("all", value);
 
-export { req, req as request, res, res as response, before, after, getMapping, postMapping, requestMapping, setRouter, upload, jwt };
+export { next, reqBody, reqQuery, reqForm, reqParam, req, req as request, res, res as response, before, after, getMapping, postMapping, requestMapping, setRouter, upload, jwt };
