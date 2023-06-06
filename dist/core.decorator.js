@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.schedule = exports.getComponent = exports.getBean = exports.autoware = exports.config = exports.error = exports.value = exports.after = exports.before = exports.app = exports.log = exports.resource = exports.bean = exports.component = void 0;
+exports.schedule = exports.getComponent = exports.getBean = exports.autoware = exports.config = exports.error = exports.value = exports.app = exports.log = exports.resource = exports.bean = exports.component = void 0;
 require("reflect-metadata");
 const fs = require("fs");
 const path = require("path");
@@ -147,35 +147,6 @@ function error(message, ...optionalParams) {
     }
 }
 exports.error = error;
-function before(constructorFunction, methodName) {
-    const targetBean = getComponent(constructorFunction);
-    return function (target, propertyKey) {
-        const currentMethod = targetBean[methodName];
-        Object.assign(targetBean, {
-            [methodName]: function (...args) {
-                target[propertyKey](...args);
-                log("========== before ==========");
-                return currentMethod.apply(targetBean, args);
-            }
-        });
-    };
-}
-exports.before = before;
-function after(constructorFunction, methodName) {
-    const targetBean = getComponent(constructorFunction);
-    return function (target, propertyKey) {
-        const currentMethod = targetBean[methodName];
-        Object.assign(targetBean, {
-            [methodName]: function (...args) {
-                const result = currentMethod.apply(targetBean, args);
-                const afterResult = target[propertyKey](result);
-                log("========== after ==========");
-                return afterResult !== null && afterResult !== void 0 ? afterResult : result;
-            }
-        });
-    };
-}
-exports.after = after;
 function schedule(cronTime) {
     return (target, propertyKey) => {
         new cron.CronJob(cronTime, target[propertyKey]).start();
