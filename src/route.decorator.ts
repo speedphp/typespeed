@@ -25,11 +25,37 @@ function setRouter(app: express.Application) {
   });
 }
 
+function apiDocs() {
+  ["get", "post", "all"].forEach(method => {
+    for (let key in routerMapper[method]) {
+      let routerBean = getComponent(routerMapper[method][key].target);
+      let returnType = Reflect.getMetadata("design:returntype", routerBean, routerMapper[method][key].propertyKey);
+      if(returnType === Promise) {
+        
+      }
+      if(returnType !== undefined){
+        let returnTypeObject = new returnType();
+        Object.keys(returnTypeObject)
+      }
+    }
+  });
+
+  // console.log(target.constructor, propertyKey);
+
+  // let returnType = Reflect.getMetadata("design:returntype", target.constructor, propertyKey);
+  // console.log(target, propertyKey, returnType);
+  // let returnTypeObject = new returnType();
+  // console.log(returnType.toString(), Object.getOwnPropertyNames(returnTypeObject), returnTypeObject.prototype, Object.getPrototypeOf(returnTypeObject),
+  // Object.keys(returnTypeObject));
+}
+
 function mapperFunction(method: string, value: string) {
   return (target: any, propertyKey: string) => {
     routerMapper[method][value] = {
       "path": value,
       "name": [target.constructor.name, propertyKey].toString(),
+      "target": target.constructor,
+      "propertyKey": propertyKey,
       "invoker": async (req, res, next) => {
         const routerBean = getComponent(target.constructor);
         try {
@@ -46,15 +72,7 @@ function mapperFunction(method: string, value: string) {
             }
           }
           const testResult = await routerBean[propertyKey].apply(routerBean, args);
-
-
-          let returnType = Reflect.getMetadata("design:returntype", routerBean, propertyKey);
-          let returnTypeObject = new returnType();
-          console.log(testResult, returnType.toString(), Object.getOwnPropertyNames(returnTypeObject), returnTypeObject.prototype, Object.getPrototypeOf(returnTypeObject),
-          Object.keys(returnTypeObject));
-        
-
-
+          apiDocs();
           if (typeof testResult === "object") {
             res.json(testResult);
           } else if (typeof testResult !== "undefined") {
