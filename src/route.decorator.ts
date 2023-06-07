@@ -2,7 +2,6 @@ import * as express from "express";
 import * as multiparty from "multiparty";
 import { expressjwt } from "express-jwt";
 import { getComponent } from "./core.decorator";
-import { param } from "./database.decorator";
 
 const routerMapper = {
   "get": {},
@@ -47,6 +46,15 @@ function mapperFunction(method: string, value: string) {
             }
           }
           const testResult = await routerBean[propertyKey].apply(routerBean, args);
+
+
+          let returnType = Reflect.getMetadata("design:returntype", routerBean, propertyKey);
+          let returnTypeObject = new returnType();
+          console.log(testResult, returnType.toString(), Object.getOwnPropertyNames(returnTypeObject), returnTypeObject.prototype, Object.getPrototypeOf(returnTypeObject),
+          Object.keys(returnTypeObject));
+        
+
+
           if (typeof testResult === "object") {
             res.json(testResult);
           } else if (typeof testResult !== "undefined") {

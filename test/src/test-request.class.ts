@@ -1,5 +1,7 @@
 import { component, getMapping, postMapping, log } from "../../";
 import { req, res, reqQuery, reqBody, reqForm, reqParam } from "../../src/route.decorator";
+import MutilUsers from "./entities/mutil-users.class";
+import UserDto from "./entities/user-dto.class";
 
 
 @component
@@ -11,9 +13,9 @@ export default class TestRequest {
     }
 
     @getMapping("/request/query")
-    testQuery(req, res, @reqQuery("id") id: number) {
+    testQuery(req, res, @reqQuery("id") id: number): MutilUsers {
         log("id: " + id);
-        res.send("test query");
+        return new MutilUsers("group", [new UserDto(1, "name"), new UserDto(2, "name")]);
     }
 
     @postMapping("/request/body")
