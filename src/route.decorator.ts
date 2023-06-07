@@ -25,18 +25,24 @@ function setRouter(app: express.Application) {
   });
 }
 
-function apiDocs() {
-  ["get", "post", "all"].forEach(method => {
+
+async function apiDocs() {
+  ["get", "post", "all"].forEach(async method =>  {
     for (let key in routerMapper[method]) {
       let routerBean = getComponent(routerMapper[method][key].target);
       let returnType = Reflect.getMetadata("design:returntype", routerBean, routerMapper[method][key].propertyKey);
+      console.log(routerMapper[method][key].target, routerMapper[method][key].propertyKey)
       if(returnType === Promise) {
-        
+        let returnTypeObject = returnType.resolve;
+        if(returnTypeObject !== undefined){
+          console.log(returnTypeObject, Object.getOwnPropertyNames(returnTypeObject));
+        }
+        continue;
       }
-      if(returnType !== undefined){
-        let returnTypeObject = new returnType();
-        Object.keys(returnTypeObject)
-      }
+      // if(returnType !== undefined){
+      //   let returnTypeObject = new returnType();
+      //   console.log(Object.getOwnPropertyNames(returnTypeObject));
+      // }
     }
   });
 
@@ -72,7 +78,7 @@ function mapperFunction(method: string, value: string) {
             }
           }
           const testResult = await routerBean[propertyKey].apply(routerBean, args);
-          apiDocs();
+          await apiDocs();
           if (typeof testResult === "object") {
             res.json(testResult);
           } else if (typeof testResult !== "undefined") {

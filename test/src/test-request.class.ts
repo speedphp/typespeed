@@ -13,15 +13,15 @@ export default class TestRequest {
     }
 
     @getMapping("/request/query")
-    testQuery(req, res, @reqQuery("id") id: number): MutilUsers {
+    testQuery(req, res, @reqQuery("id") id: number): Promise<MutilUsers> {
         log("id: " + id);
-        return new MutilUsers("group", [new UserDto(1, "name"), new UserDto(2, "name")]);
+        return Promise.resolve(new MutilUsers("group", [new UserDto(1, "name"), new UserDto(2, "name")]));
     }
 
     @postMapping("/request/body")
-    testBody(@res res, @reqBody body: object) {
+    testBody(@res res, @reqBody body: object):MutilUsers {
         log("body: " + JSON.stringify(body));
-        res.send("test body");
+        return new MutilUsers("group", [new UserDto(1, "name"), new UserDto(2, "name")]);
     }
 
     @postMapping("/request/form")
