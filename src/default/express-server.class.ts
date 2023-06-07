@@ -11,6 +11,7 @@ import { setRouter } from "../route.decorator";
 import { bean, log, value, error, autoware } from "../core.decorator";
 import Redis from "./redis.class";
 import AuthenticationFactory from "../factory/authentication-factory.class";
+import * as swaggerUi from "swagger-ui-express";
 
 export default class ExpressServer extends ServerFactory {
 
@@ -54,12 +55,20 @@ export default class ExpressServer extends ServerFactory {
 
     public start(port: number) {
         this.app.use(this.authentication.afterCompletion);
-        
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
-
+        this.app.use(
+            "/docs",
+            swaggerUi.serve,
+            swaggerUi.setup(undefined, {
+              swaggerOptions: {
+                url: "/api-docs.json",
+              },
+            })
+          );
         this.setDefaultMiddleware();
+ 
         this.app.listen(port, () => {
             log("server start at port: " + port);
         });

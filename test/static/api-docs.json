@@ -1,0 +1,180 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Game Test",
+    "description": "This is a game test",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://game.speedphp.com"
+    }
+  ],
+  "tags": [
+    {
+      "name": "game-controller",
+      "description": "Game Controller"
+    },
+    {
+      "name": "user-controller",
+      "description": "User Controller"
+    }
+  ],
+  "paths": {
+    "/enter-room": {
+      "post": {
+        "tags": [
+          "game-controller"
+        ],
+        "summary": "enterRoom",
+        "operationId": "enterRoomPOST",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterRoomRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/checkProfile": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "checkProfile",
+        "operationId": "checkProfileGET",
+        "parameters": [
+          {
+            "name": "profile",
+            "description": "profileName",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/addUserPoints": {
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "addUserPoints",
+        "operationId": "addUserPointsPOST",
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "userId",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "con",
+            "description": "con",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EnterRoomRequest": {
+        "title": "EnterRoomRequest",
+        "type": "object",
+        "properties": {
+          "game": {
+            "$ref": "#/components/schemas/GameDO"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string"
+          }
+        }
+      },
+      "GameResponse": {
+        "title": "GameResponse",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "initLevel": {
+            "type": "number"
+          },
+          "uuid": {
+            "type": "string"
+          }
+        }
+      },
+      "GameDO": {
+        "title": "GameDO",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
