@@ -1,5 +1,4 @@
-import { component, getMapping, postMapping, log } from "../../";
-import { req, res, reqQuery, reqBody, reqForm, reqParam } from "../../src/route.decorator";
+import { component, getMapping, postMapping, log, req, res, reqQuery, reqBody, reqForm, reqParam } from "../../";
 import MutilUsers from "./entities/mutil-users.class";
 import UserDto from "./entities/user-dto.class";
 
@@ -13,7 +12,7 @@ export default class TestRequest {
     }
 
     @getMapping("/request/query")
-    testQuery(req, res, @reqQuery("id") id: number): Promise<MutilUsers> {
+    async testQuery(req, res, @reqQuery("id") id: number): Promise<MutilUsers> {
         log("id: " + id);
         return Promise.resolve(new MutilUsers("group", [new UserDto(1, "name"), new UserDto(2, "name")]));
     }

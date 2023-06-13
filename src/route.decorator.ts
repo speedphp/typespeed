@@ -14,9 +14,9 @@ const routerMiddleware = {};
 function setRouter(app: express.Application) {
   ["get", "post", "all"].forEach(method => {
     for (let key in routerMapper[method]) {
-      let rounterFunction = routerMapper[method][key];
+      const rounterFunction = routerMapper[method][key];
       if (routerMiddleware[rounterFunction["name"]]) {
-        let args: Array<any> = [key, ...routerMiddleware[rounterFunction["name"]], rounterFunction["invoker"]];
+        const args: Array<any> = [key, ...routerMiddleware[rounterFunction["name"]], rounterFunction["invoker"]];
         app[method].apply(app, args);
       } else {
         app[method](key, rounterFunction["invoker"]);
@@ -39,7 +39,7 @@ function mapperFunction(method: string, value: string) {
           if(routerParamsTotal[[target.constructor.name, propertyKey].toString()]){
             paramTotal = Math.max(paramTotal, routerParamsTotal[[target.constructor.name, propertyKey].toString()]);
           }
-          let args = [req, res, next];
+          const args = [req, res, next];
           if(paramTotal > 0) {
             for(let i = 0; i < paramTotal; i++) {
               if(routerParams[[target.constructor.name, propertyKey, i].toString()]){

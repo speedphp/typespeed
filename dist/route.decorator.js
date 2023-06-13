@@ -15,9 +15,9 @@ const routerMiddleware = {};
 function setRouter(app) {
     ["get", "post", "all"].forEach(method => {
         for (let key in routerMapper[method]) {
-            let rounterFunction = routerMapper[method][key];
+            const rounterFunction = routerMapper[method][key];
             if (routerMiddleware[rounterFunction["name"]]) {
-                let args = [key, ...routerMiddleware[rounterFunction["name"]], rounterFunction["invoker"]];
+                const args = [key, ...routerMiddleware[rounterFunction["name"]], rounterFunction["invoker"]];
                 app[method].apply(app, args);
             }
             else {
@@ -32,6 +32,8 @@ function mapperFunction(method, value) {
         routerMapper[method][value] = {
             "path": value,
             "name": [target.constructor.name, propertyKey].toString(),
+            "target": target.constructor,
+            "propertyKey": propertyKey,
             "invoker": async (req, res, next) => {
                 const routerBean = (0, core_decorator_1.getComponent)(target.constructor);
                 try {
@@ -39,7 +41,7 @@ function mapperFunction(method, value) {
                     if (routerParamsTotal[[target.constructor.name, propertyKey].toString()]) {
                         paramTotal = Math.max(paramTotal, routerParamsTotal[[target.constructor.name, propertyKey].toString()]);
                     }
-                    let args = [req, res, next];
+                    const args = [req, res, next];
                     if (paramTotal > 0) {
                         for (let i = 0; i < paramTotal; i++) {
                             if (routerParams[[target.constructor.name, propertyKey, i].toString()]) {
