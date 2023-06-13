@@ -25,36 +25,6 @@ function setRouter(app: express.Application) {
   });
 }
 
-
-async function apiDocs() {
-  ["get", "post", "all"].forEach(async method =>  {
-    for (let key in routerMapper[method]) {
-      let routerBean = getComponent(routerMapper[method][key].target);
-      let returnType = Reflect.getMetadata("design:returntype", routerBean, routerMapper[method][key].propertyKey);
-      console.log(routerMapper[method][key].target, routerMapper[method][key].propertyKey)
-      if(returnType === Promise) {
-        let returnTypeObject = returnType.resolve;
-        if(returnTypeObject !== undefined){
-          console.log(returnTypeObject, Object.getOwnPropertyNames(returnTypeObject));
-        }
-        continue;
-      }
-      // if(returnType !== undefined){
-      //   let returnTypeObject = new returnType();
-      //   console.log(Object.getOwnPropertyNames(returnTypeObject));
-      // }
-    }
-  });
-
-  // console.log(target.constructor, propertyKey);
-
-  // let returnType = Reflect.getMetadata("design:returntype", target.constructor, propertyKey);
-  // console.log(target, propertyKey, returnType);
-  // let returnTypeObject = new returnType();
-  // console.log(returnType.toString(), Object.getOwnPropertyNames(returnTypeObject), returnTypeObject.prototype, Object.getPrototypeOf(returnTypeObject),
-  // Object.keys(returnTypeObject));
-}
-
 function mapperFunction(method: string, value: string) {
   return (target: any, propertyKey: string) => {
     routerMapper[method][value] = {
@@ -78,7 +48,6 @@ function mapperFunction(method: string, value: string) {
             }
           }
           const testResult = await routerBean[propertyKey].apply(routerBean, args);
-          await apiDocs();
           if (typeof testResult === "object") {
             res.json(testResult);
           } else if (typeof testResult !== "undefined") {

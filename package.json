@@ -11,7 +11,7 @@
     "prepublishOnly": "npm version patch && npm run build",
     "upgrade": "npm version minor"
   },
-  "main": "src/typespeed.ts",
+  "main": "dist/typespeed.js",
   "bin": {
     "typespeed": "./dist/scaffold/command.js"
   },
