@@ -12,7 +12,7 @@ export default class TestRequest {
     }
 
     @getMapping("/request/query")
-    async testQuery(req, res, @reqQuery("id") id: number): Promise<MutilUsers> {
+    async testQuery(req, res, @reqQuery id: number): Promise<MutilUsers> {
         log("id: " + id);
         return Promise.resolve(new MutilUsers("group", [new UserDto(1, "name"), new UserDto(2, "name")]));
     }
@@ -30,7 +30,7 @@ export default class TestRequest {
     }
 
     @getMapping("/request/param/:id")
-    testParam(@res res, @reqParam("id") id: number) {
+    testParam(@res res, @reqParam id: number) {
         log("id: " + id);
         res.send("test param");
     }

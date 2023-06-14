@@ -178,9 +178,9 @@ declare function next(target: any, propertyKey: string, parameterIndex: number) 
 /** request.body 对象装饰器，作为路由页面方法参数，获取 request.body 对象 */
 declare function reqBody(target: any, propertyKey: string, parameterIndex: number) : void;
 /** request.param 值装饰器，作为路由页面方法参数，获取 request.params 内容 */
-declare function reqParam(paramName: string) : (target: any, propertyKey: string, parameterIndex: number) => void;
+declare function reqParam(target: any, propertyKey: string, parameterIndex: number) : void;
 /** request.query 值装饰器，作为路由页面方法参数，获取 request.query 内容 */
-declare function reqQuery(paramName: string) : (target: any, propertyKey: string, parameterIndex: number) => void;
+declare function reqQuery(target: any, propertyKey: string, parameterIndex: number) : void;
 /** request 表单值装饰器，作为路由页面方法参数，获取 request.body 表单内容 */
 declare function reqForm(paramName: string) : (target: any, propertyKey: string, parameterIndex: number) => void;
 

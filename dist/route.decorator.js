@@ -149,18 +149,21 @@ function reqBody(target, propertyKey, parameterIndex) {
     routerParams[key] = (req, res, next) => req.body;
 }
 exports.reqBody = reqBody;
-function reqParam(paramName) {
-    return (target, propertyKey, parameterIndex) => {
-        const key = [target.constructor.name, propertyKey, parameterIndex].toString();
-        routerParams[key] = (req, res, next) => req.params[paramName];
-    };
+function reqParam(target, propertyKey, parameterIndex) {
+    const key = [target.constructor.name, propertyKey, parameterIndex].toString();
+    const paramName = getParamInFunction(target[propertyKey], parameterIndex);
+    routerParams[key] = (req, res, next) => req.params[paramName];
 }
 exports.reqParam = reqParam;
-function reqQuery(paramName) {
-    return (target, propertyKey, parameterIndex) => {
-        const key = [target.constructor.name, propertyKey, parameterIndex].toString();
-        routerParams[key] = (req, res, next) => req.query[paramName];
-    };
+function getParamInFunction(fn, index) {
+    const code = fn.toString().replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg, '').replace(/=>.*$/mg, '').replace(/=[^,]+/mg, '');
+    const result = code.slice(code.indexOf('(') + 1, code.indexOf(')')).match(/([^\s,]+)/g);
+    return result[index] || null;
+}
+function reqQuery(target, propertyKey, parameterIndex) {
+    const key = [target.constructor.name, propertyKey, parameterIndex].toString();
+    const paramName = getParamInFunction(target[propertyKey], parameterIndex);
+    routerParams[key] = (req, res, next) => req.query[paramName];
 }
 exports.reqQuery = reqQuery;
 function reqForm(paramName) {
