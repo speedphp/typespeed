@@ -8,8 +8,9 @@
         "build": "tsc -p ."
     },
     "dependencies": {
-        "@types/node": "^18.0.6",
-        "tracer": "^1.1.6",
         "typespeed": "latest"
+    },
+    "devDependencies": {
+        "@types/node": "^18.0.6"
     }
 }
