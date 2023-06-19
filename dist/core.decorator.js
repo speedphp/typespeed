@@ -11,18 +11,18 @@ let globalConfig = {};
 const resourceObjects = new Map();
 const beanMapper = new Map();
 const objectMapper = new Map();
-const coreDir = __dirname;
-const mainPath = path.dirname(process.argv[1]);
-const configFile = mainPath + "/config.json";
-if (fs.existsSync(configFile)) {
-    globalConfig = JSON.parse(fs.readFileSync(configFile, "utf-8"));
-    const nodeEnv = process.env.NODE_ENV || "development";
-    const envConfigFile = mainPath + "/config-" + nodeEnv + ".json";
-    if (fs.existsSync(envConfigFile)) {
-        globalConfig = Object.assign(globalConfig, JSON.parse(fs.readFileSync(envConfigFile, "utf-8")));
-    }
-}
 function app(constructor) {
+    const coreDir = __dirname;
+    const mainPath = path.dirname(getRootPath() || process.argv[1]);
+    const configFile = mainPath + "/config.json";
+    if (fs.existsSync(configFile)) {
+        globalConfig = JSON.parse(fs.readFileSync(configFile, "utf-8"));
+        const nodeEnv = process.env.NODE_ENV || "development";
+        const envConfigFile = mainPath + "/config-" + nodeEnv + ".json";
+        if (fs.existsSync(envConfigFile)) {
+            globalConfig = Object.assign(globalConfig, JSON.parse(fs.readFileSync(envConfigFile, "utf-8")));
+        }
+    }
     const coreFiles = walkSync(coreDir, { globs: ['**/*.ts'], ignore: ['**/*.d.ts', 'scaffold/**'] });
     const mainFiles = walkSync(mainPath, { globs: ['**/*.ts'] });
     (async function () {
@@ -147,6 +147,23 @@ function error(message, ...optionalParams) {
     }
 }
 exports.error = error;
+function getRootPath() {
+    const lines = new Error().stack.split("\n");
+    let rootPath = "";
+    let lastLine = "";
+    for (let line of lines) {
+        if (line.includes("at ") &&
+            line.includes("node:internal/modules/cjs/loader") &&
+            line.includes("Module._compile") &&
+            lastLine.includes("at ") &&
+            lastLine.includes("Object.<anonymous>")) {
+            rootPath = lastLine.split("(")[1].split(":")[0];
+            break;
+        }
+        lastLine = line;
+    }
+    return rootPath;
+}
 function schedule(cronTime) {
     return (target, propertyKey) => {
         new cron.CronJob(cronTime, target[propertyKey]).start();
