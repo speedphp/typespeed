@@ -37,7 +37,7 @@ class ExpressServer extends server_factory_class_1.default {
             this.app.use(middleware);
         });
         this.setDefaultMiddleware();
-        this.app.listen(port, () => {
+        return this.app.listen(port, () => {
             (0, core_decorator_1.log)("server start at port: " + port);
         });
     }

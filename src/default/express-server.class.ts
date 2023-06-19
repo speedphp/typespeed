@@ -52,7 +52,7 @@ export default class ExpressServer extends ServerFactory {
         this.middlewareList.push(middleware);
     }
 
-    public start(port: number) {
+    public start(port: number): any {
         this.app.use(this.authentication.afterCompletion);
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
@@ -60,7 +60,7 @@ export default class ExpressServer extends ServerFactory {
 
         this.setDefaultMiddleware();
  
-        this.app.listen(port, () => {
+        return this.app.listen(port, () => {
             log("server start at port: " + port);
         });
     }
