@@ -1,31 +1,28 @@
 const chaiObj = require('chai');
-
 chaiObj.use(require("chai-http"));
 
-const firstPageRequests = [
-    {
-        "url": "/first",
-        "expect": "FirstPage index running",
-    },
-    {
-        "url": "/first/sendJson",
-        "expect": JSON.stringify({
-            "from": "sendJson",
-            "to": "Browser"
-        }),
-    },
-    {
-        "url": "/first/sendResult",
-        "expect": "sendResult",
-    },
-    {
-        "url": "/first/renderTest",
-        "expect": "Hello zzz!",
-    }
-]
-
 describe("First page", () => {
-
+    const firstPageRequests = [
+        {
+            "url": "/first",
+            "expect": "FirstPage index running",
+        },
+        {
+            "url": "/first/sendJson",
+            "expect": JSON.stringify({
+                "from": "sendJson",
+                "to": "Browser"
+            }),
+        },
+        {
+            "url": "/first/sendResult",
+            "expect": "sendResult",
+        },
+        {
+            "url": "/first/renderTest",
+            "expect": "Hello zzz!",
+        }
+    ]
     firstPageRequests.forEach((testRequest) => {
         it(testRequest.url, (done) => {
             chaiObj.request("http://localhost:8081").get(testRequest.url).end((err, res) => {
