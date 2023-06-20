@@ -14,7 +14,91 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReadWriteDb = exports.Redis = exports.NodeCache = exports.LogDefault = exports.ExpressServer = exports.AuthenticationFactory = exports.ServerFactory = exports.DataSourceFactory = exports.CacheFactory = exports.LogFactory = void 0;
+exports.ReadWriteDb = exports.Redis = exports.NodeCache = exports.LogDefault = exports.ExpressServer = exports.AuthenticationFactory = exports.ServerFactory = exports.DataSourceFactory = exports.CacheFactory = exports.LogFactory = exports.config = exports.value = exports.app = void 0;
+require("reflect-metadata");
+const fs = require("fs");
+const path = require("path");
+const walkSync = require("walk-sync");
+let globalConfig = {};
+const coreDir = __dirname;
+const mainPath = path.dirname(getRootPath(new Error().stack.split("\n")) || process.argv[1]);
+const configFile = mainPath + "/config.json";
+if (fs.existsSync(configFile)) {
+    globalConfig = JSON.parse(fs.readFileSync(configFile, "utf-8"));
+    const nodeEnv = process.env.NODE_ENV || "development";
+    const envConfigFile = mainPath + "/config-" + nodeEnv + ".json";
+    if (fs.existsSync(envConfigFile)) {
+        globalConfig = Object.assign(globalConfig, JSON.parse(fs.readFileSync(envConfigFile, "utf-8")));
+    }
+}
+function app(constructor) {
+    const coreFiles = walkSync(coreDir, { globs: ['**/*.ts'], ignore: ['**/*.d.ts', 'scaffold/**'] });
+    const mainFiles = walkSync(mainPath, { globs: ['**/*.ts'] });
+    (async function () {
+        var _a, _b;
+        try {
+            for (let p of coreFiles) {
+                let moduleName = p.replace(".d.ts", "").replace(".ts", "");
+                await (_a = coreDir + "/" + moduleName, Promise.resolve().then(() => require(_a)));
+            }
+            for (let p of mainFiles) {
+                let moduleName = p.replace(".d.ts", "").replace(".ts", "");
+                await (_b = mainPath + "/" + moduleName, Promise.resolve().then(() => require(_b)));
+            }
+        }
+        catch (err) {
+            console.error(err);
+        }
+        //log("main start")
+        const main = new constructor();
+        main["main"]();
+    }());
+}
+exports.app = app;
+function config(node) {
+    return globalConfig[node] || null;
+}
+exports.config = config;
+function value(configPath) {
+    return function (target, propertyKey) {
+        if (globalConfig === undefined) {
+            Object.defineProperty(target, propertyKey, {
+                get: () => {
+                    return undefined;
+                }
+            });
+        }
+        else {
+            let pathNodes = configPath.split(".");
+            let nodeValue = globalConfig;
+            for (let i = 0; i < pathNodes.length; i++) {
+                nodeValue = nodeValue[pathNodes[i]];
+            }
+            Object.defineProperty(target, propertyKey, {
+                get: () => {
+                    return nodeValue;
+                }
+            });
+        }
+    };
+}
+exports.value = value;
+function getRootPath(lines) {
+    const macths = ["at Function.Module._load", "at Module.require", "at require", "at Object.<anonymous>"];
+    let matchIndex = 0;
+    for (let line of lines) {
+        if (line.includes(macths[matchIndex])) {
+            if (matchIndex === macths.length - 1) {
+                return line.split("(")[1].split(":")[0];
+            }
+            matchIndex++;
+        }
+        else {
+            matchIndex = 0;
+        }
+    }
+    return undefined;
+}
 __exportStar(require("./core.decorator"), exports);
 __exportStar(require("./route.decorator"), exports);
 __exportStar(require("./database.decorator"), exports);

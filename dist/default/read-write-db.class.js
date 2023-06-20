@@ -12,10 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mysql2_1 = require("mysql2");
 const data_source_factory_class_1 = require("../factory/data-source-factory.class");
 const core_decorator_1 = require("../core.decorator");
+const typespeed_1 = require("../typespeed");
 class ReadWriteDb extends data_source_factory_class_1.default {
+    getDataSource() {
+        if (!(0, typespeed_1.config)("mysql")) {
+            return null;
+        }
+        return new ReadWriteDb();
+    }
     constructor() {
         super();
-        const dbConfig = (0, core_decorator_1.config)("mysql");
+        const dbConfig = (0, typespeed_1.config)("mysql");
         if (dbConfig["master"] && dbConfig["slave"]) {
             this.writeSession = this.getConnectionByConfig(dbConfig["master"]);
             if (Array.isArray(dbConfig["slave"])) {
@@ -29,12 +36,6 @@ class ReadWriteDb extends data_source_factory_class_1.default {
             this.writeSession = this.getConnectionByConfig(dbConfig);
             this.readSession = [this.writeSession];
         }
-    }
-    getDataSource() {
-        if (!(0, core_decorator_1.config)("mysql")) {
-            return null;
-        }
-        return new ReadWriteDb();
     }
     getConnectionByConfig(config) {
         if (config["PoolOptions"] !== undefined) {

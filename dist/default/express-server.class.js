@@ -19,6 +19,7 @@ const expressSession = require("express-session");
 const connectRedis = require("connect-redis");
 const server_factory_class_1 = require("../factory/server-factory.class");
 const route_decorator_1 = require("../route.decorator");
+const typespeed_1 = require("../typespeed");
 const core_decorator_1 = require("../core.decorator");
 const redis_class_1 = require("./redis.class");
 const authentication_factory_class_1 = require("../factory/authentication-factory.class");
@@ -110,31 +111,31 @@ class ExpressServer extends server_factory_class_1.default {
     }
 }
 __decorate([
-    (0, core_decorator_1.value)("view"),
+    (0, typespeed_1.value)("view"),
     __metadata("design:type", String)
 ], ExpressServer.prototype, "view", void 0);
 __decorate([
-    (0, core_decorator_1.value)("static"),
+    (0, typespeed_1.value)("static"),
     __metadata("design:type", String)
 ], ExpressServer.prototype, "static", void 0);
 __decorate([
-    (0, core_decorator_1.value)("favicon"),
+    (0, typespeed_1.value)("favicon"),
     __metadata("design:type", String)
 ], ExpressServer.prototype, "favicon", void 0);
 __decorate([
-    (0, core_decorator_1.value)("compression"),
+    (0, typespeed_1.value)("compression"),
     __metadata("design:type", Object)
 ], ExpressServer.prototype, "compression", void 0);
 __decorate([
-    (0, core_decorator_1.value)("cookie"),
+    (0, typespeed_1.value)("cookie"),
     __metadata("design:type", Object)
 ], ExpressServer.prototype, "cookieConfig", void 0);
 __decorate([
-    (0, core_decorator_1.value)("session"),
+    (0, typespeed_1.value)("session"),
     __metadata("design:type", Object)
 ], ExpressServer.prototype, "session", void 0);
 __decorate([
-    (0, core_decorator_1.value)("redis"),
+    (0, typespeed_1.value)("redis"),
     __metadata("design:type", Object)
 ], ExpressServer.prototype, "redisConfig", void 0);
 __decorate([

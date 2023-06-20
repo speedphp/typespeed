@@ -11,11 +11,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.rabbitListener = exports.RabbitMQ = void 0;
 const core_decorator_1 = require("../core.decorator");
+const typespeed_1 = require("../typespeed");
 const amqplib_1 = require("amqplib");
 let rabbitConnection = null;
 class RabbitMQ {
     getRabbitMQ() {
-        if (!(0, core_decorator_1.config)("rabbitmq")) {
+        if (!(0, typespeed_1.config)("rabbitmq")) {
             return null;
         }
         return new RabbitMQ();
@@ -48,7 +49,7 @@ __decorate([
 exports.RabbitMQ = RabbitMQ;
 async function getChannel() {
     if (rabbitConnection === null) {
-        rabbitConnection = await (0, amqplib_1.connect)((0, core_decorator_1.config)("rabbitmq"));
+        rabbitConnection = await (0, amqplib_1.connect)((0, typespeed_1.config)("rabbitmq"));
         process.once('SIGINT', async () => {
             await rabbitConnection.close();
         });

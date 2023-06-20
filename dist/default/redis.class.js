@@ -11,12 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_decorator_1 = require("../core.decorator");
 const ioredis_1 = require("ioredis");
+const typespeed_1 = require("../typespeed");
 class Redis extends ioredis_1.default {
     getRedis() {
-        if (!(0, core_decorator_1.config)("redis")) {
+        if (!(0, typespeed_1.config)("redis")) {
             return null;
         }
-        return new Redis((0, core_decorator_1.config)("redis"));
+        return new Redis((0, typespeed_1.config)("redis"));
     }
     constructor(config) {
         super(config);

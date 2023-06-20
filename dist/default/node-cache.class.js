@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const cache_factory_class_1 = require("../factory/cache-factory.class");
 const cache = require("node-cache");
+const typespeed_1 = require("../typespeed");
 const core_decorator_1 = require("../core.decorator");
 class NodeCache extends cache_factory_class_1.default {
     constructor() {
@@ -38,7 +39,7 @@ class NodeCache extends cache_factory_class_1.default {
     }
 }
 __decorate([
-    (0, core_decorator_1.value)("cache"),
+    (0, typespeed_1.value)("cache"),
     __metadata("design:type", Object)
 ], NodeCache.prototype, "config", void 0);
 __decorate([
