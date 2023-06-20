@@ -4,8 +4,7 @@
         "path": "./src/views",
         "suffix": "html"
     },
-    "static": "/static",
-    "favicon": "/static/favicon.ico",
+
     "compression": {
         "level": 9
     },
