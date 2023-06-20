@@ -5,8 +5,8 @@
   "author": "speedphp",
   "license": "MIT License",
   "scripts": {
-    "test": "mocha --require ts-node/register test/**/*.ts",
-    "test-with-coverage": "nyc --reporter=text npm run start",
+    "test": "mocha --require ts-node/register test/**/*.ts --exit",
+    "test-with-coverage": "nyc --reporter=text npm test",
     "start": "ts-node --transpile-only app/src/main.ts",
     "build": "tsc -p .",
     "postbuild": "cp src/typespeed.d.ts dist/typespeed.d.ts && cp -r src/default/pages dist/default/pages && cp -r src/scaffold/templates dist/scaffold/templates",
@@ -52,13 +52,12 @@
     "reflect-metadata": "^0.1.13",
     "serve-favicon": "^2.5.0",
     "tracer": "^1.1.6",
-    "typescript": "^4.7.4",
     "walk-sync": "^3.0.0",
     "amqplib": "0.10.3"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
     "@types/node": "^18.0.6",
+    "@types/mocha": "^10.0.1",
     "chai": "4.3.7",
     "chai-http": "^4.4.0",
     "mocha": "10.2.0",
