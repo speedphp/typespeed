@@ -1,6 +1,6 @@
-import { bean, config } from "../core.decorator";
+import { bean } from "../core.decorator";
 import IoRedis from "ioredis";
-
+import { config } from "../typespeed";
 export default class Redis extends IoRedis {
 
     @bean

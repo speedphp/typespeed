@@ -1,4 +1,5 @@
-import { bean, config } from "../core.decorator";
+import { bean  } from "../core.decorator";
+import { config } from "../typespeed";
 import { connect } from "amqplib";
 let rabbitConnection = null;
 

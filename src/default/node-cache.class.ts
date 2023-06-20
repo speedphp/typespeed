@@ -1,6 +1,7 @@
 import CacheFactory from "../factory/cache-factory.class";
 import * as cache from "node-cache";
-import { value, bean } from "../core.decorator";
+import { value } from "../typespeed";
+import { bean } from "../core.decorator";
 
 export default class NodeCache extends CacheFactory {
     private NodeCache: any;

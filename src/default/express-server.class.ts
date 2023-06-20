@@ -8,7 +8,8 @@ import * as expressSession from "express-session";
 import * as connectRedis from "connect-redis";
 import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route.decorator";
-import { bean, log, value, error, autoware } from "../core.decorator";
+import { value } from "../typespeed";
+import { bean, log, error, autoware } from "../core.decorator";
 import Redis from "./redis.class";
 import AuthenticationFactory from "../factory/authentication-factory.class";
 
