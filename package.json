@@ -57,6 +57,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.0.6",
+    "@types/express": "^4.17.13",
     "@types/mocha": "^10.0.1",
     "chai": "4.3.7",
     "chai-http": "^4.4.0",
