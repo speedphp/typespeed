@@ -25,10 +25,7 @@ const firstPageRequests = [
 ]
 
 describe("First page", () => {
-    let appClose;
-    before(() => {
-        appClose = require("../app/src/main");
-    });
+
     firstPageRequests.forEach((testRequest) => {
         it(testRequest.url, (done) => {
             chaiObj.request("http://localhost:8081").get(testRequest.url).end((err, res) => {
@@ -37,9 +34,7 @@ describe("First page", () => {
             });
         });
     });
-    after(() => {
-        if(appClose != null){
-            appClose.default();
-        }
-    });
+
 });
+
+export {};
