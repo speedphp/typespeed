@@ -21,7 +21,7 @@ const firstPageRequests = [
     {
         "url": "/first/renderTest",
         "expect": "Hello zzz!",
-    },
+    }
 ]
 
 describe("First page", () => {
