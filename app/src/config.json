@@ -1,7 +1,7 @@
 {
     "view": {
-        "engine": "pug",
-        "path": "./views",
+        "engine": "mustache",
+        "path": "./src/views",
         "suffix": "html"
     },
     "static": "/static",

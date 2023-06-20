@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
     "module": "CommonJS",
-    //"declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "target": "ES2017",
-    //"sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "typeRoots": [
@@ -21,6 +19,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    "test"
+    "test",
+    "app"
   ]
 }
