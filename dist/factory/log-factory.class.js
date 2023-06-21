@@ -7,8 +7,5 @@ class LogFactory {
     error(message, ...optionalParams) {
         console.error(message, ...optionalParams);
     }
-    debug(message, ...optionalParams) {
-        console.debug(message, ...optionalParams);
-    }
 }
 exports.default = LogFactory;
