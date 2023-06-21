@@ -1,10 +1,10 @@
 const chaiObj = require('chai');
 chaiObj.use(require("chai-http"));
-
+const expect = chaiObj.expect;
 describe("Test Database", () => {
     const testDatabase = [
         {
-            "url": "/db/insert?id=" + Math.random() * 1000,
+            "url": "/db/insert?id=" + Math.ceil(Math.random() * 1000),
             "expect": "Insert success",
         },
         {
@@ -28,7 +28,22 @@ describe("Test Database", () => {
             });
         });
     });
-
+    it("/db/select", (done) => {
+        chaiObj.request("http://localhost:8081").get("/db/select").end((err, res) => {
+            const dataList = JSON.parse(res.text);
+            expect(dataList).to.be.an('array');
+            expect(dataList[0]).to.have.property('id');
+            done();
+        });
+    });
+    it("/db/select-user", (done) => {
+        chaiObj.request("http://localhost:8081").get("/db/select-user").end((err, res) => {
+            const dataList = JSON.parse(res.text);
+            expect(dataList).to.be.an('array');
+            expect(dataList[0]).to.have.property('id');
+            done();
+        });
+    });
 });
 
 export {};
