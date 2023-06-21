@@ -1,5 +1,5 @@
 {
     "watch": ["src", "../dist", "../src", "../test"],
     "ext": "ts,json",
-    "exec": "npm start" 
+    "exec": "npm test" 
 }
