@@ -18,7 +18,7 @@ export default class TestDatabase {
     @getMapping("/db/insert2")
     async insertByObject(req, res) {
         const newId = await this.addRowByObject({
-            "id": 25, "name": "new name 25"
+            "id": Math.random() * 1000, "name": "new name 25"
         });
         log("Insert newId: " + newId);
         res.send("Insert success");

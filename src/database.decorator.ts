@@ -72,7 +72,7 @@ function select(sql: string) {
 
 function resultType(dataClass) {
     return function (target, propertyKey: string) {
-        resultTypeMap.set([target.constructor.name, propertyKey].toString(), new dataClass());
+        resultTypeMap.set([target.constructor.name, propertyKey].toString(), dataClass);
         //never return
     };
 }

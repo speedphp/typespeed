@@ -74,7 +74,7 @@ function select(sql) {
 exports.select = select;
 function resultType(dataClass) {
     return function (target, propertyKey) {
-        resultTypeMap.set([target.constructor.name, propertyKey].toString(), new dataClass());
+        resultTypeMap.set([target.constructor.name, propertyKey].toString(), dataClass);
         //never return
     };
 }
