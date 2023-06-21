@@ -11,7 +11,7 @@ const jwtConfig: {
 
 export default class JwtAuthentication extends AuthenticationFactory {
 
-    //@bean
+    @bean
     public getJwtAuthentication(): AuthenticationFactory {
         return new JwtAuthentication();
     }
@@ -21,8 +21,9 @@ export default class JwtAuthentication extends AuthenticationFactory {
             const jwtMiddleware = expressjwt(jwtConfig);
             jwtMiddleware(req, res, (err) => {  
                 if (err) {
-                    next(err);
+                    //next(err);
                 }
+                next();
             });
         }
     }
