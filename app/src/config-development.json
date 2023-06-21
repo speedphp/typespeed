@@ -11,5 +11,12 @@
         "engine": "mustache",
         "path": "/app/src/views",
         "suffix": "html"
+    },
+    "rabbitmq": {
+        "protocol": "amqp",
+        "hostname": "localhost",
+        "port": 5672,
+        "username": "guest",
+        "password": "guest"
     }
 }
