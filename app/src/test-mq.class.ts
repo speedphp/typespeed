@@ -8,7 +8,7 @@ export default class TestMq {
     @autoware
     private rabbitMQ: RabbitMQ;
 
-    //@rabbitListener("myqueues")
+    @rabbitListener("myqueues")
     public async listen(message) {
         log(" Received by Decorator '%s'", message.content.toString());
     }
@@ -31,9 +31,8 @@ export default class TestMq {
             password: 'guest'
         });
         const channel = await connection.createChannel();
-        await channel.checkQueue(queue);
+        await channel.assertQueue(queue);
         channel.sendToQueue(queue, Buffer.from(text));
-        console.log(" [x] Sent by queue '%s'", text);
         await channel.close();
         return "sent by queue";
     }
@@ -46,7 +45,6 @@ export default class TestMq {
         const channel = await connection.createChannel();
         await channel.checkExchange(exchange);
         channel.publish(exchange, '', Buffer.from(text));
-        console.log(" [x] Publish by exchange '%s'", text);
         await channel.close();
         return "sent by exchange";
     }
@@ -60,10 +58,8 @@ export default class TestMq {
         await channel.checkQueue(queue);
         await channel.checkQueue(queue2);
         await channel.consume(queue, (message) => {
-            console.log(" [x] Received '%s'", message.content.toString());
         }, { noAck: true });
         await channel.consume(queue2, (message) => {
-            console.log(" [x] Received queue2 '%s'", message.content.toString());
         }, { noAck: true });
         return "ok";
     }

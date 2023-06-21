@@ -38,33 +38,33 @@ export default class TestOrm {
 
     @getMapping("/orm/count")
     async countTest(req, res) {
-        const results = await this.userModel.count();
-        res.send(results);
+        const total = await this.userModel.count();
+        res.send({"count": total});
     }
 
     @getMapping("/orm/new")
     async newUserTest(req, res) {
-        const results = await this.userModel.newUsers();
-        res.send("new user test, to " + results);
+        const newId = await this.userModel.newUsers();
+        res.send({"newId": newId});
     }
 
     @getMapping("/orm/page/calculate")
     async calculatePage(req, res) {
         const pages = this.userModel.pager(15, 376);
-        res.send("pages calculate result: " + JSON.stringify(pages));
+        res.json(pages);
     }
 
     @getMapping("/orm/pages/:id")
     async findPage(req, res) {
         const results = await this.userModel.findAll("1", { id: -1 }, "*", { page: req.params.id, pageSize: 3 });
         log(this.userModel.page);
-        res.send("pages find result: " + JSON.stringify(results));
+        res.json(results);
     }
 
     @postMapping("/orm/edit")
     async updateTest(req, res) {
-        const results = await this.userModel.editUser(req.body.id, req.body.name);
-        res.send(results);
+        const effectRows = await this.userModel.editUser(req.body.id, req.body.name);
+        res.send({"effectRows": effectRows});
     }
 
     //@schedule("* * * * * *")

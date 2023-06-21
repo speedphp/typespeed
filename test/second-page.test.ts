@@ -5,7 +5,7 @@ const chaiObj = require('chai');
 chaiObj.use(require("chai-http"));
 
 
-describe("Sencond Page", () => {
+describe("Test Sencond Page", () => {
     it("/second/setCookie", (done) => {
         chaiObj.request("http://localhost:8081").get("/second/setCookie").end((err, res) => {
             chaiObj.assert.equal(res.headers["set-cookie"].includes("name=zzz; Path=/"), true);

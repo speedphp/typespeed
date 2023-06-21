@@ -1,7 +1,7 @@
 const chaiObj = require('chai');
 chaiObj.use(require("chai-http"));
 
-describe("First page", () => {
+describe("Test First page", () => {
     const firstPageRequests = [
         {
             "url": "/first",
@@ -21,6 +21,10 @@ describe("First page", () => {
         {
             "url": "/first/renderTest",
             "expect": "Hello zzz!",
+        },
+        {
+            "url": "/test/error",
+            "expect": "This is a error log",
         }
     ]
     firstPageRequests.forEach((testRequest) => {

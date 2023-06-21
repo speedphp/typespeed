@@ -16,8 +16,12 @@ describe("Test Database", () => {
             "expect": "update success",
         },
         {
-            "url": "/db/select1",
-            "expect": "[{\"id\":1,\"name\":\"LiLei\"}]",
+            "url": "/db/set-cache?value=zzz",
+            "expect": "set cache success",
+        },
+        {
+            "url": "/db/get-cache",
+            "expect": "zzz",
         }
     ]
     testDatabase.forEach((testRequest) => {
@@ -26,6 +30,14 @@ describe("Test Database", () => {
                 chaiObj.assert.equal(testRequest.expect, res.text);
                 return done();
             });
+        });
+    });
+    it("/db/select1", (done) => {
+        chaiObj.request("http://localhost:8081").get("/db/select1").end((err, res) => {
+            const dataList = JSON.parse(res.text);
+            expect(dataList).to.be.an('array');
+            expect(dataList[0]).to.have.property("id").which.is.a("number").equal(1);
+            done();
         });
     });
     it("/db/select", (done) => {
