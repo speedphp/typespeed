@@ -32,15 +32,13 @@ class ExpressServer extends server_factory_class_1.default {
     setMiddleware(middleware) {
         this.middlewareList.push(middleware);
     }
-    start(port) {
+    start(port, callback) {
         this.app.use(this.authentication.afterCompletion);
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
         this.setDefaultMiddleware();
-        return this.app.listen(port, () => {
-            (0, core_decorator_1.log)("server start at port: " + port);
-        });
+        return this.app.listen(port, callback);
     }
     setDefaultMiddleware() {
         this.app.use(express.urlencoded({ extended: true }));
