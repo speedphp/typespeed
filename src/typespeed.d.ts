@@ -199,7 +199,7 @@ declare abstract class ServerFactory {
      * 启动 Web 服务
      * @param port 端口号
      */
-    abstract start(port: number): any;
+    abstract start(port: number, callback?: Function): any;
 }
 /**日志工厂类 */
 declare abstract class LogFactory {
