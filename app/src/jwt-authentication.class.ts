@@ -22,7 +22,6 @@ export default class JwtAuthentication extends AuthenticationFactory {
             jwtMiddleware(req, res, (err) => {  
                 if (err) {
                     //next(err);
-                    next();
                 }
             });
         }
