@@ -1,4 +1,4 @@
-import { before, log, component, after } from "../../";
+import { before, log, component, after } from "../../src/typespeed";
 import FirstPage from "./first-page.class";
 
 @component

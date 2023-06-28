@@ -1,4 +1,4 @@
-import { log, Model } from "../../";
+import { log, Model } from "../../src/typespeed";
 import UserDto from "./entities/user-dto.class";
 
 export default class UserModel extends Model {

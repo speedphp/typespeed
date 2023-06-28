@@ -1,4 +1,4 @@
-import { AuthenticationFactory, bean, config } from "../../";
+import { AuthenticationFactory, bean, config } from "../../src/typespeed";
 import express from "express";
 import { expressjwt, GetVerificationKey } from "express-jwt";
 import * as jwt from 'jsonwebtoken';

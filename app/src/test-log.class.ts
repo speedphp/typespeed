@@ -1,4 +1,4 @@
-import { component, getMapping, error } from "../../";
+import { component, getMapping, error } from "../../src/typespeed";
 
 @component
 export default class TestLog {

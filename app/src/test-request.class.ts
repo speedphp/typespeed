@@ -1,4 +1,4 @@
-import { component, getMapping, postMapping, log, req, res, reqQuery, reqBody, reqForm, reqParam } from "../../";
+import { component, getMapping, postMapping, log, req, res, reqQuery, reqBody, reqForm, reqParam } from "../../src/typespeed";
 import MutilUsers from "./entities/mutil-users.class";
 import UserDto from "./entities/user-dto.class";
 

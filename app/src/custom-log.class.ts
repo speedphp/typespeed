@@ -1,5 +1,5 @@
 import * as tracer from "tracer";
-import { bean, LogFactory } from "../../";
+import { bean, LogFactory } from "../../src/typespeed";
 
 export default class CustomLog extends LogFactory {
     private logger = tracer.console({

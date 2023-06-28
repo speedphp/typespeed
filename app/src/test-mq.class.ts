@@ -1,4 +1,4 @@
-import { component, getMapping, autoware, log, RabbitMQ, rabbitListener } from "../../";
+import { component, getMapping, autoware, log, RabbitMQ, rabbitListener } from "../../src/typespeed";
 import { connect } from "amqplib";
 
 
