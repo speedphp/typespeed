@@ -11,24 +11,22 @@ export default class TestDatabase {
     async insert(req, res) {
         const id = req.query.id || 1;
         const newId = await this.addRow("new name " + id, id);
-        log("Insert newId: " + newId);
-        res.send("Insert success");
+        res.send("Insert success: " + newId);
     }
 
     @getMapping("/db/insert2")
     async insertByObject(req, res) {
         const newId = await this.addRowByObject({
-            "id": Math.ceil(Math.random() * 1000), "name": "new name 25"
+            "id": req.query.id, "name": "new name " + req.query.id
         });
-        log("Insert newId: " + newId);
-        res.send("Insert success");
+        res.send("Insert success: " + newId);
     }
 
     @getMapping("/db/update")
     async update(req, res) {
-        const affectedRows = await this.editRow();
+        const affectedRows = await this.editRow(req.query.id);
         log("Update rows: " + affectedRows);
-        res.send("update success");
+        res.send("update success: " + affectedRows);
     }
 
     @getMapping("/db/select")
@@ -38,17 +36,15 @@ export default class TestDatabase {
         res.send(rows);
     }
 
-    @getMapping("/db/select1")
+    @getMapping("/db/select-row")
     async selectById(req, res) {
-        const row = await this.findRow(req.query.id || 1);
-        log("select rows: " + row);
+        const row = await this.findRow(req.query.id);
         res.send(row);
     }
 
     @getMapping("/db/select-user")
     async selectUser(req, res) {
         const users: UserDto[] = await this.findUsers();
-        log("select users: " + users);
         res.send(users);
     }
 
@@ -69,8 +65,8 @@ export default class TestDatabase {
     @insert("Insert into `user` (id, name) values (#{id}, #{name})")
     private async addRowByObject(myParams: object) { }
 
-    @update("Update `user` set `name` = 'test5' where id = 5")
-    private async editRow() { }
+    @update("Update `user` set `name` = 'test5' where id = #{id}")
+    private async editRow(@param("id") id: number) { }
 
     @select("Select * from `user`")
     private async selectRow() { }

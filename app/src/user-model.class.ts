@@ -20,7 +20,7 @@ export default class UserModel extends Model {
     }
 
     async newUsers() {
-        const newId = Math.ceil(Math.random() * 1000);
+        const newId = this.random(1000, 2000);
         await this.create([
             new UserDto(newId, "UserDto " + newId),
             new UserDto(newId+1, "UserDto " + (newId+1)),
@@ -42,5 +42,9 @@ export default class UserModel extends Model {
     async editUser(id: number, name: string) {
         const effectRows = await this.update({ id: id }, { name: name });
         return effectRows;
+    }
+
+    private random(min, max) {
+        return Math.round(Math.random() * (max - min)) + min;
     }
 }

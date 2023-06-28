@@ -2,18 +2,19 @@ const chaiObj = require('chai');
 chaiObj.use(require("chai-http"));
 const expect = chaiObj.expect;
 describe("Test Database", () => {
+    const randomId = random(3000, 5000);
     const testDatabase = [
         {
-            "url": "/db/insert?id=" + Math.ceil(Math.random() * 1000),
-            "expect": "Insert success",
+            "url": "/db/insert?id=" + randomId,
+            "expect": "Insert success: " + randomId,
         },
         {
-            "url": "/db/insert2",
-            "expect": "Insert success",
+            "url": "/db/insert2?id=" + (randomId + 1),
+            "expect": "Insert success: " + (randomId + 1),
         },
         {
-            "url": "/db/update",
-            "expect": "update success",
+            "url": "/db/update?id=" + randomId,
+            "expect": "update success: 1",
         },
         {
             "url": "/db/set-cache?value=zzz",
@@ -32,11 +33,11 @@ describe("Test Database", () => {
             });
         });
     });
-    it("/db/select1", (done) => {
-        chaiObj.request("http://localhost:8081").get("/db/select1").end((err, res) => {
+    it("/db/select-row", (done) => {
+        chaiObj.request("http://localhost:8081").get("/db/select-row?id=" + randomId).end((err, res) => {
             const dataList = JSON.parse(res.text);
             expect(dataList).to.be.an('array');
-            expect(dataList[0]).to.have.property("id").which.is.a("number").equal(1);
+            expect(dataList[0]).to.have.property("id").which.is.a("number").equal(randomId);
             done();
         });
     });
@@ -57,5 +58,9 @@ describe("Test Database", () => {
         });
     });
 });
+
+function random(min, max) {
+    return Math.round(Math.random() * (max - min)) + min;
+}
 
 export {};
