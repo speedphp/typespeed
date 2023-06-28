@@ -6,7 +6,7 @@
   "license": "MIT License",
   "scripts": {
     "test": "mocha --require ts-node/register test/**/*.ts --exit",
-    "test-with-coverage": "nyc --reporter=text npm test",
+    "test-with-coverage": "nyc --reporter=lcov npm test",
     "start": "ts-node --transpile-only app/src/main.ts",
     "build": "tsc -p .",
     "postbuild": "cp src/typespeed.d.ts dist/typespeed.d.ts && cp -r src/default/pages dist/default/pages && cp -r src/scaffold/templates dist/scaffold/templates",
