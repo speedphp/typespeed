@@ -2,6 +2,7 @@ const chaiObj = require('chai');
 chaiObj.use(require("chai-http"));
 
 describe("Test First page", () => {
+    const testAddr = `http://${process.env.LOCAL_HOST || "localhost"}:8081`;
     const firstPageRequests = [
         {
             "url": "/first",
@@ -29,7 +30,7 @@ describe("Test First page", () => {
     ]
     firstPageRequests.forEach((testRequest) => {
         it(testRequest.url, (done) => {
-            chaiObj.request("http://localhost:8081").get(testRequest.url).end((err, res) => {
+            chaiObj.request(testAddr).get(testRequest.url).end((err, res) => {
                 chaiObj.assert.equal(testRequest.expect, res.text);
                 return done();
             });

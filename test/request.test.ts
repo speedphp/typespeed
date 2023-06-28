@@ -5,14 +5,15 @@ chaiObj.use(require("chai-http"));
 const expect = chaiObj.expect;
 
 describe("Test Request Paramters", () => {
+    const testAddr = `http://${process.env.LOCAL_HOST || "localhost"}:8081`;
     it("/request/res", (done) => {
-        chaiObj.request("http://localhost:8081").get("/request/res").end((err, res) => {
+        chaiObj.request(testAddr).get("/request/res").end((err, res) => {
             expect(res.text).to.be.equal("test res");
             done();
         });
     });
     it("/request/query", (done) => {
-        chaiObj.request("http://localhost:8081").get("/request/query?id=100").end((err, res) => {
+        chaiObj.request(testAddr).get("/request/query?id=100").end((err, res) => {
             expect(res.text).to.be.equal(JSON.stringify(
                 new MutilUsers("group", [new UserDto(1, "name"), new UserDto(2, "name")]
             )));
@@ -21,7 +22,7 @@ describe("Test Request Paramters", () => {
     });
     it("/request/body", (done) => {
         const sendUser = new UserDto(100, "name100");
-        chaiObj.request("http://localhost:8081").post("/request/body")
+        chaiObj.request(testAddr).post("/request/body")
             .send(sendUser)
             .end((err, res) => {
             expect(res.text).to.be.equal(JSON.stringify(new MutilUsers("group", [sendUser])));
@@ -30,7 +31,7 @@ describe("Test Request Paramters", () => {
     });
     it("/request/form", (done) => {
         const sendName = "name200";
-        chaiObj.request("http://localhost:8081").post("/request/form")
+        chaiObj.request(testAddr).post("/request/form")
             .type("form")
             .send({ name: sendName })
             .end((err, res) => {
@@ -40,7 +41,7 @@ describe("Test Request Paramters", () => {
     });
     it("/request/param", (done) => {
         const sendId = 200;
-        chaiObj.request("http://localhost:8081").get("/request/param/" + sendId).end((err, res) => {
+        chaiObj.request(testAddr).get("/request/param/" + sendId).end((err, res) => {
             expect(res.text).to.be.equal("test param: " + sendId);
             done();
         });

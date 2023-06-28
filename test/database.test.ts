@@ -1,8 +1,10 @@
+
 const chaiObj = require('chai');
 chaiObj.use(require("chai-http"));
 const expect = chaiObj.expect;
 describe("Test Database", () => {
     const randomId = random(3000, 5000);
+    const testAddr = `http://${process.env.LOCAL_HOST || "localhost"}:8081`;
     const testDatabase = [
         {
             "url": "/db/insert?id=" + randomId,
@@ -27,14 +29,14 @@ describe("Test Database", () => {
     ]
     testDatabase.forEach((testRequest) => {
         it(testRequest.url, (done) => {
-            chaiObj.request("http://localhost:8081").get(testRequest.url).end((err, res) => {
+            chaiObj.request(testAddr).get(testRequest.url).end((err, res) => {
                 chaiObj.assert.equal(testRequest.expect, res.text);
                 return done();
             });
         });
     });
     it("/db/select-row", (done) => {
-        chaiObj.request("http://localhost:8081").get("/db/select-row?id=" + randomId).end((err, res) => {
+        chaiObj.request(testAddr).get("/db/select-row?id=" + randomId).end((err, res) => {
             const dataList = JSON.parse(res.text);
             expect(dataList).to.be.an('array');
             expect(dataList[0]).to.have.property("id").which.is.a("number").equal(randomId);
@@ -42,7 +44,7 @@ describe("Test Database", () => {
         });
     });
     it("/db/select", (done) => {
-        chaiObj.request("http://localhost:8081").get("/db/select").end((err, res) => {
+        chaiObj.request(testAddr).get("/db/select").end((err, res) => {
             const dataList = JSON.parse(res.text);
             expect(dataList).to.be.an('array');
             expect(dataList[0]).to.have.property('id');
@@ -50,7 +52,7 @@ describe("Test Database", () => {
         });
     });
     it("/db/select-user", (done) => {
-        chaiObj.request("http://localhost:8081").get("/db/select-user").end((err, res) => {
+        chaiObj.request(testAddr).get("/db/select-user").end((err, res) => {
             const dataList = JSON.parse(res.text);
             expect(dataList).to.be.an('array');
             expect(dataList[0]).to.have.property('id');
