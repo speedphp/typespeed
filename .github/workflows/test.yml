@@ -1,0 +1,47 @@
+name: Tests
+'on': ["push"]
+
+jobs:
+  test:
+    name: 'Test TypeSpeed'
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+      rabbitmq:
+        image: rabbitmq:3.8
+        env:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+        ports:
+          - 5672
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 18
+      - uses: actions/checkout@v2
+      - name: Setup MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE test;USE test; \
+          CREATE TABLE `user` (`id` int(11) NOT NULL AUTO_INCREMENT,`name` varchar(100) DEFAULT NULL,PRIMARY KEY (`id`)) \
+          ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;SHOW TABLES;' -uroot -p123456
+      - name: 'Cache node_modules'
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-v18-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-v18-
+      - name: Install Dependencies
+        run: npm install
+      - name: Run Tests with Coverage
+        run: npm run test-with-coverage
+        env:
+          LOCAL_HOST: localhost
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
