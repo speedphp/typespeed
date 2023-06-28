@@ -1,21 +1,23 @@
 {
-    "server": {
-        "port": "8081"
-    },
-    "database": {
-        "host": "localhost",
-        "user": "root",
-        "password": "root",
-        "database": "test"
-    },
     "view": {
         "engine": "mustache",
         "path": "/app/src/views",
         "suffix": "html"
     },
+    "mysql": {
+        "host": "127.0.0.1",
+        "user": "root",
+        "password": "root",
+        "database": "test"
+    },
+    "redis": {
+        "host": "127.0.0.1",
+        "port": "6379",
+        "db": 0
+    },
     "rabbitmq": {
         "protocol": "amqp",
-        "hostname": "localhost",
+        "hostname": "127.0.0.1",
         "port": 5672,
         "username": "guest",
         "password": "guest"

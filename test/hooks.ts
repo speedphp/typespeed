@@ -4,8 +4,9 @@ before(function () {
     appClose = require("../app/src/main");
 });
 
-after(() => {
+after((done) => {
     if(appClose != null){
         appClose.default();
     }
+    done();
 });
