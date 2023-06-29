@@ -14,7 +14,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReadWriteDb = exports.Redis = exports.NodeCache = exports.LogDefault = exports.ExpressServer = exports.AuthenticationFactory = exports.ServerFactory = exports.DataSourceFactory = exports.CacheFactory = exports.LogFactory = exports.config = exports.value = exports.app = void 0;
+exports.ReadWriteDb = exports.redisSubscriber = exports.Redis = exports.NodeCache = exports.LogDefault = exports.ExpressServer = exports.AuthenticationFactory = exports.ServerFactory = exports.DataSourceFactory = exports.CacheFactory = exports.LogFactory = exports.config = exports.value = exports.app = void 0;
 require("reflect-metadata");
 const fs = require("fs");
 const path = require("path");
@@ -119,7 +119,8 @@ Object.defineProperty(exports, "LogDefault", { enumerable: true, get: function (
 var node_cache_class_1 = require("./default/node-cache.class");
 Object.defineProperty(exports, "NodeCache", { enumerable: true, get: function () { return node_cache_class_1.default; } });
 var redis_class_1 = require("./default/redis.class");
-Object.defineProperty(exports, "Redis", { enumerable: true, get: function () { return redis_class_1.default; } });
+Object.defineProperty(exports, "Redis", { enumerable: true, get: function () { return redis_class_1.Redis; } });
+Object.defineProperty(exports, "redisSubscriber", { enumerable: true, get: function () { return redis_class_1.redisSubscriber; } });
 var read_write_db_class_1 = require("./default/read-write-db.class");
 Object.defineProperty(exports, "ReadWriteDb", { enumerable: true, get: function () { return read_write_db_class_1.default; } });
 __exportStar(require("./default/rabbitmq.class"), exports);

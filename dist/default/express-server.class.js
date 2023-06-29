@@ -138,7 +138,7 @@ __decorate([
 ], ExpressServer.prototype, "redisConfig", void 0);
 __decorate([
     core_decorator_1.autoware,
-    __metadata("design:type", redis_class_1.default)
+    __metadata("design:type", redis_class_1.Redis)
 ], ExpressServer.prototype, "redisClient", void 0);
 __decorate([
     core_decorator_1.autoware,
