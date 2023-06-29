@@ -1,5 +1,5 @@
 import { bean } from "../core.decorator";
-import IoRedis from "ioredis";
+import { Redis as IoRedis, RedisKey} from "ioredis";
 import { config } from "../typespeed";
 const redisSubscribers = {};
 
@@ -10,6 +10,24 @@ class Redis extends IoRedis {
     @bean
     public getRedis(): Redis {
         return Redis.getInstanceOfRedis("pub");
+    }
+
+    public async zrevranking(key: RedisKey, start: number | string, stop: number | string): Promise<Map<string, number>> {
+        const list = await this.zrevrange(key, start, stop, "WITHSCORES");
+        const map = new Map<string, number>();
+        for (let i = 0; i < list.length; i = i + 2) {
+            map.set(list[i], Number(list[i + 1]));
+        }
+        return map;
+    }
+
+    public async zranking(key: RedisKey, start: number | string, stop: number | string): Promise<Map<string, number>> {
+        const list = await this.zrange(key, start, stop, "WITHSCORES");
+        const map = new Map<string, number>();
+        for (let i = 0; i < list.length; i = i + 2) {
+            map.set(list[i], Number(list[i + 1]));
+        }
+        return map;
     }
 
     static getInstanceOfRedis(mode: "sub" | "pub") {
