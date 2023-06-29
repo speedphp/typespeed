@@ -1,9 +1,7 @@
-import { Redis, component, redisSubscriber, autoware, getMapping, log } from "../../src/typespeed";
+import { Redis, component, redisSubscriber, autoware, getMapping, log, reqQuery } from "../../src/typespeed";
 
 @component
 export default class TestRedis {
-
-
     @autoware
     private redisObj: Redis;
 
@@ -13,9 +11,34 @@ export default class TestRedis {
     }
 
     @getMapping("/redis/publish")
-    async redisTest() {
+    async redisPublish() {
         await this.redisObj.publish("mychannel", "Hello World");
         return "Published!";
     }
 
+    @getMapping("/redis")
+    async redisString() {
+        await this.redisObj.set("redisKey", "Hello World");
+        const value = await this.redisObj.get("redisKey");
+        return "get from redis: " + value;
+    }
+
+    @getMapping("/redis/add")
+    async addZset(@reqQuery name: string, @reqQuery score: number) {
+        log("add zset: %s, %s", name, score)
+        await this.redisObj.zadd("scoreSet", score, name);
+        return "add zset success";
+    }
+
+    @getMapping("/redis/ranking")
+    async listRanking() {
+        const list = await this.redisObj.zrevranking("scoreSet", 0, -1);
+        return "list zset: " + JSON.stringify(Object.fromEntries(list));
+    }
+
+    @getMapping("/redis/list")
+    async listZset() {
+        const list = await this.redisObj.zranking("scoreSet", 0, -1);
+        return "list zset: " + JSON.stringify(Object.fromEntries(list));
+    }
 }

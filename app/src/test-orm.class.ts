@@ -7,17 +7,6 @@ export default class TestOrm {
     @resource("user")
     private userModel: UserModel;
 
-    @autoware
-    private redisObj: Redis;
-
-    @getMapping("/redis")
-    async redisTest() {
-        await this.redisObj.set("redisKey", "Hello World");
-        const value = await this.redisObj.get("redisKey");
-        log(value)
-        return "get from redis: " + value;
-    }
-
     @getMapping("/orm/first")
     async firstTest(req, res) {
         const results = await this.userModel.getUsers();
