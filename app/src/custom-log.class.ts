@@ -17,6 +17,7 @@ export default class CustomLog extends LogFactory {
     }
 
     public log(message?: any, ...optionalParams: any[]) : void{
+        if(process.env.LOG === "CLOSE") return;
         this.logger.log(message, ...optionalParams);
     }
 

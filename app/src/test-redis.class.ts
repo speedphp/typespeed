@@ -33,12 +33,13 @@ export default class TestRedis {
     @getMapping("/redis/ranking")
     async listRanking() {
         const list = await this.redisObj.zrevranking("scoreSet", 0, -1);
-        return "list zset: " + JSON.stringify(Object.fromEntries(list));
+        return Object.fromEntries(list);
     }
 
     @getMapping("/redis/list")
     async listZset() {
         const list = await this.redisObj.zranking("scoreSet", 0, -1);
-        return "list zset: " + JSON.stringify(Object.fromEntries(list));
+        log("list zset: %s", JSON.stringify(Object.fromEntries(list)));
+        return Object.fromEntries(list);
     }
 }
