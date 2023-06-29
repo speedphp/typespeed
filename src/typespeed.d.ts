@@ -169,6 +169,8 @@ declare function after(constructorFunction: any, methodName: string): (target: a
 declare function schedule(cronTime: string | Date): (target: any, propertyKey: string) => void;
 /**RabbitMQ 监听装饰器，参数是监听的队列名称，当接受到消息时将执行被装饰方法 */
 declare function rabbitListener(queue: string): (target: any, propertyKey: string) => void;
+/**Redis 监听装饰器，参数是监听的队列名称，当接受到消息时将执行被装饰方法 */
+declare function redisSubscriber(target: any, propertyKey: string): void;
 /** request 对象装饰器，作为路由页面方法参数，获取 request 对象 */
 declare function req(target: any, propertyKey: string, parameterIndex: number) : void;
 /** response 对象装饰器，作为路由页面方法参数，获取 response 对象 */

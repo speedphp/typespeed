@@ -97,6 +97,6 @@ export { default as AuthenticationFactory} from "./factory/authentication-factor
 export { default as ExpressServer} from "./default/express-server.class";
 export { default as LogDefault} from "./default/log-default.class";
 export { default as NodeCache} from "./default/node-cache.class";
-export { default as Redis} from "./default/redis.class";
+export { Redis, redisSubscriber } from "./default/redis.class";
 export { default as ReadWriteDb} from "./default/read-write-db.class";
 export * from "./default/rabbitmq.class";
