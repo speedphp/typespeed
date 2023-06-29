@@ -1,39 +1,34 @@
 import { bean } from "../core.decorator";
 import IoRedis from "ioredis";
 import { config } from "../typespeed";
+const redisSubscribers = {};
 
 class Redis extends IoRedis {
-
-    private static redisObj: Redis = null;
+    private static pubObj: Redis = null;
+    private static subObj: Redis = null;
 
     @bean
     public getRedis(): Redis {
-        return Redis.getInstanceOfRedis();
+        return Redis.getInstanceOfRedis("pub");
     }
 
-    constructor(config: any) {
-        super(config);
-    }
-
-    static getInstanceOfRedis() {
+    static getInstanceOfRedis(mode: "sub" | "pub") {
         if (!config("redis")) {
             return null;
         }
-        if (this.redisObj === null) {
-            this.redisObj = new Redis(config("redis"));
+        if (mode === "sub") {
+            this.pubObj = this.pubObj || new Redis(config("redis"));
+            return this.pubObj;
+        } else {
+            this.subObj = this.subObj || new Redis(config("redis"));
+            return this.subObj;
         }
-        return this.redisObj;
     }
 }
 
-process.once('SIGINT', () => { 
-    Redis.getInstanceOfRedis() || Redis.getInstanceOfRedis().disconnect();
-});
-const redisSubscribers = {};
-
 function redisSubscriber(channel: string) {
     if (!config("redis")) return;
-    Redis.getInstanceOfRedis().subscribe(channel, function (err, count) {
+    Redis.getInstanceOfRedis("sub").subscribe(channel, function (err, count) {
         if (err) {
             console.error(err);
         }
@@ -44,9 +39,14 @@ function redisSubscriber(channel: string) {
 }
 
 if (config("redis")) {
-    Redis.getInstanceOfRedis().on("message", function (channel, message) {
-        console.log("Message '" + message + "' on channel '" + channel + "' arrived!");
+    Redis.getInstanceOfRedis("sub").on("message", function (channel, message) {
         redisSubscribers[channel](message);
     });
 }
+
+process.once('SIGINT', () => { 
+    Redis.getInstanceOfRedis("sub") || Redis.getInstanceOfRedis("sub").disconnect();
+    Redis.getInstanceOfRedis("pub") || Redis.getInstanceOfRedis("pub").disconnect();
+});
+
 export { Redis, redisSubscriber };

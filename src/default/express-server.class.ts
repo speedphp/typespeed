@@ -10,7 +10,7 @@ import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route.decorator";
 import { value } from "../typespeed";
 import { bean, log, error, autoware } from "../core.decorator";
-import Redis from "./redis.class";
+import { Redis } from "./redis.class";
 import AuthenticationFactory from "../factory/authentication-factory.class";
 
 export default class ExpressServer extends ServerFactory {
