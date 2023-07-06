@@ -54,7 +54,6 @@ export default class ExpressServer extends ServerFactory {
     }
 
     public start(port: number, callback?: Function): any {
-        this.app.use(this.authentication.afterCompletion);
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
@@ -107,7 +106,8 @@ export default class ExpressServer extends ServerFactory {
             this.app.use(express.static(staticPath))
         }
         setRouter(this.app);
-
+        this.app.use(this.authentication.afterCompletion);
+        
         const errorPageDir = __dirname + "/pages";
         this.app.use((req, res) => {
             error("404 not found, for page: " + req.url);
