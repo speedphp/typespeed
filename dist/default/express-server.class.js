@@ -33,7 +33,6 @@ class ExpressServer extends server_factory_class_1.default {
         this.middlewareList.push(middleware);
     }
     start(port, callback) {
-        this.app.use(this.authentication.afterCompletion);
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
@@ -76,6 +75,7 @@ class ExpressServer extends server_factory_class_1.default {
             this.app.use(express.static(staticPath));
         }
         (0, route_decorator_1.setRouter)(this.app);
+        this.app.use(this.authentication.afterCompletion);
         const errorPageDir = __dirname + "/pages";
         this.app.use((req, res) => {
             (0, core_decorator_1.error)("404 not found, for page: " + req.url);
