@@ -15,14 +15,14 @@ class RabbitMQ {
 
     public async publishMessageToExchange(exchange: string, routingKey: string, message: string): Promise<void> {
         const channel = await getChannel();
-        await channel.checkExchange(exchange);
+        await channel.assertExchange(exchange);
         channel.publish(exchange, routingKey, Buffer.from(message));
         await channel.close();
     }
 
     public async sendMessageToQueue(queue: string, message: string): Promise<void> {
         const channel = await getChannel();
-        await channel.checkQueue(queue);
+        await channel.accertQueue(queue);
         channel.sendToQueue(queue, Buffer.from(message));
         await channel.close();
     }
@@ -51,7 +51,7 @@ function rabbitListener(queue: string) {
     return (target: any, propertyKey: string) => {
         (async function () {
             const channel = await getChannel();
-            await channel.checkQueue(queue);
+            await channel.assertQueue(queue);
             await channel.consume(queue, target[propertyKey], { noAck: true });
         }());
     }

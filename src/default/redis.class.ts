@@ -1,5 +1,5 @@
 import { bean } from "../core.decorator";
-import { Redis as IoRedis, RedisKey} from "ioredis";
+import { default as IoRedis, RedisKey} from "ioredis";
 import { config } from "../typespeed";
 const redisSubscribers = {};
 
