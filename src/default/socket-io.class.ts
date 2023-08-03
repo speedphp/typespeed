@@ -2,9 +2,9 @@ import { Server as IoServer } from "socket.io";
 import { createServer } from "http";
 
 let ioObj: IoServer = null;
-const listeners = { "event": [], "disconnect": null, "error": null, "recovered": null, "handshake": null };
+const listeners = { "event": [], "disconnect": null, "error": null, "handshake": null };
 
-class SocketIo{
+class SocketIo {
 
     public static getIoServer(): IoServer {
         return ioObj;
@@ -26,11 +26,17 @@ class SocketIo{
                 });
             }
 
-            for (let listener of listeners["event"]) {
-                socket.on(listener[1], (...args) => {
-                    listener[0](socket, ...args);
-                });
-            }
+            socket.use(([event, ...args], next) => {
+                try {
+                    for (let listener of listeners["event"]) {
+                        if (listener[1] === event) {
+                            listener[0](socket, ...args);
+                        }
+                    }
+                } catch (err) {
+                    next(err);
+                }
+            });
 
             if (listeners["error"] !== null) {
                 socket.on("error", (err) => {
