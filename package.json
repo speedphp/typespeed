@@ -57,6 +57,7 @@
     "walk-sync": "^3.0.0"
   },
   "devDependencies": {
+    "socket.io-client": "^4.7.2",
     "@types/express": "^4.17.13",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.0.6",

@@ -2,7 +2,7 @@ import { Server as IoServer } from "socket.io";
 import { createServer } from "http";
 
 let ioObj: IoServer = null;
-const listeners = { "event": [], "disconnect": null, "error": null, "handshake": null };
+const listeners = { "event": [], "disconnect": null, "error": null, "connected": null };
 
 class SocketIo {
 
@@ -13,19 +13,18 @@ class SocketIo {
     public static setIoServer(app, ioSocketConfig) {
         const httpServer = createServer(app);
         ioObj = new IoServer(httpServer, ioSocketConfig);
+        ioObj.use((socket, next) => {
+            if (listeners["connected"] !== null) {
+                listeners["connected"](socket, next);
+            }
+            next();
+        });
         ioObj.on("connection", (socket) => {
             if (listeners["disconnect"] !== null) {
                 socket.on("disconnect", (reason) => {
                     listeners["disconnect"](socket, reason);
                 });
             }
-
-            if (listeners["handshake"] !== null) {
-                socket.use(([event, ...args], next) => {
-                    listeners["handshake"](socket, next);
-                });
-            }
-
             socket.use(([event, ...args], next) => {
                 try {
                     for (let listener of listeners["event"]) {
@@ -54,16 +53,16 @@ class SocketIo {
         }
     }
 
-    public static onHandshake(target: any, propertyKey: string) {
-        listeners["handshake"] = target[propertyKey];
-    }
-
     public static onError(target: any, propertyKey: string) {
         listeners["error"] = target[propertyKey];
     }
 
     public static onDisconnect(target: any, propertyKey: string) {
         listeners["disconnect"] = target[propertyKey];
+    }
+
+    public static onConnected(target: any, propertyKey: string) {
+        listeners["connected"] = target[propertyKey];
     }
 }
 
