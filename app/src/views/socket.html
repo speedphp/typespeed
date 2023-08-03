@@ -8,20 +8,14 @@
         socket.on('connect', function() {
             console.log('connected');
         });
-        socket.on('test1', function(data) {
-            console.log(data);
-        });
-        socket.on('test2', function(data) {
-            console.log(data);
-        });
         socket.on('all', function(data) {
             console.log(data);
         });
     </script>
 </head>
 <body>
-<button onclick="socket.emit('test1', 'test-from-client-1')">Test1</button>
-<button onclick="socket.emit('test2', 'test-from-client-2')">Test2</button>
+<button onclick="socket.emit('say', 'test-from-client-1')">Test1</button>
+<button onclick="socket.emit('say', 'test-from-client-2')">Test2</button>
 <button onclick="socket.emit('test-error', 'test-from-client-3')">Test Error</button>
 <button onclick="socket.close()">Close</button>
 </body>

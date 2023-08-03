@@ -1,21 +1,25 @@
-import { SocketIo, getMapping,value, component } from "../../src/typespeed";
+import { SocketIo, getMapping, component } from "../../src/typespeed";
 
 @component
 export default class TestSocket {
 
-    @value("view")
-    public view: string;
+    static names = ["LiLei", "HanMeiMei"];
+
+    static loginUsers: Map<string, string> = new Map<string, string>();
 
     @SocketIo.onConnected
     public connected(socket, next) {
-        SocketIo.getIoServer().sockets.emit("all", "We have a new member: " + socket.id);
-        console.log(SocketIo.getIoServer().engine.clientsCount);
-        next();
+        // 从 names 里面取出一个名字
+        let name = TestSocket.names.pop();
+        TestSocket.loginUsers.set(socket.id, name);
+        //SocketIo.server().sockets.emit("all", "We have a new member: " + name);
+        
+        //next(new Error("test-error"));
     }
 
     @SocketIo.onDisconnect
     public disconnet(socket, reason) {
-        SocketIo.getIoServer().sockets.emit("all", "We lost a member by: " + reason);
+        SocketIo.server().sockets.emit("all", "We lost a member by: " + reason);
     }
 
     @SocketIo.onEvent("test-error") 
@@ -25,21 +29,12 @@ export default class TestSocket {
 
     @SocketIo.onError
     public error(socket, err) {
-        console.log(err.message);
-        SocketIo.getIoServer().sockets.emit("all", "We have a problem!");
+        SocketIo.server().sockets.emit("all", "We have a problem!");
     }
 
     @SocketIo.onEvent("say") 
     public say(socket, message) {
-        SocketIo.getIoServer().sockets.emit("all", "");
-        socket.emit("message", "test-from-server-1");
-    }
-
-    @SocketIo.onEvent("test2") 
-    public test2(socket, message) {
-        console.log(message);
-        console.log(SocketIo.getIoServer().sockets.emit("all", "test-from-server-all"));
-        socket.emit("test2", "test-from-server-2");
+        SocketIo.server().sockets.emit("all", TestSocket.loginUsers.get(socket.id) + " said: " + message);
     }
 
     @getMapping("/socketIo")

@@ -52,12 +52,11 @@
     "node-cache": "^5.1.2",
     "reflect-metadata": "^0.1.13",
     "serve-favicon": "^2.5.0",
-    "socket.io": "^4.7.1",
+    "socket.io": "4.7.1",
     "tracer": "^1.1.6",
     "walk-sync": "^3.0.0"
   },
   "devDependencies": {
-    "socket.io-client": "^4.7.2",
     "@types/express": "^4.17.13",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.0.6",
@@ -66,6 +65,7 @@
     "mocha": "10.2.0",
     "nyc": "^15.1.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "socket.io-client": "4.7.1"
   }
 }
