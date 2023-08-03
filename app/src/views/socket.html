@@ -1,0 +1,19 @@
+<html>
+
+<head>
+    <title>Socket Test</title>
+    <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
+    <script>
+        var io = io('http://localhost:8085');
+        io.on('connect', function() {
+            console.log('connected');
+        });
+        io.on('test', function(data) {
+            console.log(data);
+        });
+    </script>
+</head>
+<body>
+<button onclick="io.emit('test', 'test-from-client')">Send</button>
+</body>
+</html>
