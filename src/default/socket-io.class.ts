@@ -1,35 +1,40 @@
 import { Server as IoServer } from "socket.io";
 import { createServer } from "http";
+import { bean } from "../core.decorator";
 
 let ioObj: IoServer = null;
 const listeners = { "event": [], "disconnect": null, "error": null, "connected": null };
 
 class SocketIo {
 
-    public static getIoServer(): IoServer {
+    public static server() {
         return ioObj;
     }
-
+    
     public static setIoServer(app, ioSocketConfig) {
         const httpServer = createServer(app);
         ioObj = new IoServer(httpServer, ioSocketConfig);
         ioObj.use((socket, next) => {
             if (listeners["connected"] !== null) {
-                listeners["connected"](socket, next);
+                listeners["connected"](socket, async (err) => {
+                    if (listeners["error"] !== null && err) {
+                        await listeners["error"](socket, err);
+                    }
+                });
             }
             next();
         });
         ioObj.on("connection", (socket) => {
             if (listeners["disconnect"] !== null) {
-                socket.on("disconnect", (reason) => {
-                    listeners["disconnect"](socket, reason);
+                socket.on("disconnect", async (reason) => {
+                    await listeners["disconnect"](socket, reason);
                 });
             }
-            socket.use(([event, ...args], next) => {
+            socket.use(async ([event, ...args], next) => {
                 try {
                     for (let listener of listeners["event"]) {
                         if (listener[1] === event) {
-                            listener[0](socket, ...args);
+                            await listener[0](socket, ...args);
                         }
                     }
                 } catch (err) {
@@ -38,8 +43,8 @@ class SocketIo {
             });
 
             if (listeners["error"] !== null) {
-                socket.on("error", (err) => {
-                    listeners["error"](socket, err);
+                socket.on("error", async (err) => {
+                    await listeners["error"](socket, err);
                 });
             }
         });
