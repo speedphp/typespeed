@@ -12,7 +12,7 @@ export default class TestSocket {
         // 从 names 里面取出一个名字
         let name = TestSocket.names.pop();
         TestSocket.loginUsers.set(socket.id, name);
-        //SocketIo.server().sockets.emit("all", "We have a new member: " + name);
+        SocketIo.server().sockets.emit("all", "We have a new member: " + name);
         
         //next(new Error("test-error"));
     }
@@ -35,6 +35,17 @@ export default class TestSocket {
     @SocketIo.onEvent("say") 
     public say(socket, message) {
         SocketIo.server().sockets.emit("all", TestSocket.loginUsers.get(socket.id) + " said: " + message);
+    }
+
+    @SocketIo.onEvent("join") 
+    public join(socket, message) {
+        socket.join("private-room");
+        SocketIo.server().to("private-room").emit("all", TestSocket.loginUsers.get(socket.id) + " joined private-room");
+    }
+
+    @SocketIo.onEvent("say-inroom") 
+    public sayInRoom(socket, message) {
+        SocketIo.server().to("private-room").emit("all", TestSocket.loginUsers.get(socket.id) + " said in Room: " + message);
     }
 
     @getMapping("/socketIo")

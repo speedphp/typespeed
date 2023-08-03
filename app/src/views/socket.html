@@ -14,9 +14,10 @@
     </script>
 </head>
 <body>
-<button onclick="socket.emit('say', 'test-from-client-1')">Test1</button>
-<button onclick="socket.emit('say', 'test-from-client-2')">Test2</button>
-<button onclick="socket.emit('test-error', 'test-from-client-3')">Test Error</button>
+<button onclick="socket.emit('say', 'I say some thing')">TestSay</button>
+<button onclick="socket.emit('join', 'I want to join the room')">Join</button>
+<button onclick="socket.emit('say-inroom', 'say some in room')">InRoom</button>
+<button onclick="socket.emit('test-error', 'this is a error')">Test Error</button>
 <button onclick="socket.close()">Close</button>
 </body>
 </html>

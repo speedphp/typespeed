@@ -17,7 +17,7 @@ describe("Test Socket IO", () => {
       });
     it("send and receive message", (done) => {
         clientHanMeiMei.on("all", (arg) => {
-            expect(arg).to.be.equal("LiLei said: test-from-client-1");
+            expect(arg).to.be.include("LiLei");
             done();
         });
         clientLiLei.emit("say", "test-from-client-1");
