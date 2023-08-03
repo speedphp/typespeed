@@ -8,8 +8,9 @@ import * as expressSession from "express-session";
 import * as connectRedis from "connect-redis";
 import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route.decorator";
+import { SocketIo } from "../default/socket-io.class";
 import { value } from "../typespeed";
-import { bean, log, error, autoware } from "../core.decorator";
+import { bean, error, autoware, resource } from "../core.decorator";
 import { Redis } from "./redis.class";
 import AuthenticationFactory from "../factory/authentication-factory.class";
 
@@ -56,14 +57,14 @@ export default class ExpressServer extends ServerFactory {
         this.middlewareList.push(middleware);
     }
 
-    public start(port: number, callback?: Function): any {
+    public start(port: number): any {
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
 
         this.setDefaultMiddleware();
- 
-        return this.app.listen(port, callback);
+        const newSocketApp = SocketIo.setIoServer(this.app, {});
+        return newSocketApp.listen(port);
     }
 
     private setDefaultMiddleware() {
