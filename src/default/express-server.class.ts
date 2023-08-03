@@ -37,6 +37,9 @@ export default class ExpressServer extends ServerFactory {
     @value("redis")
     private redisConfig: object;
 
+    @value("socket")
+    private socketIoConfig: object;
+
     @value("MAIN_PATH")
     private mainPath: string;
 
@@ -63,8 +66,12 @@ export default class ExpressServer extends ServerFactory {
         });
 
         this.setDefaultMiddleware();
-        const newSocketApp = SocketIo.setIoServer(this.app, {});
-        return newSocketApp.listen(port);
+        if(this.socketIoConfig) {
+            const newSocketApp = SocketIo.setIoServer(this.app, this.socketIoConfig);
+            return newSocketApp.listen(port);
+        }else{
+            return this.app.listen(port);
+        }
     }
 
     private setDefaultMiddleware() {
