@@ -1,7 +1,7 @@
 {
     "view": {
         "engine": "mustache",
-        "path": "/app/src/views",
+        "path": "/views/",
         "suffix": "html"
     },
     "mysql": {

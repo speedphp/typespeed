@@ -36,6 +36,9 @@ export default class ExpressServer extends ServerFactory {
     @value("redis")
     private redisConfig: object;
 
+    @value("MAIN_PATH")
+    private mainPath: string;
+
     @autoware
     private redisClient: Redis;
 
@@ -70,7 +73,7 @@ export default class ExpressServer extends ServerFactory {
             const viewConfig = this.view;
             this.app.engine(viewConfig["suffix"], consolidate[viewConfig["engine"]]);
             this.app.set('view engine', viewConfig["suffix"]);
-            this.app.set('views', process.cwd() + viewConfig["path"]);
+            this.app.set('views', this.mainPath + viewConfig["path"]);
         }
 
         if (this.session) {
@@ -87,7 +90,7 @@ export default class ExpressServer extends ServerFactory {
         }
 
         if (this.favicon) {
-            const faviconPath = process.cwd() + this.favicon;
+            const faviconPath = this.mainPath + this.favicon;
             this.app.use(serveFavicon(faviconPath));
         }
 
@@ -102,7 +105,7 @@ export default class ExpressServer extends ServerFactory {
         this.app.use(this.authentication.preHandle);
 
         if (this.static) {
-            const staticPath = process.cwd() + this.static;
+            const staticPath = this.mainPath + this.static;
             this.app.use(express.static(staticPath))
         }
         setRouter(this.app);

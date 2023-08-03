@@ -4,7 +4,7 @@ import * as path from "path";
 import * as walkSync from "walk-sync";
 
 let globalConfig = {};
-const coreDir = __dirname;
+const corePath = __dirname;
 const mainPath = path.dirname(getRootPath(new Error().stack.split("\n")) || process.argv[1]);
 const configFile = mainPath + "/config.json";
 if (fs.existsSync(configFile)) {
@@ -15,16 +15,18 @@ if (fs.existsSync(configFile)) {
         globalConfig = Object.assign(globalConfig, JSON.parse(fs.readFileSync(envConfigFile, "utf-8")));
     }
 }
+globalConfig["MAIN_PATH"] = mainPath;
+globalConfig["CORE_PATH"] = corePath;
 
 function app<T extends { new(...args: any[]): {} }>(constructor: T) {
-    const coreFiles = walkSync(coreDir, { globs: ['**/*.ts'], ignore: ['**/*.d.ts', 'scaffold/**'] });
+    const coreFiles = walkSync(corePath, { globs: ['**/*.ts'], ignore: ['**/*.d.ts', 'scaffold/**'] });
     const mainFiles = walkSync(mainPath, { globs: ['**/*.ts'] });
 
     (async function () {
         try {
             for (let p of coreFiles) {
                 let moduleName = p.replace(".d.ts", "").replace(".ts", "");
-                await import(coreDir + "/" + moduleName);
+                await import(corePath + "/" + moduleName);
             }
 
             for (let p of mainFiles) {
@@ -100,3 +102,4 @@ export { default as NodeCache} from "./default/node-cache.class";
 export { Redis, redisSubscriber } from "./default/redis.class";
 export { default as ReadWriteDb} from "./default/read-write-db.class";
 export * from "./default/rabbitmq.class";
+export * from "./default/socket-io.class";
