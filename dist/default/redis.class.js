@@ -14,7 +14,7 @@ const core_decorator_1 = require("../core.decorator");
 const ioredis_1 = require("ioredis");
 const typespeed_1 = require("../typespeed");
 const redisSubscribers = {};
-class Redis extends ioredis_1.Redis {
+class Redis extends ioredis_1.default {
     getRedis() {
         return Redis.getInstanceOfRedis("pub");
     }

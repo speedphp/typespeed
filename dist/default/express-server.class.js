@@ -19,6 +19,7 @@ const expressSession = require("express-session");
 const connectRedis = require("connect-redis");
 const server_factory_class_1 = require("../factory/server-factory.class");
 const route_decorator_1 = require("../route.decorator");
+const socket_io_class_1 = require("../default/socket-io.class");
 const typespeed_1 = require("../typespeed");
 const core_decorator_1 = require("../core.decorator");
 const redis_class_1 = require("./redis.class");
@@ -32,12 +33,18 @@ class ExpressServer extends server_factory_class_1.default {
     setMiddleware(middleware) {
         this.middlewareList.push(middleware);
     }
-    start(port, callback) {
+    start(port) {
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
         this.setDefaultMiddleware();
-        return this.app.listen(port, callback);
+        if (this.socketIoConfig) {
+            const newSocketApp = socket_io_class_1.SocketIo.setIoServer(this.app, this.socketIoConfig);
+            return newSocketApp.listen(port);
+        }
+        else {
+            return this.app.listen(port);
+        }
     }
     setDefaultMiddleware() {
         this.app.use(express.urlencoded({ extended: true }));
@@ -46,7 +53,7 @@ class ExpressServer extends server_factory_class_1.default {
             const viewConfig = this.view;
             this.app.engine(viewConfig["suffix"], consolidate[viewConfig["engine"]]);
             this.app.set('view engine', viewConfig["suffix"]);
-            this.app.set('views', process.cwd() + viewConfig["path"]);
+            this.app.set('views', this.mainPath + viewConfig["path"]);
         }
         if (this.session) {
             const sessionConfig = this.session;
@@ -60,7 +67,7 @@ class ExpressServer extends server_factory_class_1.default {
             this.app.use(expressSession(sessionConfig));
         }
         if (this.favicon) {
-            const faviconPath = process.cwd() + this.favicon;
+            const faviconPath = this.mainPath + this.favicon;
             this.app.use(serveFavicon(faviconPath));
         }
         if (this.compression) {
@@ -71,7 +78,7 @@ class ExpressServer extends server_factory_class_1.default {
         }
         this.app.use(this.authentication.preHandle);
         if (this.static) {
-            const staticPath = process.cwd() + this.static;
+            const staticPath = this.mainPath + this.static;
             this.app.use(express.static(staticPath));
         }
         (0, route_decorator_1.setRouter)(this.app);
@@ -136,6 +143,14 @@ __decorate([
     (0, typespeed_1.value)("redis"),
     __metadata("design:type", Object)
 ], ExpressServer.prototype, "redisConfig", void 0);
+__decorate([
+    (0, typespeed_1.value)("socket"),
+    __metadata("design:type", Object)
+], ExpressServer.prototype, "socketIoConfig", void 0);
+__decorate([
+    (0, typespeed_1.value)("MAIN_PATH"),
+    __metadata("design:type", String)
+], ExpressServer.prototype, "mainPath", void 0);
 __decorate([
     core_decorator_1.autoware,
     __metadata("design:type", redis_class_1.Redis)

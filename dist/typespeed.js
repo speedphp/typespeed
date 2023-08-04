@@ -20,7 +20,7 @@ const fs = require("fs");
 const path = require("path");
 const walkSync = require("walk-sync");
 let globalConfig = {};
-const coreDir = __dirname;
+const corePath = __dirname;
 const mainPath = path.dirname(getRootPath(new Error().stack.split("\n")) || process.argv[1]);
 const configFile = mainPath + "/config.json";
 if (fs.existsSync(configFile)) {
@@ -31,15 +31,17 @@ if (fs.existsSync(configFile)) {
         globalConfig = Object.assign(globalConfig, JSON.parse(fs.readFileSync(envConfigFile, "utf-8")));
     }
 }
+globalConfig["MAIN_PATH"] = mainPath;
+globalConfig["CORE_PATH"] = corePath;
 function app(constructor) {
-    const coreFiles = walkSync(coreDir, { globs: ['**/*.ts'], ignore: ['**/*.d.ts', 'scaffold/**'] });
+    const coreFiles = walkSync(corePath, { globs: ['**/*.ts'], ignore: ['**/*.d.ts', 'scaffold/**'] });
     const mainFiles = walkSync(mainPath, { globs: ['**/*.ts'] });
     (async function () {
         var _a, _b;
         try {
             for (let p of coreFiles) {
                 let moduleName = p.replace(".d.ts", "").replace(".ts", "");
-                await (_a = coreDir + "/" + moduleName, Promise.resolve().then(() => require(_a)));
+                await (_a = corePath + "/" + moduleName, Promise.resolve().then(() => require(_a)));
             }
             for (let p of mainFiles) {
                 let moduleName = p.replace(".d.ts", "").replace(".ts", "");
@@ -124,3 +126,4 @@ Object.defineProperty(exports, "redisSubscriber", { enumerable: true, get: funct
 var read_write_db_class_1 = require("./default/read-write-db.class");
 Object.defineProperty(exports, "ReadWriteDb", { enumerable: true, get: function () { return read_write_db_class_1.default; } });
 __exportStar(require("./default/rabbitmq.class"), exports);
+__exportStar(require("./default/socket-io.class"), exports);

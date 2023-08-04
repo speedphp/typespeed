@@ -1,5 +1,6 @@
 import * as express from "express";
 import { Redis as IoRedis, RedisKey } from "ioredis";
+import { Server as IoServer } from "socket.io";
 import "reflect-metadata";
 
 /**设置路由中间件 */
@@ -375,5 +376,22 @@ declare class ExpressServer extends ServerFactory {
     start(port: number): void;
     private setDefaultMiddleware;
 }
+/**Socket IO 装饰器类 */
+declare class SocketIo {
+    public static setIoServer(app, ioSocketConfig);
+    /**
+     * Socket IO 事件装饰器
+     * @param event 事件名称
+     */
+    public static onEvent(event: string): (target: any, propertyKey: string) => void;
+    /**Socket IO 错误捕获装饰器 */
+    public static onError(target: any, propertyKey: string): void;
+    /**Socket IO 客户端断开连接事件装饰器 */
+    public static onDisconnect(target: any, propertyKey: string): void;
+    /**Socket IO 客户端连接成功事件装饰器 */
+    public static onConnected(target: any, propertyKey: string): void;
+}
+/**Socket IO 服务实现类 */
+declare const io: IoServer;
 
-export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, redisSubscriber, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, AuthenticationFactory, next, reqBody, reqQuery, reqForm, reqParam, req, req as request, res, res as response, component, bean, resource, log, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, resultType, cache, Model };
+export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, redisSubscriber, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, AuthenticationFactory, next, reqBody, reqQuery, reqForm, reqParam, req, req as request, res, res as response, component, bean, resource, log, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, resultType, cache, Model, SocketIo, io };
