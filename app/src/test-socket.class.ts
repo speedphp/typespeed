@@ -1,4 +1,4 @@
-import { SocketIo, getMapping, component } from "../../src/typespeed";
+import { SocketIo, getMapping, component, io } from "../../src/typespeed";
 
 @component
 export default class TestSocket {
@@ -12,14 +12,15 @@ export default class TestSocket {
         // 从 names 里面取出一个名字
         let name = TestSocket.names.pop();
         TestSocket.loginUsers.set(socket.id, name);
-        SocketIo.server().sockets.emit("all", "We have a new member: " + name);
-        
+        //io.sockets.emit("all", "We have a new member: " + name);
+        //console.log(socket.handshake);
+        //console.log(socket.id);
         //next(new Error("test-error"));
     }
 
     @SocketIo.onDisconnect
     public disconnet(socket, reason) {
-        SocketIo.server().sockets.emit("all", "We lost a member by: " + reason);
+        io.sockets.emit("all", "We lost a member by: " + reason);
     }
 
     @SocketIo.onEvent("test-error") 
@@ -29,23 +30,23 @@ export default class TestSocket {
 
     @SocketIo.onError
     public error(socket, err) {
-        SocketIo.server().sockets.emit("all", "We have a problem!");
+        io.sockets.emit("all", "We have a problem!");
     }
 
     @SocketIo.onEvent("say") 
     public say(socket, message) {
-        SocketIo.server().sockets.emit("all", TestSocket.loginUsers.get(socket.id) + " said: " + message);
+        io.sockets.emit("all", TestSocket.loginUsers.get(socket.id) + " said: " + message);
     }
 
     @SocketIo.onEvent("join") 
     public join(socket, message) {
         socket.join("private-room");
-        SocketIo.server().to("private-room").emit("all", TestSocket.loginUsers.get(socket.id) + " joined private-room");
+        io.to("private-room").emit("all", TestSocket.loginUsers.get(socket.id) + " joined private-room");
     }
 
     @SocketIo.onEvent("say-inroom") 
     public sayInRoom(socket, message) {
-        SocketIo.server().to("private-room").emit("all", TestSocket.loginUsers.get(socket.id) + " said in Room: " + message);
+        io.to("private-room").emit("all", TestSocket.loginUsers.get(socket.id) + " said in Room: " + message);
     }
 
     @getMapping("/socketIo")

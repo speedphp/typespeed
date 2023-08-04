@@ -1,20 +1,15 @@
 import { Server as IoServer } from "socket.io";
 import { createServer } from "http";
-import { bean } from "../core.decorator";
 
-let ioObj: IoServer = null;
+let io: IoServer = null;
 const listeners = { "event": [], "disconnect": null, "error": null, "connected": null };
 
 class SocketIo {
 
-    public static server() {
-        return ioObj;
-    }
-    
     public static setIoServer(app, ioSocketConfig) {
         const httpServer = createServer(app);
-        ioObj = new IoServer(httpServer, ioSocketConfig);
-        ioObj.use((socket, next) => {
+        io = new IoServer(httpServer, ioSocketConfig);
+        io.use((socket, next) => {
             if (listeners["connected"] !== null) {
                 listeners["connected"](socket, async (err) => {
                     if (listeners["error"] !== null && err) {
@@ -24,7 +19,7 @@ class SocketIo {
             }
             next();
         });
-        ioObj.on("connection", (socket) => {
+        io.on("connection", (socket) => {
             if (listeners["disconnect"] !== null) {
                 socket.on("disconnect", async (reason) => {
                     await listeners["disconnect"](socket, reason);
@@ -48,7 +43,6 @@ class SocketIo {
                 });
             }
         });
-
         return httpServer;
     }
 
@@ -71,4 +65,4 @@ class SocketIo {
     }
 }
 
-export { SocketIo }
+export { SocketIo, io }
