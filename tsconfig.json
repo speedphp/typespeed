@@ -14,7 +14,8 @@
   },
   "include": [
     "./src/**/*.ts",
-    "./src/typespeed.d.ts"
+    "./src/typespeed.d.ts",
+    "./introduction/**/*.ts",
   ],
   "exclude": [
     "node_modules",
