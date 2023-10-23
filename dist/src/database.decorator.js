@@ -305,13 +305,11 @@ class Model {
                     }
                     else {
                         const operatorTemplate = { $lt: "<", $lte: "<=", $gt: ">", $gte: ">=", $ne: "!=", $like: "LIKE" };
-                        let firstCondition = Object.keys(conditions[field]).length > 1;
-                        Object.keys(conditions[field]).map((operator) => {
+                        Object.keys(conditions[field]).map((operator, index) => {
                             if (operatorTemplate[operator]) {
                                 const operatorValue = operatorTemplate[operator];
-                                result["sql"] += ` ${field} ${operatorValue} ? ` + (firstCondition ? " AND " : "");
+                                result["sql"] += (index ? " AND " : "") + ` ${field} ${operatorValue} ? `;
                                 result["values"].push(conditions[field][operator]);
-                                firstCondition = false;
                             }
                         });
                     }
