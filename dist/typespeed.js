@@ -91,7 +91,10 @@ function getRootPath(lines) {
     for (let line of lines) {
         if (line.includes(macths[matchIndex])) {
             if (matchIndex === macths.length - 1) {
-                return line.split("(")[1].split(":")[0];
+                let arr = line.split("(")[1].split(":");
+                arr.pop();
+                arr.pop();
+                return arr.join(':');
             }
             matchIndex++;
         }
