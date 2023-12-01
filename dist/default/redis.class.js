@@ -59,7 +59,9 @@ __decorate([
 exports.Redis = Redis;
 function redisSubscriber(channel) {
     if (!(0, typespeed_1.config)("redis"))
-        return;
+        return function () {
+            throw new Error("redis not configured");
+        };
     Redis.getInstanceOfRedis("sub").subscribe(channel, function (err, count) {
         if (err) {
             console.error(err);
