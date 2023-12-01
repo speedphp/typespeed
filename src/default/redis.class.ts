@@ -45,7 +45,9 @@ class Redis extends IoRedis {
 }
 
 function redisSubscriber(channel: string) {
-    if (!config("redis")) return;
+    if (!config("redis")) return function(){
+        throw new Error("redis not configured");
+    };
     Redis.getInstanceOfRedis("sub").subscribe(channel, function (err, count) {
         if (err) {
             console.error(err);
