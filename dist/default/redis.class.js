@@ -38,7 +38,7 @@ class Redis extends ioredis_1.default {
         if (!(0, typespeed_1.config)("redis")) {
             return null;
         }
-        if (mode === "sub") {
+        if (mode === "pub") {
             this.pubObj = this.pubObj || new Redis((0, typespeed_1.config)("redis"));
             return this.pubObj;
         }
