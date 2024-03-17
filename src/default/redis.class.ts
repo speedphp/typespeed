@@ -34,7 +34,7 @@ class Redis extends IoRedis {
         if (!config("redis")) {
             return null;
         }
-        if (mode === "sub") {
+        if (mode === "pub") {
             this.pubObj = this.pubObj || new Redis(config("redis"));
             return this.pubObj;
         } else {

@@ -43,6 +43,14 @@ describe("Test Database", () => {
             done();
         });
     });
+    it("/db/select-row twice", (done) => {
+        chaiObj.request(testAddr).get("/db/select-row?id=" + randomId).end((err, res) => {
+            const dataList = JSON.parse(res.text);
+            expect(dataList).to.be.an('array');
+            expect(dataList[0]).to.have.property("id").which.is.a("number").equal(randomId);
+            done();
+        });
+    });
     it("/db/select", (done) => {
         chaiObj.request(testAddr).get("/db/select").end((err, res) => {
             const dataList = JSON.parse(res.text);
