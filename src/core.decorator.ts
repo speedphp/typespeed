@@ -70,6 +70,16 @@ function log(message?: any, ...optionalParams: any[]) {
     }
 }
 
+function logx(message) {
+    message = JSON.stringify(message);
+    const logObject = beanMapper.get(LogFactory.name);
+    if (logObject) {
+        logObject["factory"].log(message);
+    } else {
+        console.log(message);
+    }
+}
+
 function error(message?: any, ...optionalParams: any[]) {
     const logObject = beanMapper.get(LogFactory.name);
     if (logObject) {
@@ -85,4 +95,4 @@ function schedule(cronTime: string | Date) {
     }
 }
 
-export { component, bean, resource, log, error, autoware, getBean, getComponent, schedule };
+export { component, bean, resource, log, logx, error, autoware, getBean, getComponent, schedule };

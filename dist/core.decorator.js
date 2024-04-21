@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.schedule = exports.getComponent = exports.getBean = exports.autoware = exports.error = exports.log = exports.resource = exports.bean = exports.component = void 0;
+exports.schedule = exports.getComponent = exports.getBean = exports.autoware = exports.error = exports.logx = exports.log = exports.resource = exports.bean = exports.component = void 0;
 require("reflect-metadata");
 const cron = require("cron");
 const log_factory_class_1 = require("./factory/log-factory.class");
@@ -71,6 +71,17 @@ function log(message, ...optionalParams) {
     }
 }
 exports.log = log;
+function logx(message) {
+    message = JSON.stringify(message);
+    const logObject = beanMapper.get(log_factory_class_1.default.name);
+    if (logObject) {
+        logObject["factory"].log(message);
+    }
+    else {
+        console.log(message);
+    }
+}
+exports.logx = logx;
 function error(message, ...optionalParams) {
     const logObject = beanMapper.get(log_factory_class_1.default.name);
     if (logObject) {

@@ -4,10 +4,7 @@
         "declaration": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "allowSyntheticDefaultImports": true,
-        "forceConsistentCasingInFileNames": true,
-        "target": "ES2017",
-        "sourceMap": true,
+        "target": "ES6",
         "outDir": "./dist",
         "baseUrl": "./",
         "typeRoots": [
@@ -15,6 +12,6 @@
         ]
     },
     "include": [
-        "./src/**/*.ts"
+        "./src/**.ts"
     ]
 }

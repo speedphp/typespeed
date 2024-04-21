@@ -160,6 +160,8 @@ declare function autoware(target: any, propertyKey: string): void;
 declare function resource(...args: any[]): any;
 /**日志函数，输出打印日志 */
 declare function log(message?: any, ...optionalParams: any[]): void;
+/**日志函数，输出JSON日志 */
+declare function logx(message: any): void;
 /**错误日志函数，输出打印错误日志 */
 declare function error(message?: any, ...optionalParams: any[]): void;
 /**路由页面前置执行装饰器，参数指向路由页面方法，被装饰的方法将在路由页面之前执行 */
@@ -394,4 +396,4 @@ declare class SocketIo {
 /**Socket IO 服务实现类 */
 declare const io: IoServer;
 
-export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, redisSubscriber, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, AuthenticationFactory, next, reqBody, reqQuery, reqForm, reqParam, req, req as request, res, res as response, component, bean, resource, log, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, resultType, cache, Model, SocketIo, io };
+export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, redisSubscriber, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, AuthenticationFactory, next, reqBody, reqQuery, reqForm, reqParam, req, req as request, res, res as response, component, bean, resource, log, logx, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, resultType, cache, Model, SocketIo, io };
