@@ -99,8 +99,11 @@ async function actionExecute(newSql, sqlValues) {
 async function actionQuery(newSql, sqlValues, dataClassType) {
     const readConnection = await (0, core_decorator_1.getBean)(data_source_factory_class_1.default).readConnection();
     const [rows] = await readConnection.query(newSql, sqlValues);
-    if (rows === null || Object.keys(rows).length === 0 || !dataClassType) {
+    if (rows === null || Object.keys(rows).length === 0) {
         return null;
+    }
+    else if (!dataClassType) {
+        return rows;
     }
     const records = [];
     for (const rowIndex in rows) {
@@ -188,7 +191,7 @@ class Model {
         }
         else if (typeof limit === 'object') {
             const total = await actionQuery('SELECT COUNT(*) AS M_COUNTER  FROM ' + this.table + ' WHERE ' + sql, values);
-            if (total === undefined || total[0]['M_COUNTER'] === 0) {
+            if (total === null || total[0] === undefined || total[0]['M_COUNTER'] === 0) {
                 return [];
             }
             if (limit['pageSize'] !== undefined && limit['pageSize'] < total[0]['M_COUNTER']) {
@@ -220,7 +223,7 @@ class Model {
     }
     async find(conditions, sort, fields = '*') {
         const result = await this.findAll(conditions, sort, fields, 1);
-        return result.length > 0 ? result[0] : null;
+        return result != null && result.length > 0 ? result[0] : null;
     }
     async update(conditions, fieldToValues) {
         const { sql, values } = this.where(conditions);
@@ -238,7 +241,7 @@ class Model {
         const { sql, values } = this.where(conditions);
         const newSql = 'SELECT COUNT(*) AS M_COUNTER FROM ' + this.table + ' WHERE ' + sql;
         const result = await actionQuery(newSql, values);
-        return result[0]['M_COUNTER'] || 0;
+        return result != null && result[0] != undefined ? result[0]['M_COUNTER'] : 0;
     }
     async incr(conditions, field, optval = 1) {
         const { sql, values } = this.where(conditions);
