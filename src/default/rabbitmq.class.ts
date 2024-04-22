@@ -1,4 +1,4 @@
-import { bean  } from "../core.decorator";
+import { bean, getComponent  } from "../core.decorator";
 import { config } from "../typespeed";
 import { connect } from "amqplib";
 let rabbitConnection = null;
@@ -52,7 +52,8 @@ function rabbitListener(queue: string) {
         (async function () {
             const channel = await getChannel();
             await channel.assertQueue(queue);
-            await channel.consume(queue, target[propertyKey], { noAck: true });
+            const targetBean = getComponent(target.constructor);
+            await channel.consume(queue, targetBean[propertyKey], { noAck: true });
         }());
     }
 }

@@ -1,4 +1,4 @@
-import { bean } from "../core.decorator";
+import { bean, getComponent } from "../core.decorator";
 import { default as IoRedis, RedisKey} from "ioredis";
 import { config } from "../typespeed";
 const redisSubscribers = {};
@@ -42,6 +42,11 @@ class Redis extends IoRedis {
             return this.subObj;
         }
     }
+
+    static async close() {
+        if(this.subObj != null) { await this.subObj.quit(); }
+        if(this.pubObj != null) { await this.pubObj.quit(); }
+    }
 }
 
 function redisSubscriber(channel: string) {
@@ -54,19 +59,21 @@ function redisSubscriber(channel: string) {
         }
     });
     return function (target: any, propertyKey: string) {
-        redisSubscribers[channel] = target[propertyKey];
+        redisSubscribers[channel] = {
+            target: target,
+            propertyKey: propertyKey
+        };
     };
 }
 
 if (config("redis")) {
-    Redis.getInstanceOfRedis("sub").on("message", function (channel, message) {
-        redisSubscribers[channel](message);
+    Redis.getInstanceOfRedis("sub").on("message", async function (channel, message) {
+        await getComponent(redisSubscribers[channel].target.constructor)[redisSubscribers[channel].propertyKey](message);
     });
 }
 
 process.once('SIGINT', () => { 
-    Redis.getInstanceOfRedis("sub") || Redis.getInstanceOfRedis("sub").disconnect();
-    Redis.getInstanceOfRedis("pub") || Redis.getInstanceOfRedis("pub").disconnect();
+    Redis.close();
 });
 
 export { Redis, redisSubscriber };
