@@ -47,6 +47,14 @@ class Redis extends ioredis_1.default {
             return this.subObj;
         }
     }
+    static async close() {
+        if (this.subObj != null) {
+            await this.subObj.quit();
+        }
+        if (this.pubObj != null) {
+            await this.pubObj.quit();
+        }
+    }
 }
 Redis.pubObj = null;
 Redis.subObj = null;
@@ -68,16 +76,18 @@ function redisSubscriber(channel) {
         }
     });
     return function (target, propertyKey) {
-        redisSubscribers[channel] = target[propertyKey];
+        redisSubscribers[channel] = {
+            target: target,
+            propertyKey: propertyKey
+        };
     };
 }
 exports.redisSubscriber = redisSubscriber;
 if ((0, typespeed_1.config)("redis")) {
-    Redis.getInstanceOfRedis("sub").on("message", function (channel, message) {
-        redisSubscribers[channel](message);
+    Redis.getInstanceOfRedis("sub").on("message", async function (channel, message) {
+        await (0, core_decorator_1.getComponent)(redisSubscribers[channel].target.constructor)[redisSubscribers[channel].propertyKey](message);
     });
 }
 process.once('SIGINT', () => {
-    Redis.getInstanceOfRedis("sub") || Redis.getInstanceOfRedis("sub").disconnect();
-    Redis.getInstanceOfRedis("pub") || Redis.getInstanceOfRedis("pub").disconnect();
+    Redis.close();
 });

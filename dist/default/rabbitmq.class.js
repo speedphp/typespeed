@@ -62,7 +62,8 @@ function rabbitListener(queue) {
         (async function () {
             const channel = await getChannel();
             await channel.assertQueue(queue);
-            await channel.consume(queue, target[propertyKey], { noAck: true });
+            const targetBean = (0, core_decorator_1.getComponent)(target.constructor);
+            await channel.consume(queue, targetBean[propertyKey], { noAck: true });
         }());
     };
 }
