@@ -192,7 +192,7 @@ class Model {
             newSql += ' LIMIT ' + limit
         } else if (typeof limit === 'object') {
             const total = await actionQuery('SELECT COUNT(*) AS M_COUNTER  FROM ' + this.table + ' WHERE ' + sql, values);
-            if (total === undefined || total[0]['M_COUNTER'] === 0) {
+            if (total === null || total[0] === undefined || total[0]['M_COUNTER'] === 0) {
                 return [];
             }
             if (limit['pageSize'] !== undefined && limit['pageSize'] < total[0]['M_COUNTER']) {
@@ -226,7 +226,7 @@ class Model {
 
     async find<T>(conditions, sort, fields = '*'): Promise<T> {
         const result = await this.findAll(conditions, sort, fields, 1);
-        return result.length > 0 ? <T>result[0] : null;
+        return result != null && result.length > 0 ? <T>result[0] : null;
     }
 
     async update(conditions, fieldToValues): Promise<number> {
@@ -247,7 +247,7 @@ class Model {
         const { sql, values } = this.where(conditions);
         const newSql = 'SELECT COUNT(*) AS M_COUNTER FROM ' + this.table + ' WHERE ' + sql;
         const result = await actionQuery(newSql, values);
-        return result[0]['M_COUNTER'] || 0;
+        return result != null && result[0] != undefined ? result[0]['M_COUNTER'] : 0;
     }
 
     async incr(conditions, field, optval = 1): Promise<number> {
