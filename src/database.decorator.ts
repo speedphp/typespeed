@@ -100,7 +100,7 @@ async function actionQuery(newSql, sqlValues, dataClassType?) {
     const readConnection = await getBean(DataSourceFactory).readConnection();
     const [rows] = await readConnection.query(newSql, sqlValues);
     if (rows === null || Object.keys(rows).length === 0 || !dataClassType) {
-        return rows;
+        return null;
     }
     const records = [];
     for (const rowIndex in rows) {
@@ -112,7 +112,7 @@ async function actionQuery(newSql, sqlValues, dataClassType?) {
         });
         records.push(entity);
     }
-    return records;
+    return Object.keys(records).length === 0 ? null : records;
 }
 
 function convertSQLParams(decoratorSQL: string, target: any, propertyKey: string, args: any[]): [string, any[]] {
