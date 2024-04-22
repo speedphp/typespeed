@@ -99,8 +99,10 @@ async function actionExecute(newSql, sqlValues): Promise<ResultSetHeader> {
 async function actionQuery(newSql, sqlValues, dataClassType?) {
     const readConnection = await getBean(DataSourceFactory).readConnection();
     const [rows] = await readConnection.query(newSql, sqlValues);
-    if (rows === null || Object.keys(rows).length === 0 || !dataClassType) {
+    if (rows === null || Object.keys(rows).length === 0){
         return null;
+    } else if (!dataClassType) {
+        return rows;
     }
     const records = [];
     for (const rowIndex in rows) {
