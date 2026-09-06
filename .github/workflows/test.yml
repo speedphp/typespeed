@@ -21,10 +21,10 @@ jobs:
         ports:
           - 5672
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
-      - uses: actions/checkout@v2
+          node-version: 22
       - name: Setup MySQL
         run: |
           sudo /etc/init.d/mysql start
@@ -32,12 +32,12 @@ jobs:
           CREATE TABLE `user` (`id` int(11) NOT NULL AUTO_INCREMENT,`name` varchar(100) DEFAULT NULL,PRIMARY KEY (`id`)) \
           ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;SHOW TABLES;' -uroot -proot
       - name: 'Cache node_modules'
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-v18-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.os }}-node-v22-${{ hashFiles('**/package.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-v18-
+            ${{ runner.os }}-node-v22-
       - name: Install Dependencies
         run: npm install
       - name: Run Tests with Coverage

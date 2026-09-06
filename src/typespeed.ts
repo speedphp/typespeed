@@ -70,19 +70,21 @@ function value(configPath: string): any {
 }
 
 function getRootPath(lines: string[]) {
-    const macths = ["at Function.Module._load", "at Module.require", "at require", "at Object.<anonymous>"];
+    // 兼容新旧 Node 栈帧（Node<22: "Function.Module._load" / Node22+: "Function._load"）、
+    // mocha(ts-node) 下 "Context.<anonymous>" 与中间可能插入的 "wrapModuleLoad" 帧：
+    // 按顺序出现匹配（不要求严格相邻），提高在各种加载器下的容错。
+    const macths = [/at Function(\.Module)?\._load/, "at Module.require", /at require\b/, /at (Object|Context)\.<anonymous>/];
     let matchIndex = 0;
     for (let line of lines) {
-        if (line.includes(macths[matchIndex])) {
-            if(matchIndex === macths.length - 1) {
+        const matcher = macths[matchIndex];
+        if (matcher instanceof RegExp ? matcher.test(line) : line.includes(matcher)) {
+            if (matchIndex === macths.length - 1) {
                 let arr = line.split("(")[1].split(":")
                 arr.pop()
                 arr.pop()
                 return arr.join(':')
             }
             matchIndex++;
-        }else{
-            matchIndex = 0;
         }
     }
     return undefined;

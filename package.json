@@ -1,11 +1,11 @@
 {
   "name": "typespeed",
-  "version": "2.4.10",
+  "version": "2.4.11",
   "description": "A new Framework for TypeScript.",
   "author": "speedphp",
   "license": "MIT License",
   "scripts": {
-    "test": "mocha --require ts-node/register test/**/*.ts --exit",
+    "test": "NODE_OPTIONS=--no-experimental-strip-types mocha --require ts-node/register test/**/*.ts --exit",
     "test-with-coverage": "nyc --reporter=lcov npm test",
     "start": "ts-node --transpile-only app/src/main.ts",
     "build": "tsc -p .",
