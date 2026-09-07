@@ -1,0 +1,44 @@
+# 镜像配置
+image:
+  repository: typespeed-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# 副本数
+replicaCount: 2
+
+# 服务配置
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+# 容器端口
+containerPort: 8080
+
+# 探针配置（typespeed 内建 /health 与 /ready）
+probes:
+  readiness:
+    path: /ready
+    port: 8080
+    initialDelaySeconds: 10
+    periodSeconds: 5
+  liveness:
+    path: /health
+    port: 8080
+    initialDelaySeconds: 15
+    periodSeconds: 10
+
+# 资源限制
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+# Ingress 配置（可选，enabled=false 则不部署）
+ingress:
+  enabled: false
+  host: typespeed.example.com

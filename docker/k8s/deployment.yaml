@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: typespeed-app
+  labels:
+    app: typespeed-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: typespeed-app
+  template:
+    metadata:
+      labels:
+        app: typespeed-app
+    spec:
+      containers:
+        - name: typespeed-app
+          image: typespeed-app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          # 就绪探针：typespeed 内建 /ready（readiness）
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3
+          # 存活探针：typespeed 内建 /health（liveness）
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

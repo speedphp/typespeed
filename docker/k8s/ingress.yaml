@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: typespeed-app
+spec:
+  rules:
+    - host: typespeed.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: typespeed-app
+                port:
+                  number: 80
