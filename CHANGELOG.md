@@ -4,6 +4,7 @@ typespeed 版本演进记录。本文件 2026-09-06 从 git 历史反推建立�
 
 ## 2.6.x
 
+- **2.6.2**：框架内建健康检查——新增 `HealthFactory`（abstract `ready()`）+ `HealthDefault`（默认恒就绪）；`ExpressServer` 内建 `GET /health`（liveness）与 `GET /ready`（readiness，读 HealthFactory，200/503），路径可经 config 覆盖（2026-09-07）
 - **2.6.1**：Node/TS 升级——TypeScript 4.9 → 5.9.3（legacy 装饰器零改动兼容，标准装饰器双轨同步验证）；`@types/node` 对齐 22；声明 `engines`（node >=18）（2026-09-07）
 
 ## 2.5.x

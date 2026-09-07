@@ -9,8 +9,9 @@ import * as connectRedis from "connect-redis";
 import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route.decorator";
 import { SocketIo } from "../default/socket-io.class";
-import { value } from "../typespeed";
-import { bean, error, autoware, resource } from "../core.decorator";
+import { value, config } from "../typespeed";
+import { bean, error, autoware, resource, getBean } from "../core.decorator";
+import HealthFactory from "../factory/health-factory.class";
 import { Redis } from "./redis.class";
 import AuthenticationFactory from "../factory/authentication-factory.class";
 
@@ -119,6 +120,23 @@ export default class ExpressServer extends ServerFactory {
         setRouter(this.app);
         this.app.use(this.authentication.afterCompletion);
         
+        // 健康检查（k8s liveness / readiness 探针）
+        const healthConfig = config("health") || {};
+        const livenessPath = healthConfig["liveness"] || "/health";
+        const readinessPath = healthConfig["readiness"] || "/ready";
+        this.app.get(livenessPath, (req, res) => {
+            res.status(200).json({ status: "up" });
+        });
+        this.app.get(readinessPath, (req, res) => {
+            let ready = true;
+            try {
+                ready = getBean(HealthFactory).ready();
+            } catch (e) {
+                ready = false;
+            }
+            res.status(ready ? 200 : 503).json({ status: ready ? "ready" : "not-ready" });
+        });
+
         const errorPageDir = __dirname + "/pages";
         this.app.use((req, res) => {
             error("404 not found, for page: " + req.url);

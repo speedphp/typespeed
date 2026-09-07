@@ -280,6 +280,14 @@ declare abstract class AuthenticationFactory {
      */
     afterCompletion(req: express.Request, res: express.Response, next: express.NextFunction): void;
 }
+/**健康检查工厂类，实现 ready() 自定义就绪检查（readiness） */
+declare abstract class HealthFactory {
+    abstract ready(): boolean;
+}
+/**健康检查默认实现类，默认恒为就绪 */
+declare class HealthDefault extends HealthFactory {
+    ready(): boolean;
+}
 /**Redis 操作类 */
 declare class Redis extends IoRedis {
     /**获取 Redis 实例 */
@@ -400,4 +408,4 @@ declare class SocketIo {
 /**Socket IO 服务实现类 */
 declare const io: IoServer;
 
-export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, redisSubscriber, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, AuthenticationFactory, next, reqBody, reqQuery, reqForm, reqParam, req, req as request, res, res as response, component, bean, resource, log, logx, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, bind, resultType, cache, Model, SocketIo, io };
+export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, redisSubscriber, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, AuthenticationFactory, HealthFactory, HealthDefault, next, reqBody, reqQuery, reqForm, reqParam, req, req as request, res, res as response, component, bean, resource, log, logx, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, bind, resultType, cache, Model, SocketIo, io };

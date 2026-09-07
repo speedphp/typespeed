@@ -22,6 +22,7 @@ const route_decorator_1 = require("../route.decorator");
 const socket_io_class_1 = require("../default/socket-io.class");
 const typespeed_1 = require("../typespeed");
 const core_decorator_1 = require("../core.decorator");
+const health_factory_class_1 = require("../factory/health-factory.class");
 const redis_class_1 = require("./redis.class");
 const authentication_factory_class_1 = require("../factory/authentication-factory.class");
 class ExpressServer extends server_factory_class_1.default {
@@ -83,6 +84,23 @@ class ExpressServer extends server_factory_class_1.default {
         }
         (0, route_decorator_1.setRouter)(this.app);
         this.app.use(this.authentication.afterCompletion);
+        // 健康检查（k8s liveness / readiness 探针）
+        const healthConfig = (0, typespeed_1.config)("health") || {};
+        const livenessPath = healthConfig["liveness"] || "/health";
+        const readinessPath = healthConfig["readiness"] || "/ready";
+        this.app.get(livenessPath, (req, res) => {
+            res.status(200).json({ status: "up" });
+        });
+        this.app.get(readinessPath, (req, res) => {
+            let ready = true;
+            try {
+                ready = (0, core_decorator_1.getBean)(health_factory_class_1.default).ready();
+            }
+            catch (e) {
+                ready = false;
+            }
+            res.status(ready ? 200 : 503).json({ status: ready ? "ready" : "not-ready" });
+        });
         const errorPageDir = __dirname + "/pages";
         this.app.use((req, res) => {
             (0, core_decorator_1.error)("404 not found, for page: " + req.url);
