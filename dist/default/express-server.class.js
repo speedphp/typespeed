@@ -26,6 +26,10 @@ const health_factory_class_1 = require("../factory/health-factory.class");
 const redis_class_1 = require("./redis.class");
 const authentication_factory_class_1 = require("../factory/authentication-factory.class");
 class ExpressServer extends server_factory_class_1.default {
+    constructor() {
+        super(...arguments);
+        this.httpServer = null;
+    }
     getSever() {
         const server = new ExpressServer();
         server.app = express();
@@ -39,13 +43,46 @@ class ExpressServer extends server_factory_class_1.default {
             this.app.use(middleware);
         });
         this.setDefaultMiddleware();
+        let server;
         if (this.socketIoConfig) {
             const newSocketApp = socket_io_class_1.SocketIo.setIoServer(this.app, this.socketIoConfig);
-            return newSocketApp.listen(port);
+            server = newSocketApp.listen(port);
         }
         else {
-            return this.app.listen(port);
+            server = this.app.listen(port);
         }
+        this.httpServer = server;
+        this.registerGracefulShutdown();
+        return server;
+    }
+    stop() {
+        return new Promise((resolve) => {
+            if (this.httpServer) {
+                this.httpServer.close(() => resolve());
+            }
+            else {
+                resolve();
+            }
+        });
+    }
+    registerGracefulShutdown() {
+        const shutdown = (signal) => {
+            (0, core_decorator_1.log)(`received ${signal}, gracefully shutting down...`);
+            // 30 秒兜底强制退出，防止连接迟迟不关闭
+            const forceExit = setTimeout(() => {
+                (0, core_decorator_1.log)("forced shutdown after timeout");
+                process.exit(1);
+            }, 30000);
+            forceExit.unref();
+            redis_class_1.Redis.close().catch(() => { });
+            this.httpServer.close(() => {
+                clearTimeout(forceExit);
+                (0, core_decorator_1.log)("server closed");
+                process.exit(0);
+            });
+        };
+        process.on("SIGTERM", () => shutdown("SIGTERM"));
+        process.on("SIGINT", () => shutdown("SIGINT"));
     }
     setDefaultMiddleware() {
         this.app.use(express.urlencoded({ extended: true }));

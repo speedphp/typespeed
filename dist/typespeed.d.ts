@@ -388,6 +388,10 @@ declare class ExpressServer extends ServerFactory {
     getSever(): ServerFactory;
     setMiddleware(middleware: any): void;
     start(port: number): void;
+    /**HTTP 服务实例（start 后可用） */
+    httpServer: any;
+    /**优雅停机：关闭 HTTP 服务（排空在途连接） */
+    stop(): Promise<void>;
     private setDefaultMiddleware;
 }
 /**Socket IO 装饰器类 */

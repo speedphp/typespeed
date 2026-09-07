@@ -10,7 +10,7 @@ import ServerFactory from "../factory/server-factory.class";
 import { setRouter } from "../route.decorator";
 import { SocketIo } from "../default/socket-io.class";
 import { value, config } from "../typespeed";
-import { bean, error, autoware, resource, getBean } from "../core.decorator";
+import { bean, error, autoware, resource, getBean, log } from "../core.decorator";
 import HealthFactory from "../factory/health-factory.class";
 import { Redis } from "./redis.class";
 import AuthenticationFactory from "../factory/authentication-factory.class";
@@ -61,18 +61,54 @@ export default class ExpressServer extends ServerFactory {
         this.middlewareList.push(middleware);
     }
 
+    public httpServer: any = null;
+
     public start(port: number): any {
         this.middlewareList.forEach(middleware => {
             this.app.use(middleware);
         });
 
         this.setDefaultMiddleware();
+        let server;
         if(this.socketIoConfig) {
             const newSocketApp = SocketIo.setIoServer(this.app, this.socketIoConfig);
-            return newSocketApp.listen(port);
+            server = newSocketApp.listen(port);
         }else{
-            return this.app.listen(port);
+            server = this.app.listen(port);
         }
+        this.httpServer = server;
+        this.registerGracefulShutdown();
+        return server;
+    }
+
+    public stop(): Promise<void> {
+        return new Promise((resolve) => {
+            if (this.httpServer) {
+                this.httpServer.close(() => resolve());
+            } else {
+                resolve();
+            }
+        });
+    }
+
+    private registerGracefulShutdown() {
+        const shutdown = (signal: string) => {
+            log(`received ${signal}, gracefully shutting down...`);
+            // 30 秒兜底强制退出，防止连接迟迟不关闭
+            const forceExit = setTimeout(() => {
+                log("forced shutdown after timeout");
+                process.exit(1);
+            }, 30000);
+            forceExit.unref();
+            Redis.close().catch(() => {});
+            this.httpServer.close(() => {
+                clearTimeout(forceExit);
+                log("server closed");
+                process.exit(0);
+            });
+        };
+        process.on("SIGTERM", () => shutdown("SIGTERM"));
+        process.on("SIGINT", () => shutdown("SIGINT"));
     }
 
     private setDefaultMiddleware() {
