@@ -19,6 +19,7 @@ require("reflect-metadata");
 const fs = require("fs");
 const path = require("path");
 const walkSync = require("walk-sync");
+const decorator_utils_1 = require("./decorator-utils");
 let globalConfig = {};
 const corePath = __dirname;
 const mainPath = path.dirname(getRootPath(new Error().stack.split("\n")) || process.argv[1]);
@@ -33,7 +34,18 @@ if (fs.existsSync(configFile)) {
 }
 globalConfig["MAIN_PATH"] = mainPath;
 globalConfig["CORE_PATH"] = corePath;
-function app(constructor) {
+function app(...args) {
+    if ((0, decorator_utils_1.isStd)(args)) {
+        const [, ctx] = (0, decorator_utils_1.getStdArgs)(args);
+        ctx.addInitializer(function () {
+            startApp(this.constructor);
+        });
+        return;
+    }
+    startApp(args[0]);
+}
+exports.app = app;
+function startApp(constructor) {
     const coreFiles = walkSync(corePath, { globs: ['**/*.ts'], ignore: ['**/*.d.ts', 'scaffold/**'] });
     const mainFiles = walkSync(mainPath, { globs: ['**/*.ts'] });
     (async function () {
@@ -56,13 +68,28 @@ function app(constructor) {
         main["main"]();
     }());
 }
-exports.app = app;
 function config(node) {
     return globalConfig[node] || null;
 }
 exports.config = config;
 function value(configPath) {
-    return function (target, propertyKey) {
+    return function (...args) {
+        if ((0, decorator_utils_1.isStd)(args)) {
+            // 标准 field 装饰器：返回 initializer 注入配置值（标准模式下无 design:type）。
+            return (initialValue) => {
+                if (globalConfig === undefined) {
+                    return initialValue;
+                }
+                let pathNodes = configPath.split(".");
+                let nodeValue = globalConfig;
+                for (let i = 0; i < pathNodes.length; i++) {
+                    nodeValue = nodeValue[pathNodes[i]];
+                }
+                return nodeValue === undefined ? initialValue : nodeValue;
+            };
+        }
+        const target = args[0];
+        const propertyKey = args[1];
         if (globalConfig === undefined) {
             Object.defineProperty(target, propertyKey, {
                 get: () => {
@@ -108,6 +135,7 @@ function getRootPath(lines) {
 __exportStar(require("./core.decorator"), exports);
 __exportStar(require("./route.decorator"), exports);
 __exportStar(require("./database.decorator"), exports);
+__exportStar(require("./bind.decorator"), exports);
 var log_factory_class_1 = require("./factory/log-factory.class");
 Object.defineProperty(exports, "LogFactory", { enumerable: true, get: function () { return log_factory_class_1.default; } });
 var cache_factory_class_1 = require("./factory/cache-factory.class");

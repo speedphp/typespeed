@@ -1,0 +1,14 @@
+{
+  "name": "typespeed-example-std",
+  "version": "1.0.0",
+  "private": true,
+  "description": "typespeed 标准装饰器（TC39 Stage 2.7）示例：experimentalDecorators: false + Symbol.metadata polyfill",
+  "scripts": {
+    "build": "tsc -p .",
+    "start": "node dist/main.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@types/node": "^18.19.3"
+  }
+}

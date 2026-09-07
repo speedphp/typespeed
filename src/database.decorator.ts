@@ -1,5 +1,7 @@
 import { ResultSetHeader } from 'mysql2';
 import { log, getBean } from './core.decorator';
+import { isStd, getStdArgs } from './decorator-utils';
+import { getBindMapping } from './bind.decorator';
 import CacheFactory from './factory/cache-factory.class';
 import DataSourceFactory from './factory/data-source-factory.class';
 
@@ -10,9 +12,24 @@ const tableVersionMap = new Map<string, number>();
 let cacheBean: CacheFactory;
 
 function insert(sql: string) {
-    return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
-        descriptor.value = async (...args: any[]) => {
-            const result: ResultSetHeader = await queryForExecute(sql, args, target, propertyKey);
+    return (...args: any[]): any => {
+        if (isStd(args)) {
+            const [, ctx] = getStdArgs(args);
+            const propertyKey = String(ctx.name);
+            return async function (this: any, ...callArgs: any[]) {
+                const result: ResultSetHeader = await queryForExecute(sql, callArgs, this, propertyKey);
+                if (cacheBean && result.affectedRows > 0) {
+                    const [tableName, tableVersion] = getTableAndVersion("insert", sql);
+                    tableVersionMap.set(tableName, tableVersion + 1);
+                }
+                return result.insertId;
+            };
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
+        const descriptor = args[2] as PropertyDescriptor;
+        descriptor.value = async (...callArgs: any[]) => {
+            const result: ResultSetHeader = await queryForExecute(sql, callArgs, target, propertyKey);
             if (cacheBean && result.affectedRows > 0) {
                 const [tableName, tableVersion] = getTableAndVersion("insert", sql);
                 tableVersionMap.set(tableName, tableVersion + 1);
@@ -23,9 +40,24 @@ function insert(sql: string) {
 }
 
 function update(sql: string) {
-    return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
-        descriptor.value = async (...args: any[]) => {
-            const result: ResultSetHeader = await queryForExecute(sql, args, target, propertyKey);
+    return (...args: any[]): any => {
+        if (isStd(args)) {
+            const [, ctx] = getStdArgs(args);
+            const propertyKey = String(ctx.name);
+            return async function (this: any, ...callArgs: any[]) {
+                const result: ResultSetHeader = await queryForExecute(sql, callArgs, this, propertyKey);
+                if (cacheBean && result.affectedRows > 0) {
+                    const [tableName, tableVersion] = getTableAndVersion("update", sql);
+                    tableVersionMap.set(tableName, tableVersion + 1);
+                }
+                return result.affectedRows;
+            };
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
+        const descriptor = args[2] as PropertyDescriptor;
+        descriptor.value = async (...callArgs: any[]) => {
+            const result: ResultSetHeader = await queryForExecute(sql, callArgs, target, propertyKey);
             if (cacheBean && result.affectedRows > 0) {
                 const [tableName, tableVersion] = getTableAndVersion("update", sql);
                 tableVersionMap.set(tableName, tableVersion + 1);
@@ -36,9 +68,24 @@ function update(sql: string) {
 }
 
 function remove(sql: string) {
-    return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
-        descriptor.value = async (...args: any[]) => {
-            const result: ResultSetHeader = await queryForExecute(sql, args, target, propertyKey);
+    return (...args: any[]): any => {
+        if (isStd(args)) {
+            const [, ctx] = getStdArgs(args);
+            const propertyKey = String(ctx.name);
+            return async function (this: any, ...callArgs: any[]) {
+                const result: ResultSetHeader = await queryForExecute(sql, callArgs, this, propertyKey);
+                if (cacheBean && result.affectedRows > 0) {
+                    const [tableName, tableVersion] = getTableAndVersion("delete", sql);
+                    tableVersionMap.set(tableName, tableVersion + 1);
+                }
+                return result.affectedRows;
+            };
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
+        const descriptor = args[2] as PropertyDescriptor;
+        descriptor.value = async (...callArgs: any[]) => {
+            const result: ResultSetHeader = await queryForExecute(sql, callArgs, target, propertyKey);
             if (cacheBean && result.affectedRows > 0) {
                 const [tableName, tableVersion] = getTableAndVersion("delete", sql);
                 tableVersionMap.set(tableName, tableVersion + 1);
@@ -49,9 +96,33 @@ function remove(sql: string) {
 }
 
 function select(sql: string) {
-    return (target, propertyKey: string, descriptor: PropertyDescriptor) => {
-        descriptor.value = async (...args: any[]) => {
-            const [newSql, sqlValues] = convertSQLParams(sql, target, propertyKey, args);
+    return (...args: any[]): any => {
+        if (isStd(args)) {
+            const [, ctx] = getStdArgs(args);
+            const propertyKey = String(ctx.name);
+            return async function (this: any, ...callArgs: any[]) {
+                const [newSql, sqlValues] = convertSQLParams(sql, this, propertyKey, callArgs);
+                const resultType = resultTypeMap.get([this.constructor.name, propertyKey].toString());
+                if (cacheBean && cacheDefindMap.has([this.constructor.name, propertyKey].toString())) {
+                    const [tableName, tableVersion] = getTableAndVersion("select", newSql);
+                    const cacheKey = JSON.stringify([tableName, tableVersion, newSql, sqlValues]);
+                    if (cacheBean.get(cacheKey)) {
+                        return cacheBean.get(cacheKey);
+                    } else {
+                        const rows = await actionQuery(newSql, sqlValues, resultType);
+                        cacheBean.set(cacheKey, rows, cacheDefindMap.get([this.constructor.name, propertyKey].toString()));
+                        return rows;
+                    }
+                } else {
+                    return await actionQuery(newSql, sqlValues, resultType);
+                }
+            };
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
+        const descriptor = args[2] as PropertyDescriptor;
+        descriptor.value = async (...callArgs: any[]) => {
+            const [newSql, sqlValues] = convertSQLParams(sql, target, propertyKey, callArgs);
             const resultType = resultTypeMap.get([target.constructor.name, propertyKey].toString());
             if (cacheBean && cacheDefindMap.has([target.constructor.name, propertyKey].toString())) {
                 const [tableName, tableVersion] = getTableAndVersion("select", newSql);
@@ -71,7 +142,16 @@ function select(sql: string) {
 }
 
 function resultType(dataClass) {
-    return function (target, propertyKey: string) {
+    return function (...args: any[]): any {
+        if (isStd(args)) {
+            const [, ctx] = getStdArgs(args);
+            ctx.addInitializer(function (this: any) {
+                resultTypeMap.set([this.constructor.name, String(ctx.name)].toString(), dataClass);
+            });
+            return;
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
         resultTypeMap.set([target.constructor.name, propertyKey].toString(), dataClass);
         //never return
     };
@@ -124,8 +204,17 @@ function convertSQLParams(decoratorSQL: string, target: any, propertyKey: string
         if (typeof args[0] === 'object') {
             argsVal = new Map(Object.getOwnPropertyNames(args[0]).map((valName) => [valName, args[0][valName]]));
         } else {
-            const existingParameters: [string, number][] = Reflect.getOwnMetadata(paramMetadataKey, target, propertyKey,);
-            argsVal = new Map(existingParameters.map(([argName, argIdx]) => [argName, args[argIdx]]));
+            // 优先 @param（legacy reflect-metadata），否则回退 @bind（方法级声明，标准模式）
+            let existingParameters: [string, number][] = Reflect.getOwnMetadata(paramMetadataKey, target, propertyKey);
+            if (!existingParameters) {
+                const bindMapping = getBindMapping(target.constructor.name, propertyKey);
+                if (bindMapping) {
+                    existingParameters = Object.entries(bindMapping)
+                        .filter(([, value]) => typeof value === "number")
+                        .map(([name, value]) => [name, value as number]);
+                }
+            }
+            argsVal = new Map((existingParameters || []).map(([argName, argIdx]) => [argName, args[argIdx]]));
         }
         const regExp = /#{(\w+)}/;
         let match;
@@ -139,7 +228,22 @@ function convertSQLParams(decoratorSQL: string, target: any, propertyKey: string
 }
 
 function cache(ttl: number) {
-    return function (target: any, propertyKey: string) {
+    return function (...args: any[]): any {
+        if (isStd(args)) {
+            const [, ctx] = getStdArgs(args);
+            ctx.addInitializer(function (this: any) {
+                cacheDefindMap.set([this.constructor.name, String(ctx.name)].toString(), ttl);
+                if (cacheBean == null) {
+                    const cacheFactory = getBean(CacheFactory);
+                    if (cacheFactory || cacheFactory["factory"]) {
+                        cacheBean = cacheFactory["factory"];
+                    }
+                }
+            });
+            return;
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
         cacheDefindMap.set([target.constructor.name, propertyKey].toString(), ttl);
         if (cacheBean == null) {
             const cacheFactory = getBean(CacheFactory);

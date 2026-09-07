@@ -2,9 +2,14 @@
 
 typespeed 版本演进记录。本文件 2026-09-06 从 git 历史反推建立；git 最早提交 2022-09-18（ch01）。
 
-## 2.4.x（当前 2.4.10）
+## 2.5.x
 
-- **2.4.10**：升级 jsonwebtoken 和 mysql2 库（2024-05-07，当前 HEAD）
+- **2.5.0**：装饰器双轨——支持 TC39 标准装饰器（Stage 2.7），legacy 装饰器零破坏。单份源码运行时双签名感知（`isStd` 判据），覆盖 core/route/database 三族 + 入口 `app`/`value`；新增方法级 `@bind` 装饰器（route 参数名→来源、database 占位符→索引，替代标准模式删除的参数装饰器）；`@autoware`/`@resource`/`@bean` 支持显式 token（标准模式无 `design:type`）；类型声明宽松化；新增标准模式示例 `introduction/decorator-next/` + `isStd` 单测（2026-09-07）
+
+## 2.4.x
+
+- **2.4.11**：README 四入口、CI 修复（action 升 v4、node 22）、CHANGELOG 建立、getRootPath 兼容 Node22/mocha（2026-09-06）
+- **2.4.10**：升级 jsonwebtoken 和 mysql2 库（2024-05-07）
 - **2.4.9**：修复 SocketIO、MQ、Redis 等对象获取不准确问题（2024-04-22）
 - **2.4.8**：修复 socket.io 未从 bean 工厂获取装饰类的问题；修复 select 返回值不为 null 的问题（2024-04-22）
 - **2.4.7**：logx 日志模块（2024-04-21）

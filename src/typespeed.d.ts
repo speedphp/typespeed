@@ -5,68 +5,74 @@ import "reflect-metadata";
 
 /**设置路由中间件 */
 declare function setRouter(app: express.Application): void;
-/**上传文件装饰器，装饰页面具备解析上传文件的能力 */
-declare function upload(target: any, propertyKey: string): void;
+/**上传文件装饰器，装饰页面具备解析上传文件的能力（legacy 方法装饰器；2.5.x 起兼容标准 (value, context) 签名） */
+declare function upload(...args: any[]): any;
 /**
  * 页面支持 JWT 鉴权能力
  * @param jwtConfig jwt 配置
  */
-declare function jwt(jwtConfig: any): (target: any, propertyKey: string) => void;
+declare function jwt(jwtConfig: any): (...args: any[]) => any;
 /**
  * GET 请求装饰器
  * @param value 请求路径
  */
-declare const getMapping: (value: string) => (target: any, propertyKey: string) => void;
+declare const getMapping: (value: string) => (...args: any[]) => any;
 /**
  * POST 请求装饰器
  * @param value 请求路径
  */
-declare const postMapping: (value: string) => (target: any, propertyKey: string) => void;
+declare const postMapping: (value: string) => (...args: any[]) => any;
 /**
  * 请求装饰器，不区分请求类型
  * @param value 请求路径
  */
-declare const requestMapping: (value: string) => (target: any, propertyKey: string) => void;
+declare const requestMapping: (value: string) => (...args: any[]) => any;
 /**
  * INSERT 装饰器
  * 将方法作为 INSERT SQL 使用
  * @param sql INSERT SQL 语句
  */
-declare function insert(sql: string): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => void;
+declare function insert(sql: string): (...args: any[]) => any;
 /**
  * UPDATE 装饰器
  * 将方法作为 UPDATE SQL 使用
  * @param sql UPDATE SQL 语句
  */
-declare function update(sql: string): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => void;
+declare function update(sql: string): (...args: any[]) => any;
 /**
  * DELETE 装饰器
  * 将方法作为 DELETE SQL 使用
  * @param sql DELETE SQL 语句
  */
-declare function remove(sql: string): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => void;
+declare function remove(sql: string): (...args: any[]) => any;
 /**
  * SELECT 装饰器
  * 将方法作为 SELECT SQL 使用
  * @param sql SELECT SQL 语句
  */
-declare function select(sql: string): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => void;
+declare function select(sql: string): (...args: any[]) => any;
 /**
  * SELECT 结果类型装饰器，和 @select 配合使用
  * @param dataClass 结果类型
  */
-declare function resultType(dataClass: any): (target: any, propertyKey: string) => void;
+declare function resultType(dataClass: any): (...args: any[]) => any;
 /**
  * SQL 参数装饰器，标注 SQL 语句的绑定参数值，和 @select @insert @update @remove 配合使用
  * @param name 参数在 SQL 语句内的标记值
  */
 declare function param(name: string): (target: any, propertyKey: string | symbol, parameterIndex: number) => void;
 /**
+ * 方法级参数绑定装饰器（标准装饰器删除了参数装饰器后的替代，legacy 模式也可用）。
+ * database 场景映射 SQL 占位符 → 参数索引（值为 number）；route 场景映射参数名 → 请求来源（值为 string）。
+ * @param mapping 绑定声明，如 { name: 0, id: 1 } 或 { id: "reqParam", body: "reqBody" }
+ */
+declare function bind(mapping: Record<string, string | number>): (...args: any[]) => any;
+/**
  * SELECT 缓存装饰器，自动缓存 SELECT 查询结果，和 @select 配合使用
  * 当执行 @insert @update @remove 时，会自动清除缓存。
  * @param ttl 缓存时间，单位秒
  */
-declare function cache(ttl: number): (target: any, propertyKey: string) => void;
+declare function cache(ttl: number): (...args: any[]) => any;
 /**模型数据操作类 */
 declare class Model {
     /**分页数据 */
@@ -139,23 +145,21 @@ declare class Model {
  * 
  * 被装饰的类将作为应用程序入口，框架将启动该类的 main 方法
  */
-declare function app<T extends {
-    new(...args: any[]): {};
-}>(constructor: T): void;
+declare function app(...args: any[]): any;
 /**获取配置文件中的配置项 */
 declare function config(node: string): any;
-/**组件装饰器，被装饰的类可以通过 @autoware 取得实例 */
-declare function component(constructorFunction: any): void;
+/**组件装饰器，被装饰的类可以通过 @autoware 取得实例（legacy 类装饰器；2.5.x 起兼容标准 (value, context) 签名） */
+declare function component(...args: any[]): any;
 /**获取组件实例函数，返回结果同 @autoware */
 declare function getComponent(constructorFunction: any): any;
-/**提供对象装饰器，框架将使用 @bean 装饰的方法来获取对象实例 */
-declare function bean(target: any, propertyKey: string): void;
+/**提供对象装饰器，框架将使用 @bean 装饰的方法来获取对象实例（legacy 方法装饰器；2.5.x 起兼容标准签名） */
+declare function bean(...args: any[]): any;
 /**获取对象实例函数，返回结果由 @bean 装饰的方法提供 */
 declare function getBean(mappingClass: Function): any;
 /**配置装饰器，装饰类成员变量值，获取配置文件中的配置项 */
 declare function value(configPath: string): any;
 /**自动装配装饰器，无参数版本，被装饰的类成员变量将自动注入实例 */
-declare function autoware(target: any, propertyKey: string): void;
+declare function autoware(...args: any[]): any;
 /**自动装配装饰器，带参数版本，可输入参数作为实例初始化参数，被装饰的类成员变量将自动注入实例 */
 declare function resource(...args: any[]): any;
 /**日志函数，输出打印日志 */
@@ -165,11 +169,11 @@ declare function logx(message: any): void;
 /**错误日志函数，输出打印错误日志 */
 declare function error(message?: any, ...optionalParams: any[]): void;
 /**路由页面前置执行装饰器，参数指向路由页面方法，被装饰的方法将在路由页面之前执行 */
-declare function before(constructorFunction: any, methodName: string): (target: any, propertyKey: string) => void;
+declare function before(constructorFunction: any, methodName: string): (...args: any[]) => any;
 /**路由页面后置执行装饰器，参数指向路由页面方法，被装饰的方法将在路由页面之后执行 */
-declare function after(constructorFunction: any, methodName: string): (target: any, propertyKey: string) => void;
+declare function after(constructorFunction: any, methodName: string): (...args: any[]) => any;
 /**定时程序装饰器，参数支持 crontab 格式字符串，可根据参数定时执行被装饰的方法 */
-declare function schedule(cronTime: string | Date): (target: any, propertyKey: string) => void;
+declare function schedule(cronTime: string | Date): (...args: any[]) => any;
 /**RabbitMQ 监听装饰器，参数是监听的队列名称，当接受到消息时将执行被装饰方法 */
 declare function rabbitListener(queue: string): (target: any, propertyKey: string) => void;
 /**Redis 监听装饰器，参数是监听的队列名称，当接受到消息时将执行被装饰方法 */
@@ -396,4 +400,4 @@ declare class SocketIo {
 /**Socket IO 服务实现类 */
 declare const io: IoServer;
 
-export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, redisSubscriber, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, AuthenticationFactory, next, reqBody, reqQuery, reqForm, reqParam, req, req as request, res, res as response, component, bean, resource, log, logx, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, resultType, cache, Model, SocketIo, io };
+export { ExpressServer, LogDefault, NodeCache, RabbitMQ, rabbitListener, redisSubscriber, ReadWriteDb, Redis, CacheFactory, DataSourceFactory, LogFactory, ServerFactory, AuthenticationFactory, next, reqBody, reqQuery, reqForm, reqParam, req, req as request, res, res as response, component, bean, resource, log, logx, app, before, after, value, error, config, autoware, getBean, getComponent, schedule, getMapping, postMapping, requestMapping, setRouter, upload, jwt, insert, update, remove, select, param, bind, resultType, cache, Model, SocketIo, io };

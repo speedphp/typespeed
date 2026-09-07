@@ -2,6 +2,7 @@ import "reflect-metadata";
 import * as fs from "fs";
 import * as path from "path";
 import * as walkSync from "walk-sync";
+import { isStd, getStdArgs } from "./decorator-utils";
 
 let globalConfig = {};
 const corePath = __dirname;
@@ -18,7 +19,18 @@ if (fs.existsSync(configFile)) {
 globalConfig["MAIN_PATH"] = mainPath;
 globalConfig["CORE_PATH"] = corePath;
 
-function app<T extends { new(...args: any[]): {} }>(constructor: T) {
+function app(...args: any[]): any {
+    if (isStd(args)) {
+        const [, ctx] = getStdArgs(args);
+        ctx.addInitializer(function (this: any) {
+            startApp(this.constructor);
+        });
+        return;
+    }
+    startApp(args[0]);
+}
+
+function startApp(constructor: any) {
     const coreFiles = walkSync(corePath, { globs: ['**/*.ts'], ignore: ['**/*.d.ts', 'scaffold/**'] });
     const mainFiles = walkSync(mainPath, { globs: ['**/*.ts'] });
 
@@ -47,7 +59,23 @@ function config(node: string) {
 }
 
 function value(configPath: string): any {
-    return function (target: any, propertyKey: string) {
+    return function (...args: any[]): any {
+        if (isStd(args)) {
+            // 标准 field 装饰器：返回 initializer 注入配置值（标准模式下无 design:type）。
+            return (initialValue: any) => {
+                if (globalConfig === undefined) {
+                    return initialValue;
+                }
+                let pathNodes = configPath.split(".");
+                let nodeValue = globalConfig;
+                for (let i = 0; i < pathNodes.length; i++) {
+                    nodeValue = nodeValue[pathNodes[i]];
+                }
+                return nodeValue === undefined ? initialValue : nodeValue;
+            };
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
         if (globalConfig === undefined) {
             Object.defineProperty(target, propertyKey, {
                 get: () => {
@@ -94,6 +122,7 @@ export { app, value, config };
 export * from "./core.decorator";
 export * from "./route.decorator";
 export * from "./database.decorator";
+export * from "./bind.decorator";
 
 export { default as LogFactory} from "./factory/log-factory.class";
 export { default as CacheFactory} from "./factory/cache-factory.class";

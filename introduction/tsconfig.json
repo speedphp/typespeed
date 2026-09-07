@@ -16,5 +16,8 @@
   },
   "include": [
     "./**/*.ts"
+  ],
+  "exclude": [
+    "decorator-next"
   ]
 }
