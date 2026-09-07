@@ -1,6 +1,6 @@
 {
   "name": "typespeed",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "A new Framework for TypeScript.",
   "author": "speedphp",
   "license": "MIT License",
@@ -15,7 +15,8 @@
   "main": "dist/typespeed.js",
   "files": [
     "dist",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "README.en.md"
   ],
   "bin": {
     "typespeed": "dist/scaffold/command.js"
