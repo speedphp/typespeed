@@ -1,6 +1,7 @@
 import { Server as IoServer } from "socket.io";
 import { createServer } from "http";
 import { getComponent } from "../core.decorator";
+import { isStd, getStdArgs } from "../decorator-utils";
 
 let io: IoServer = null;
 const listeners = { "event": [], "disconnect": null, "error": null, "connected": null };
@@ -48,7 +49,19 @@ class SocketIo {
     }
 
     public static onEvent(event: string) {
-        return (target: any, propertyKey: string) => {
+        return (...args: any[]): any => {
+            if (isStd(args)) {
+                const [, ctx] = getStdArgs(args);
+                ctx.addInitializer(function (this: any) {
+                    listeners["event"].push([{
+                        target: this,
+                        propertyKey: String(ctx.name)
+                    }, event]);
+                });
+                return;
+            }
+            const target = args[0];
+            const propertyKey = args[1] as string;
             listeners["event"].push([{
                 target: target,
                 propertyKey: propertyKey
@@ -56,21 +69,57 @@ class SocketIo {
         }
     }
 
-    public static onError(target: any, propertyKey: string) {
+    public static onError(...args: any[]): any {
+        if (isStd(args)) {
+            const [, ctx] = getStdArgs(args);
+            ctx.addInitializer(function (this: any) {
+                listeners["error"] = {
+                    target: this,
+                    propertyKey: String(ctx.name)
+                };
+            });
+            return;
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
         listeners["error"] = {
             target: target,
             propertyKey: propertyKey
         };
     }
 
-    public static onDisconnect(target: any, propertyKey: string) {
+    public static onDisconnect(...args: any[]): any {
+        if (isStd(args)) {
+            const [, ctx] = getStdArgs(args);
+            ctx.addInitializer(function (this: any) {
+                listeners["disconnect"] = {
+                    target: this,
+                    propertyKey: String(ctx.name)
+                };
+            });
+            return;
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
         listeners["disconnect"] = {
             target: target,
             propertyKey: propertyKey
         };
     }
 
-    public static onConnected(target: any, propertyKey: string) {
+    public static onConnected(...args: any[]): any {
+        if (isStd(args)) {
+            const [, ctx] = getStdArgs(args);
+            ctx.addInitializer(function (this: any) {
+                listeners["connected"] = {
+                    target: this,
+                    propertyKey: String(ctx.name)
+                };
+            });
+            return;
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
         listeners["connected"] = {
             target: target,
             propertyKey: propertyKey

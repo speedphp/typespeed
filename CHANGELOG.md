@@ -4,6 +4,7 @@ typespeed 版本演进记录。本文件 2026-09-06 从 git 历史反推建立�
 
 ## 2.5.x
 
+- **2.5.1**：补全 `default/` 族装饰器双签名（`rabbitListener` / `redisSubscriber` / `SocketIo.onEvent`/`onError`/`onDisconnect`/`onConnected`）；打包瘦身（`files` 白名单 108→31 文件）；`npm pkg fix` 修正 bin 字段；修正 `redisSubscriber` 的 d.ts 签名（2026-09-07）
 - **2.5.0**：装饰器双轨——支持 TC39 标准装饰器（Stage 2.7），legacy 装饰器零破坏。单份源码运行时双签名感知（`isStd` 判据），覆盖 core/route/database 三族 + 入口 `app`/`value`；新增方法级 `@bind` 装饰器（route 参数名→来源、database 占位符→索引，替代标准模式删除的参数装饰器）；`@autoware`/`@resource`/`@bean` 支持显式 token（标准模式无 `design:type`）；类型声明宽松化；新增标准模式示例 `introduction/decorator-next/` + `isStd` 单测（2026-09-07）
 
 ## 2.4.x

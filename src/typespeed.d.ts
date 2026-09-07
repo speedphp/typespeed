@@ -175,9 +175,9 @@ declare function after(constructorFunction: any, methodName: string): (...args: 
 /**定时程序装饰器，参数支持 crontab 格式字符串，可根据参数定时执行被装饰的方法 */
 declare function schedule(cronTime: string | Date): (...args: any[]) => any;
 /**RabbitMQ 监听装饰器，参数是监听的队列名称，当接受到消息时将执行被装饰方法 */
-declare function rabbitListener(queue: string): (target: any, propertyKey: string) => void;
-/**Redis 监听装饰器，参数是监听的队列名称，当接受到消息时将执行被装饰方法 */
-declare function redisSubscriber(target: any, propertyKey: string): void;
+declare function rabbitListener(queue: string): (...args: any[]) => any;
+/**Redis 监听装饰器，参数是监听的频道名称，当接受到消息时将执行被装饰方法 */
+declare function redisSubscriber(channel: string): (...args: any[]) => any;
 /** request 对象装饰器，作为路由页面方法参数，获取 request 对象 */
 declare function req(target: any, propertyKey: string, parameterIndex: number): void;
 /** response 对象装饰器，作为路由页面方法参数，获取 response 对象 */
@@ -389,13 +389,13 @@ declare class SocketIo {
      * Socket IO 事件装饰器
      * @param event 事件名称
      */
-    public static onEvent(event: string): (target: any, propertyKey: string) => void;
+    public static onEvent(event: string): (...args: any[]) => any;
     /**Socket IO 错误捕获装饰器 */
-    public static onError(target: any, propertyKey: string): void;
+    public static onError(...args: any[]): any;
     /**Socket IO 客户端断开连接事件装饰器 */
-    public static onDisconnect(target: any, propertyKey: string): void;
+    public static onDisconnect(...args: any[]): any;
     /**Socket IO 客户端连接成功事件装饰器 */
-    public static onConnected(target: any, propertyKey: string): void;
+    public static onConnected(...args: any[]): any;
 }
 /**Socket IO 服务实现类 */
 declare const io: IoServer;

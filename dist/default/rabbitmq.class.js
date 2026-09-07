@@ -13,6 +13,7 @@ exports.rabbitListener = exports.RabbitMQ = void 0;
 const core_decorator_1 = require("../core.decorator");
 const typespeed_1 = require("../typespeed");
 const amqplib_1 = require("amqplib");
+const decorator_utils_1 = require("../decorator-utils");
 let rabbitConnection = null;
 class RabbitMQ {
     getRabbitMQ() {
@@ -58,7 +59,23 @@ async function getChannel() {
     return channel;
 }
 function rabbitListener(queue) {
-    return (target, propertyKey) => {
+    return (...args) => {
+        if ((0, decorator_utils_1.isStd)(args)) {
+            const [, ctx] = (0, decorator_utils_1.getStdArgs)(args);
+            ctx.addInitializer(function () {
+                const targetConstructor = this.constructor;
+                const methodName = String(ctx.name);
+                (async function () {
+                    const channel = await getChannel();
+                    await channel.assertQueue(queue);
+                    const targetBean = (0, core_decorator_1.getComponent)(targetConstructor);
+                    await channel.consume(queue, targetBean[methodName], { noAck: true });
+                }());
+            });
+            return;
+        }
+        const target = args[0];
+        const propertyKey = args[1];
         (async function () {
             const channel = await getChannel();
             await channel.assertQueue(queue);

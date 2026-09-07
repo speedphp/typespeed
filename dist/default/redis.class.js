@@ -13,6 +13,7 @@ exports.redisSubscriber = exports.Redis = void 0;
 const core_decorator_1 = require("../core.decorator");
 const ioredis_1 = require("ioredis");
 const typespeed_1 = require("../typespeed");
+const decorator_utils_1 = require("../decorator-utils");
 const redisSubscribers = {};
 class Redis extends ioredis_1.default {
     getRedis() {
@@ -75,7 +76,19 @@ function redisSubscriber(channel) {
             console.error(err);
         }
     });
-    return function (target, propertyKey) {
+    return function (...args) {
+        if ((0, decorator_utils_1.isStd)(args)) {
+            const [, ctx] = (0, decorator_utils_1.getStdArgs)(args);
+            ctx.addInitializer(function () {
+                redisSubscribers[channel] = {
+                    target: this,
+                    propertyKey: String(ctx.name)
+                };
+            });
+            return;
+        }
+        const target = args[0];
+        const propertyKey = args[1];
         redisSubscribers[channel] = {
             target: target,
             propertyKey: propertyKey

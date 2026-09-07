@@ -1,6 +1,7 @@
 import { bean, getComponent  } from "../core.decorator";
 import { config } from "../typespeed";
 import { connect } from "amqplib";
+import { isStd, getStdArgs } from "../decorator-utils";
 let rabbitConnection = null;
 
 class RabbitMQ {
@@ -48,7 +49,23 @@ async function getChannel() {
 }
 
 function rabbitListener(queue: string) {
-    return (target: any, propertyKey: string) => {
+    return (...args: any[]): any => {
+        if (isStd(args)) {
+            const [, ctx] = getStdArgs(args);
+            ctx.addInitializer(function (this: any) {
+                const targetConstructor = this.constructor;
+                const methodName = String(ctx.name);
+                (async function () {
+                    const channel = await getChannel();
+                    await channel.assertQueue(queue);
+                    const targetBean = getComponent(targetConstructor);
+                    await channel.consume(queue, targetBean[methodName], { noAck: true });
+                }());
+            });
+            return;
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
         (async function () {
             const channel = await getChannel();
             await channel.assertQueue(queue);

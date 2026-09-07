@@ -1,6 +1,7 @@
 import { bean, getComponent } from "../core.decorator";
 import { default as IoRedis, RedisKey} from "ioredis";
 import { config } from "../typespeed";
+import { isStd, getStdArgs } from "../decorator-utils";
 const redisSubscribers = {};
 
 class Redis extends IoRedis {
@@ -58,7 +59,19 @@ function redisSubscriber(channel: string) {
             console.error(err);
         }
     });
-    return function (target: any, propertyKey: string) {
+    return function (...args: any[]): any {
+        if (isStd(args)) {
+            const [, ctx] = getStdArgs(args);
+            ctx.addInitializer(function (this: any) {
+                redisSubscribers[channel] = {
+                    target: this,
+                    propertyKey: String(ctx.name)
+                };
+            });
+            return;
+        }
+        const target = args[0];
+        const propertyKey = args[1] as string;
         redisSubscribers[channel] = {
             target: target,
             propertyKey: propertyKey
