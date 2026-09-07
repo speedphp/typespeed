@@ -4,6 +4,7 @@ typespeed 版本演进记录。本文件 2026-09-06 从 git 历史反推建立�
 
 ## 2.6.x
 
+- **2.6.5**：测试——新增健康检查冒烟测试（`/health`、`/ready` 断言）+ 优雅停机冒烟脚本（`npm run test:shutdown`，SIGTERM → 退出码 0）；`npm test` 63 passing（2026-09-07）
 - **2.6.4**：官方部署清单——多阶段 `Dockerfile`（build/run 分离 + 非 root + HEALTHCHECK）；`docker-compose.yml`（app + MySQL/Redis/RabbitMQ，depends_on + healthcheck）；k8s 清单（Deployment 带 readinessProbe→`/ready`、livenessProbe→`/health` + Service + Ingress）；Helm chart（Chart/values/templates）（2026-09-07）
 - **2.6.3**：框架内建优雅停机——`ExpressServer` 存储 `httpServer` + 新增 `stop()`（Promise 化 graceful close）；SIGTERM/SIGINT 优雅停机（close 后 exit 0，30s 兜底强制退出），停机时关闭 Redis；socket 模式一并处理（2026-09-07）
 - **2.6.2**：框架内建健康检查——新增 `HealthFactory`（abstract `ready()`）+ `HealthDefault`（默认恒就绪）；`ExpressServer` 内建 `GET /health`（liveness）与 `GET /ready`（readiness，读 HealthFactory，200/503），路径可经 config 覆盖（2026-09-07）

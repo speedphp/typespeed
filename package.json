@@ -1,11 +1,12 @@
 {
   "name": "typespeed",
-  "version": "2.6.4",
+  "version": "2.6.5",
   "description": "A new Framework for TypeScript.",
   "author": "speedphp",
   "license": "MIT License",
   "scripts": {
     "test": "NODE_OPTIONS=--no-experimental-strip-types mocha --require ts-node/register test/**/*.ts --exit",
+    "test:shutdown": "bash test-env/graceful-shutdown-check.sh",
     "test-with-coverage": "nyc --reporter=lcov npm test",
     "start": "ts-node --transpile-only app/src/main.ts",
     "build": "tsc -p .",
