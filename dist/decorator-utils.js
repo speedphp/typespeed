@@ -12,7 +12,8 @@
  * 因此库可以单份源码、运行时按签名形态分流：legacy 分支逻辑与 2.4.x 逐字一致，标准分支为新增。
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getStdArgs = exports.isStd = void 0;
+exports.isStd = isStd;
+exports.getStdArgs = getStdArgs;
 /**
  * 判断装饰器收到的运行时参数是否为标准装饰器签名 (value, context)。
  *
@@ -31,7 +32,6 @@ function isStd(args) {
         && args[1] !== null
         && typeof args[1].kind === "string";
 }
-exports.isStd = isStd;
 /**
  * 从标准装饰器参数中解出 (value, context)。
  * 仅应在 isStd(args) 为 true 时调用。
@@ -39,4 +39,3 @@ exports.isStd = isStd;
 function getStdArgs(args) {
     return [args[0], args[1]];
 }
-exports.getStdArgs = getStdArgs;

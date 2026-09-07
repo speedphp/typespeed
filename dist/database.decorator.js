@@ -1,6 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Model = exports.cache = exports.resultType = exports.param = exports.select = exports.remove = exports.update = exports.insert = void 0;
+exports.Model = void 0;
+exports.insert = insert;
+exports.update = update;
+exports.remove = remove;
+exports.select = select;
+exports.param = param;
+exports.resultType = resultType;
+exports.cache = cache;
 const core_decorator_1 = require("./core.decorator");
 const decorator_utils_1 = require("./decorator-utils");
 const bind_decorator_1 = require("./bind.decorator");
@@ -38,7 +45,6 @@ function insert(sql) {
         };
     };
 }
-exports.insert = insert;
 function update(sql) {
     return (...args) => {
         if ((0, decorator_utils_1.isStd)(args)) {
@@ -66,7 +72,6 @@ function update(sql) {
         };
     };
 }
-exports.update = update;
 function remove(sql) {
     return (...args) => {
         if ((0, decorator_utils_1.isStd)(args)) {
@@ -94,7 +99,6 @@ function remove(sql) {
         };
     };
 }
-exports.remove = remove;
 function select(sql) {
     return (...args) => {
         if ((0, decorator_utils_1.isStd)(args)) {
@@ -144,7 +148,6 @@ function select(sql) {
         };
     };
 }
-exports.select = select;
 function resultType(dataClass) {
     return function (...args) {
         if ((0, decorator_utils_1.isStd)(args)) {
@@ -160,7 +163,6 @@ function resultType(dataClass) {
         //never return
     };
 }
-exports.resultType = resultType;
 function param(name) {
     return function (target, propertyKey, parameterIndex) {
         const existingParameters = Reflect.getOwnMetadata(paramMetadataKey, target, propertyKey) || [];
@@ -168,7 +170,6 @@ function param(name) {
         Reflect.defineMetadata(paramMetadataKey, existingParameters, target, propertyKey);
     };
 }
-exports.param = param;
 async function queryForExecute(sql, args, target, propertyKey) {
     const [newSql, sqlValues] = convertSQLParams(sql, target, propertyKey, args);
     return actionExecute(newSql, sqlValues);
@@ -255,7 +256,6 @@ function cache(ttl) {
         }
     };
 }
-exports.cache = cache;
 function getTableAndVersion(name, sql) {
     const regExpMap = {
         insert: /insert\sinto\s+([\w`\'\"]+)/i,

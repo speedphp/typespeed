@@ -14,7 +14,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReadWriteDb = exports.redisSubscriber = exports.Redis = exports.NodeCache = exports.LogDefault = exports.ExpressServer = exports.AuthenticationFactory = exports.ServerFactory = exports.DataSourceFactory = exports.CacheFactory = exports.LogFactory = exports.config = exports.value = exports.app = void 0;
+exports.ReadWriteDb = exports.redisSubscriber = exports.Redis = exports.NodeCache = exports.LogDefault = exports.ExpressServer = exports.AuthenticationFactory = exports.ServerFactory = exports.DataSourceFactory = exports.CacheFactory = exports.LogFactory = void 0;
+exports.app = app;
+exports.value = value;
+exports.config = config;
 require("reflect-metadata");
 const fs = require("fs");
 const path = require("path");
@@ -44,20 +47,18 @@ function app(...args) {
     }
     startApp(args[0]);
 }
-exports.app = app;
 function startApp(constructor) {
     const coreFiles = walkSync(corePath, { globs: ['**/*.ts'], ignore: ['**/*.d.ts', 'scaffold/**'] });
     const mainFiles = walkSync(mainPath, { globs: ['**/*.ts'] });
     (async function () {
-        var _a, _b;
         try {
             for (let p of coreFiles) {
                 let moduleName = p.replace(".d.ts", "").replace(".ts", "");
-                await (_a = corePath + "/" + moduleName, Promise.resolve().then(() => require(_a)));
+                await Promise.resolve(`${corePath + "/" + moduleName}`).then(s => require(s));
             }
             for (let p of mainFiles) {
                 let moduleName = p.replace(".d.ts", "").replace(".ts", "");
-                await (_b = mainPath + "/" + moduleName, Promise.resolve().then(() => require(_b)));
+                await Promise.resolve(`${mainPath + "/" + moduleName}`).then(s => require(s));
             }
         }
         catch (err) {
@@ -71,7 +72,6 @@ function startApp(constructor) {
 function config(node) {
     return globalConfig[node] || null;
 }
-exports.config = config;
 function value(configPath) {
     return function (...args) {
         if ((0, decorator_utils_1.isStd)(args)) {
@@ -111,7 +111,6 @@ function value(configPath) {
         }
     };
 }
-exports.value = value;
 function getRootPath(lines) {
     // 兼容新旧 Node 栈帧（Node<22: "Function.Module._load" / Node22+: "Function._load"）、
     // mocha(ts-node) 下 "Context.<anonymous>" 与中间可能插入的 "wrapModuleLoad" 帧：

@@ -38,6 +38,7 @@ class NodeCache extends cache_factory_class_1.default {
         this.NodeCache.flushAll();
     }
 }
+exports.default = NodeCache;
 __decorate([
     (0, typespeed_1.value)("cache"),
     __metadata("design:type", Object)
@@ -48,4 +49,3 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", cache_factory_class_1.default)
 ], NodeCache.prototype, "getNodeCache", null);
-exports.default = NodeCache;

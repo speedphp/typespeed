@@ -16,10 +16,10 @@ class LogDefault extends log_factory_class_1.default {
         return new LogDefault();
     }
 }
+exports.default = LogDefault;
 __decorate([
     core_decorator_1.bean,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", log_factory_class_1.default)
 ], LogDefault.prototype, "createLog", null);
-exports.default = LogDefault;

@@ -115,6 +115,7 @@ class ExpressServer extends server_factory_class_1.default {
         });
     }
 }
+exports.default = ExpressServer;
 __decorate([
     (0, typespeed_1.value)("view"),
     __metadata("design:type", String)
@@ -165,4 +166,3 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", server_factory_class_1.default)
 ], ExpressServer.prototype, "getSever", null);
-exports.default = ExpressServer;

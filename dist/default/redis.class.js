@@ -9,7 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.redisSubscriber = exports.Redis = void 0;
+exports.Redis = void 0;
+exports.redisSubscriber = redisSubscriber;
 const core_decorator_1 = require("../core.decorator");
 const ioredis_1 = require("ioredis");
 const typespeed_1 = require("../typespeed");
@@ -57,6 +58,7 @@ class Redis extends ioredis_1.default {
         }
     }
 }
+exports.Redis = Redis;
 Redis.pubObj = null;
 Redis.subObj = null;
 __decorate([
@@ -65,7 +67,6 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Redis)
 ], Redis.prototype, "getRedis", null);
-exports.Redis = Redis;
 function redisSubscriber(channel) {
     if (!(0, typespeed_1.config)("redis"))
         return function () {
@@ -95,7 +96,6 @@ function redisSubscriber(channel) {
         };
     };
 }
-exports.redisSubscriber = redisSubscriber;
 if ((0, typespeed_1.config)("redis")) {
     Redis.getInstanceOfRedis("sub").on("message", async function (channel, message) {
         await (0, core_decorator_1.getComponent)(redisSubscribers[channel].target.constructor)[redisSubscribers[channel].propertyKey](message);

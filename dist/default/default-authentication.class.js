@@ -16,10 +16,10 @@ class DefaultAuthentication extends authentication_factory_class_1.default {
         return new DefaultAuthentication();
     }
 }
+exports.default = DefaultAuthentication;
 __decorate([
     core_decorator_1.bean,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", authentication_factory_class_1.default)
 ], DefaultAuthentication.prototype, "getAuthentication", null);
-exports.default = DefaultAuthentication;

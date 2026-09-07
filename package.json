@@ -1,6 +1,6 @@
 {
   "name": "typespeed",
-  "version": "2.5.2",
+  "version": "2.6.1",
   "description": "A new Framework for TypeScript.",
   "author": "speedphp",
   "license": "MIT License",
@@ -13,6 +13,9 @@
     "prebuild": "rm -rf dist"
   },
   "main": "dist/typespeed.js",
+  "engines": {
+    "node": ">=18"
+  },
   "files": [
     "dist",
     "CHANGELOG.md",
@@ -62,13 +65,13 @@
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^18.19.3",
+    "@types/node": "^22.0.0",
     "chai": "4.3.7",
     "chai-http": "^4.4.0",
     "mocha": "10.2.0",
     "nyc": "^15.1.0",
     "socket.io-client": "4.7.1",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.5"
+    "typescript": "^5.9.3"
   }
 }

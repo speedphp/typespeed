@@ -1,6 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jwt = exports.upload = exports.setRouter = exports.requestMapping = exports.postMapping = exports.getMapping = exports.after = exports.before = exports.response = exports.res = exports.request = exports.req = exports.reqParam = exports.reqForm = exports.reqQuery = exports.reqBody = exports.next = void 0;
+exports.requestMapping = exports.postMapping = exports.getMapping = void 0;
+exports.next = next;
+exports.reqBody = reqBody;
+exports.reqQuery = reqQuery;
+exports.reqForm = reqForm;
+exports.reqParam = reqParam;
+exports.req = req;
+exports.request = req;
+exports.res = res;
+exports.response = res;
+exports.before = before;
+exports.after = after;
+exports.setRouter = setRouter;
+exports.upload = upload;
+exports.jwt = jwt;
 const multiparty = require("multiparty");
 const express_jwt_1 = require("express-jwt");
 const core_decorator_1 = require("./core.decorator");
@@ -28,7 +42,6 @@ function setRouter(app) {
         }
     });
 }
-exports.setRouter = setRouter;
 function mapperFunction(method, value) {
     return (...args) => {
         if ((0, decorator_utils_1.isStd)(args)) {
@@ -137,7 +150,6 @@ function upload(...args) {
         routerMiddleware[key] = [uploadMiddleware];
     }
 }
-exports.upload = upload;
 function uploadMiddleware(req, res, next) {
     const form = new multiparty.Form();
     form.parse(req, (err, fields, files) => {
@@ -171,7 +183,6 @@ function jwt(jwtConfig) {
         }
     };
 }
-exports.jwt = jwt;
 function before(constructorFunction, methodName) {
     const targetBean = (0, core_decorator_1.getComponent)(constructorFunction);
     return function (...args) {
@@ -206,7 +217,6 @@ function before(constructorFunction, methodName) {
         });
     };
 }
-exports.before = before;
 function after(constructorFunction, methodName) {
     const targetBean = (0, core_decorator_1.getComponent)(constructorFunction);
     return function (...args) {
@@ -243,35 +253,27 @@ function after(constructorFunction, methodName) {
         });
     };
 }
-exports.after = after;
 function req(target, propertyKey, parameterIndex) {
     const key = [target.constructor.name, propertyKey, parameterIndex].toString();
     routerParams[key] = (req, res, next) => req;
 }
-exports.req = req;
-exports.request = req;
 function res(target, propertyKey, parameterIndex) {
     const key = [target.constructor.name, propertyKey, parameterIndex].toString();
     routerParams[key] = (req, res, next) => res;
 }
-exports.res = res;
-exports.response = res;
 function next(target, propertyKey, parameterIndex) {
     const key = [target.constructor.name, propertyKey, parameterIndex].toString();
     routerParams[key] = (req, res, next) => next;
 }
-exports.next = next;
 function reqBody(target, propertyKey, parameterIndex) {
     const key = [target.constructor.name, propertyKey, parameterIndex].toString();
     routerParams[key] = (req, res, next) => req.body;
 }
-exports.reqBody = reqBody;
 function reqParam(target, propertyKey, parameterIndex) {
     const key = [target.constructor.name, propertyKey, parameterIndex].toString();
     const paramName = getParamInFunction(target[propertyKey], parameterIndex);
     routerParams[key] = (req, res, next) => req.params[paramName];
 }
-exports.reqParam = reqParam;
 function getParamInFunction(fn, index) {
     const code = fn.toString().replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg, '').replace(/=>.*$/mg, '').replace(/=[^,]+/mg, '');
     const result = code.slice(code.indexOf('(') + 1, code.indexOf(')')).match(/([^\s,]+)/g);
@@ -330,14 +332,12 @@ function reqQuery(target, propertyKey, parameterIndex) {
     const paramName = getParamInFunction(target[propertyKey], parameterIndex);
     routerParams[key] = (req, res, next) => req.query[paramName];
 }
-exports.reqQuery = reqQuery;
 function reqForm(paramName) {
     return (target, propertyKey, parameterIndex) => {
         const key = [target.constructor.name, propertyKey, parameterIndex].toString();
         routerParams[key] = (req, res, next) => req.body[paramName];
     };
 }
-exports.reqForm = reqForm;
 const getMapping = (value) => mapperFunction("get", value);
 exports.getMapping = getMapping;
 const postMapping = (value) => mapperFunction("post", value);

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBindMapping = exports.bind = void 0;
+exports.bind = bind;
+exports.getBindMapping = getBindMapping;
 const decorator_utils_1 = require("./decorator-utils");
 /**
  * 方法级参数绑定注册表：key = `[className, methodName]`，value = 绑定声明。
@@ -42,9 +43,7 @@ function bind(mapping) {
         bindParamMap.set([target.constructor.name, propertyKey].toString(), mapping);
     };
 }
-exports.bind = bind;
 /** 读取某方法上的 @bind 声明（route/database 内部使用） */
 function getBindMapping(className, methodName) {
     return bindParamMap.get([className, methodName].toString());
 }
-exports.getBindMapping = getBindMapping;

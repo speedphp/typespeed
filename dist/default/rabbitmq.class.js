@@ -9,7 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rabbitListener = exports.RabbitMQ = void 0;
+exports.RabbitMQ = void 0;
+exports.rabbitListener = rabbitListener;
 const core_decorator_1 = require("../core.decorator");
 const typespeed_1 = require("../typespeed");
 const amqplib_1 = require("amqplib");
@@ -41,13 +42,13 @@ class RabbitMQ {
         await this.sendMessageToQueue(queue, message);
     }
 }
+exports.RabbitMQ = RabbitMQ;
 __decorate([
     core_decorator_1.bean,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", RabbitMQ)
 ], RabbitMQ.prototype, "getRabbitMQ", null);
-exports.RabbitMQ = RabbitMQ;
 async function getChannel() {
     if (rabbitConnection === null) {
         rabbitConnection = await (0, amqplib_1.connect)((0, typespeed_1.config)("rabbitmq"));
@@ -84,4 +85,3 @@ function rabbitListener(queue) {
         }());
     };
 }
-exports.rabbitListener = rabbitListener;

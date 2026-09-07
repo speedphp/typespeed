@@ -1,6 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.schedule = exports.getComponent = exports.getBean = exports.autoware = exports.error = exports.logx = exports.log = exports.resource = exports.bean = exports.component = void 0;
+exports.component = component;
+exports.bean = bean;
+exports.resource = resource;
+exports.log = log;
+exports.logx = logx;
+exports.error = error;
+exports.autoware = autoware;
+exports.getBean = getBean;
+exports.getComponent = getComponent;
+exports.schedule = schedule;
 require("reflect-metadata");
 const cron = require("cron");
 const log_factory_class_1 = require("./factory/log-factory.class");
@@ -19,11 +28,9 @@ function component(...args) {
     const constructorFunction = args[0];
     objectMapper.set(constructorFunction.name, new constructorFunction());
 }
-exports.component = component;
 function getComponent(constructorFunction) {
     return objectMapper.get(constructorFunction.name);
 }
-exports.getComponent = getComponent;
 function bean(...args) {
     if (args.length >= 2) {
         // 直接装饰器形式：@bean（无 token，走 legacy design:returntype）
@@ -32,7 +39,6 @@ function bean(...args) {
     // 工厂形式：@bean(Token)（显式返回类型 token，标准模式必需）
     return beanWithToken(args[0]);
 }
-exports.bean = bean;
 function beanWithToken(token) {
     return function (...args) {
         if ((0, decorator_utils_1.isStd)(args)) {
@@ -59,7 +65,6 @@ function getBean(mappingClass) {
     const bean = beanMapper.get(mappingClass.name);
     return bean["factory"];
 }
-exports.getBean = getBean;
 function autoware(...args) {
     if (args.length >= 2) {
         // 直接装饰器形式：@autoware（无 token，走 legacy design:type）
@@ -68,7 +73,6 @@ function autoware(...args) {
     // 工厂形式：@autoware(Token)（显式 token，标准模式必需）
     return autowareWithToken(args[0]);
 }
-exports.autoware = autoware;
 function autowareWithToken(token) {
     return function (...args) {
         if ((0, decorator_utils_1.isStd)(args)) {
@@ -138,7 +142,6 @@ function resource(...args) {
         });
     };
 }
-exports.resource = resource;
 function log(message, ...optionalParams) {
     const logObject = beanMapper.get(log_factory_class_1.default.name);
     if (logObject) {
@@ -148,7 +151,6 @@ function log(message, ...optionalParams) {
         console.log(message, ...optionalParams);
     }
 }
-exports.log = log;
 function logx(message) {
     message = JSON.stringify(message);
     const logObject = beanMapper.get(log_factory_class_1.default.name);
@@ -159,7 +161,6 @@ function logx(message) {
         console.log(message);
     }
 }
-exports.logx = logx;
 function error(message, ...optionalParams) {
     const logObject = beanMapper.get(log_factory_class_1.default.name);
     if (logObject) {
@@ -169,7 +170,6 @@ function error(message, ...optionalParams) {
         console.error(message, ...optionalParams);
     }
 }
-exports.error = error;
 function schedule(cronTime) {
     return (...args) => {
         if ((0, decorator_utils_1.isStd)(args)) {
@@ -184,4 +184,3 @@ function schedule(cronTime) {
         new cron.CronJob(cronTime, target[propertyKey]).start();
     };
 }
-exports.schedule = schedule;

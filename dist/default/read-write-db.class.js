@@ -57,10 +57,10 @@ class ReadWriteDb extends data_source_factory_class_1.default {
         return this.writeSession;
     }
 }
+exports.default = ReadWriteDb;
 __decorate([
     core_decorator_1.bean,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", data_source_factory_class_1.default)
 ], ReadWriteDb.prototype, "getDataSource", null);
-exports.default = ReadWriteDb;
