@@ -23,7 +23,9 @@ function app(...args: any[]): any {
     if (isStd(args)) {
         const [, ctx] = getStdArgs(args);
         ctx.addInitializer(function (this: any) {
-            startApp(this.constructor);
+            // 标准类装饰器 initializer 的 this 是类本身（TS 实现：initializers.call(class)），
+            // 不是实例；用 this.constructor 会拿到 Function，导致 new Function() 后 main.main is not a function。
+            startApp(this);
         });
         return;
     }
