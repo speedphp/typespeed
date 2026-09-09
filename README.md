@@ -65,7 +65,7 @@ TypeSpeed 是一个 **TypeScript 编写的 Web 框架**，底层基于 [Express]
 
 ## 📦 快速开始
 
-**环境要求**：Node.js 16+（推荐 18/20/22），TypeScript。
+**环境要求**：Node.js 18+（推荐 20/22），TypeScript。
 
 ```bash
 # 1. 全局安装脚手架
@@ -150,8 +150,8 @@ TypeSpeed 不只是一个框架，还配有**完整的「书 + 视频 + 双源�
 | 版本 | 内容 | 状态 |
 |---|---|---|
 | 2.4.x | 文档复活、CI 现代化、测试全绿 | ✅ 已发布 |
-| 2.5.x | **标准装饰器双轨**（TC39 Stage 2.7）+ `@bind` + 显式 token | ✅ 已发布（latest） |
-| 2.6.x | Node/TS 升级 + 健康检查 + 优雅停机 + Docker/k8s 部署清单 | 🚧 进行中 |
+| 2.5.x | **标准装饰器双轨**（TC39 Stage 2.7）+ `@bind` + 显式 token | ✅ 已发布 |
+| 2.6.x | Node/TS 升级 + 健康检查 + 优雅停机 + Docker/k8s 部署清单 | ✅ 已发布（latest） |
 
 ---
 

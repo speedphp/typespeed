@@ -65,7 +65,7 @@ Supports both **legacy decorators** (`experimentalDecorators: true`, the book's 
 
 ## 📦 Quick Start
 
-**Requirements**: Node.js 16+ (18/20/22 recommended), TypeScript.
+**Requirements**: Node.js 18+ (20/22 recommended), TypeScript.
 
 ```bash
 # 1. Install the CLI globally
@@ -150,8 +150,8 @@ TypeSpeed is not just a framework — it comes with a complete **"book + video +
 | Version | Content | Status |
 |---|---|---|
 | 2.4.x | Documentation revival, CI modernization, all tests green | ✅ Released |
-| 2.5.x | **Standard decorator dual-track** (TC39 Stage 2.7) + `@bind` + explicit token | ✅ Released (latest) |
-| 2.6.x | Node/TS upgrade + health checks + graceful shutdown + Docker/k8s manifests | 🚧 In progress |
+| 2.5.x | **Standard decorator dual-track** (TC39 Stage 2.7) + `@bind` + explicit token | ✅ Released |
+| 2.6.x | Node/TS upgrade + health checks + graceful shutdown + Docker/k8s manifests | ✅ Released (latest) |
 
 ---
 
