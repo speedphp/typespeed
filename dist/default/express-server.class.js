@@ -68,7 +68,7 @@ class ExpressServer extends server_factory_class_1.default {
     registerGracefulShutdown() {
         const shutdown = (signal) => {
             (0, core_decorator_1.log)(`received ${signal}, gracefully shutting down...`);
-            // 30 秒兜底强制退出，防止连接迟迟不关闭
+            // 30 秒超时强制退出，防止连接迟迟不关闭
             const forceExit = setTimeout(() => {
                 (0, core_decorator_1.log)("forced shutdown after timeout");
                 process.exit(1);
