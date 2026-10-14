@@ -26,10 +26,6 @@ const health_factory_class_1 = require("../factory/health-factory.class");
 const redis_class_1 = require("./redis.class");
 const authentication_factory_class_1 = require("../factory/authentication-factory.class");
 class ExpressServer extends server_factory_class_1.default {
-    constructor() {
-        super(...arguments);
-        this.httpServer = null;
-    }
     getSever() {
         const server = new ExpressServer();
         server.app = express();

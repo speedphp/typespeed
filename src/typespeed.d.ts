@@ -197,6 +197,8 @@ declare function reqForm(paramName: string): (target: any, propertyKey: string, 
 declare abstract class ServerFactory {
     /**Web 服务实例 */
     app: any;
+    /**HTTP 服务实例（listen 返回，start 后可用） */
+    httpServer: any;
     /**中间件列表 */
     protected middlewareList: Array<any>;
     /**
@@ -209,6 +211,14 @@ declare abstract class ServerFactory {
      * @param port 端口号
      */
     abstract start(port: number, callback?: Function): any;
+    /**
+     * 真实监听端口（start 后同步可读；动态端口场景返回实际分配值）
+     */
+    getPort(): number;
+    /**
+     * 监听地址（绑定地址；对外可达 host 请用部署配置）
+     */
+    getHost(): string;
 }
 /**日志工厂类 */
 declare abstract class LogFactory {

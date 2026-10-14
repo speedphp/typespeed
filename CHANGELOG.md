@@ -4,6 +4,7 @@ typespeed 版本演进记录。本文件 2026-09-06 从 git 历史反推建立�
 
 ## 2.6.x
 
+- **2.6.8**：`ServerFactory` 新增真实监听地址 API——`getPort()`（`start` 后同步可读，动态端口 `listen(0)` 场景也能拿到实际分配值）与 `getHost()`（监听绑定地址）；`httpServer` 字段上提至抽象类（`ExpressServer` 继承）。为 speed 1.3.3 注册提交「真实端口」铺路（2026-10-14）
 - **2.6.7**：修复标准装饰器模式 `@app` 启动——标准类装饰器 initializer 的 `this` 是类本身，原 `this.constructor` 取到 `Function` 导致 `main.main is not a function`；改为 `startApp(this)`。修复后 `experimentalDecorators: false` 下 `@app + @autoware(ServerFactory)` 服务可正常启动并响应（`/health` 200），为 speed（标准装饰器栈）扫清启动障碍（2026-09-08）
 - **2.6.6**：D1.0 长文——新增「把 typespeed 跑进 k8s」章节级教程（`docker/教程.md`，为什么→怎么用→原理→怎么扩展）（2026-09-07）
 - **2.6.5**：测试——新增健康检查冒烟测试（`/health`、`/ready` 断言）+ 优雅停机冒烟脚本（`npm run test:shutdown`，SIGTERM → 退出码 0）；`npm test` 63 passing（2026-09-07）
